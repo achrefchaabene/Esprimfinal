@@ -2,212 +2,162 @@
 
 {% block title %}Postuler - {{ publication.title }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Styles existants conservés */
+    </style>
+{% endblock %}
+
 {% block body %}
-<div class="apply-container">
-    <div class="apply-header">
-        <h1>Postuler à l'offre : {{ publication.title }}</h1>
-        <div class="company-info">{{ publication.user.companyName }}</div>
-    </div>
-
-    <div class="apply-form">
-        {{ form_start(form) }}
-            <div class="form-group">
-                {{ form_label(form.message) }}
-                {{ form_widget(form.message) }}
-                {{ form_errors(form.message) }}
+<div class="application-container">
+    {% include 'job_seeker/_sidebar.html.twig' %}
+    
+    <div class="application-content">
+        <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Retour à l'offre
+        </a>
+        
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <div class="application-card" id="application-form-container">
+            <div class="application-steps">
+                <div class="step completed">
+                    <div class="step-number"><i class="fas fa-check"></i></div>
+                    <div class="step-label">Consulter l'offre</div>
+                </div>
+                <div class="step active">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Remplir candidature</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Confirmation</div>
+                </div>
             </div>
-
-            <div class="form-group">
-                {{ form_label(form.resumeFile) }}
-                {{ form_widget(form.resumeFile) }}
-                {{ form_errors(form.resumeFile) }}
-                <small class="form-text text-muted">Téléchargez votre CV au format PDF (max 2Mo)</small>
+            
+            <div class="application-header">
+                <h2 class="application-title">Postuler : {{ publication.title }}</h2>
+                <div class="company-badge">
+                    {% if publication.user.profileImage %}
+                        <img src="{{ asset(publication.user.profileImage) }}" alt="Company">
+                    {% else %}
+                        <img src="{{ asset('img/fxchat.png') }}" alt="Company">
+                    {% endif %}
+                    {{ publication.user.companyName ?? publication.user.username }}
+                </div>
             </div>
-
-            <div class="form-actions">
-                <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="btn-cancel">Annuler</a>
-                <button type="submit" class="btn-submit">Envoyer ma candidature</button>
+            
+            {{ form_start(form, {'attr': {'class': 'application-form', 'id': 'application-form'}}) }}
+            
+            <div class="form-section">
+                <h3>Lettre de motivation</h3>
+                <div class="form-group">
+                    {{ form_label(form.message, 'Votre message', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.message, {'attr': {'class': 'form-control', 'placeholder': 'Présentez-vous et expliquez pourquoi vous êtes intéressé par ce poste...'}}) }}
+                    {{ form_errors(form.message) }}
+                    <p class="form-help">Soyez concis et mettez en avant vos compétences pertinentes pour ce poste.</p>
+                </div>
             </div>
-        {{ form_end(form) }}
+            
+            <div class="form-section">
+                <h3>Curriculum Vitae</h3>
+                <div class="form-group">
+                    {{ form_label(form.resumeFile, 'Votre CV', {'label_attr': {'class': 'form-label'}}) }}
+                    <div class="file-upload-container" id="file-upload-container">
+                        <i class="fas fa-file-pdf" id="file-icon"></i>
+                        <p class="file-upload-text" id="file-text">Cliquez ou glissez votre CV ici</p>
+                        {{ form_widget(form.resumeFile, {'attr': {'class': 'file-upload-input'}}) }}
+                    </div>
+                    {{ form_errors(form.resumeFile) }}
+                    <p class="form-help">Format accepté: PDF. Taille max: 2MB</p>
+                </div>
+            </div>
+            
+            <div class="job-info-section">
+                <div class="job-info-header">Détails de l'offre</div>
+                <div class="job-info-content">
+                    <div class="info-row">
+                        <div class="info-label">Entreprise</div>
+                        <div class="info-value">{{ publication.user.companyName ?? publication.user.username }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Poste</div>
+                        <div class="info-value">{{ publication.title }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Catégorie</div>
+                        <div class="info-value">
+                            {% if publication.category == 'job_offer' %}
+                                Offre d'emploi
+                            {% elseif publication.category == 'internship' %}
+                                Stage
+                            {% elseif publication.category == 'news' %}
+                                Actualité
+                            {% elseif publication.category == 'event' %}
+                                Événement
+                            {% else %}
+                                {{ publication.category }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Date de publication</div>
+                        <div class="info-value">{{ publication.createdAt|date('d/m/Y') }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="btn-container">
+                <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+                <button type="submit" class="btn btn-primary" id="submit-application">
+                    <i class="fas fa-paper-plane"></i> Envoyer ma candidature
+                </button>
+            </div>
+            
+            {{ form_end(form) }}
+        </div>
     </div>
 </div>
 {% endblock %}
 
-<style>
-    .apply-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-    }
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion du téléchargement de fichier
+        const fileInput = document.querySelector('.file-upload-input');
+        const fileText = document.getElementById('file-text');
+        const fileIcon = document.getElementById('file-icon');
+        const fileContainer = document.getElementById('file-upload-container');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                if (this.files.length > 0) {
+                    const fileName = this.files[0].name;
+                    fileText.textContent = fileName;
+                    fileIcon.className = 'fas fa-check-circle';
+                    fileContainer.style.borderColor = 'var(--success-color)';
+                    fileIcon.style.color = 'var(--success-color)';
+                } else {
+                    fileText.textContent = 'Cliquez ou glissez votre CV ici';
+                    fileIcon.className = 'fas fa-file-pdf';
+                    fileContainer.style.borderColor = '';
+                    fileIcon.style.color = '';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
 
-    .apply-header {
-        margin-bottom: 2rem;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 1.5rem;
-    }
-
-    .apply-header h1 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        color: #333;
-    }
-
-    .job-info h2 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        color: #d62828;
-    }
-
-    .company-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        color: #666;
-    }
-
-    .company-name {
-        font-weight: 600;
-    }
-
-    .job-location i {
-        margin-right: 0.3rem;
-    }
-
-    .apply-content {
-        display: flex;
-        gap: 2rem;
-    }
-
-    .apply-form-container {
-        flex: 2;
-    }
-
-    .job-details-sidebar {
-        flex: 1;
-    }
-
-    .apply-form {
-        background: #fff;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .form-group textarea, .form-group input[type="file"] {
-        width: 100%;
-        padding: 0.8rem;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-family: inherit;
-    }
-
-    .form-group textarea:focus {
-        outline: none;
-        border-color: #d62828;
-        box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.1);
-    }
-
-    .form-help {
-        margin-top: 0.5rem;
-        font-size: 0.85rem;
-        color: #666;
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 2rem;
-    }
-
-    .btn-cancel, .btn-submit {
-        padding: 0.8rem 1.5rem;
-        border-radius: 5px;
-        font-weight: 600;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .btn-cancel {
-        background-color: #f8f9fa;
-        color: #333;
-        border: 1px solid #ddd;
-    }
-
-    .btn-cancel:hover {
-        background-color: #e9ecef;
-    }
-
-    .btn-submit {
-        background-color: #d62828;
-        color: white;
-        border: none;
-    }
-
-    .btn-submit:hover {
-        background-color: #ba181b;
-        transform: translateY(-2px);
-    }
-
-    .job-summary, .application-tips {
-        background: #fff;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        margin-bottom: 1.5rem;
-    }
-
-    .job-summary h3, .application-tips h3 {
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-        color: #333;
-        border-bottom: 2px solid #d62828;
-        padding-bottom: 0.5rem;
-        display: inline-block;
-    }
-
-    .summary-item {
-        margin-bottom: 0.8rem;
-        display: flex;
-    }
-
-    .summary-label {
-        font-weight: 600;
-        width: 40%;
-        color: #666;
-    }
-
-    .summary-value {
-        width: 60%;
-    }
-
-    .tips-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .tips-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
-        margin-bottom: 0.8rem;
-    }
-
-    .tips-list i {
-        color: #28a745;
 
 

@@ -4,3 +4,13 @@
 <a href="{{ path('entreprise_carte_visite') }}" class="nav-item {% if app.request.get('_route') == 'entreprise_carte_visite' %}active{% endif %}">
     <i class="fas fa-id-card"></i> Carte de visite
 </a>
+<a href="{{ path('entreprise_publication_index') }}" class="nav-item {% if app.request.get('_route') starts with 'entreprise_publication' %}active{% endif %}">
+    <i class="fas fa-briefcase"></i> Publications
+</a>
+<a href="{{ path('entreprise_applications_index') }}" class="nav-item {% if app.request.get('_route') starts with 'entreprise_applications' %}active{% endif %}">
+    <i class="fas fa-users"></i> Candidats
+</a>
+<a href="{{ path('entreprise_statistics_index') }}" class="nav-item {% if app.request.get('_route') starts with 'entreprise_statistics' %}active{% endif %}">
+    <i class="fas fa-chart-line"></i> Statistiques
+</a>
+

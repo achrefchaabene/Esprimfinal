@@ -38,9 +38,18 @@ class ApplicationsController extends AbstractController
     }
     
     #[Route('/{id}/view', name: 'view')]
-    public function view(Application $application): Response
+    public function view(Request $request, EntityManagerInterface $em, int $id): Response
     {
         $this->denyAccessUnlessGranted('ROLE_COMPANY');
+        
+        // Récupérer la candidature manuellement
+        $application = $em->getRepository(Application::class)->find($id);
+        
+        // Vérifier si la candidature existe
+        if (!$application) {
+            $this->addFlash('error', 'La candidature demandée n\'existe pas.');
+            return $this->redirectToRoute('entreprise_applications_index');
+        }
         
         // Vérifier que l'application appartient à une publication de l'entreprise
         if ($application->getPublication()->getUser() !== $this->getUser()) {
@@ -71,9 +80,18 @@ class ApplicationsController extends AbstractController
     }
     
     #[Route('/{id}/reject', name: 'reject')]
-    public function reject(Application $application, Request $request, EntityManagerInterface $em): Response
+    public function reject(Request $request, EntityManagerInterface $em, int $id): Response
     {
         $this->denyAccessUnlessGranted('ROLE_COMPANY');
+        
+        // Récupérer la candidature manuellement
+        $application = $em->getRepository(Application::class)->find($id);
+        
+        // Vérifier si la candidature existe
+        if (!$application) {
+            $this->addFlash('error', 'La candidature demandée n\'existe pas.');
+            return $this->redirectToRoute('entreprise_applications_index');
+        }
         
         // Vérifier que l'application appartient à une publication de l'entreprise
         if ($application->getPublication()->getUser() !== $this->getUser()) {
@@ -91,7 +109,8 @@ class ApplicationsController extends AbstractController
         
         $em->flush();
         
-        $this->addFlash('success', 'Candidature rejetée');
-        return $this->redirectToRoute('entreprise_applications_view', ['id' => $application->getId()]);
+        $this->addFlash('success', 'Candidature rejetée avec succès.');
+        
+        return $this->redirectToRoute('entreprise_applications_index');
     }
 }

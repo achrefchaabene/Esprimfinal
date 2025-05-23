@@ -14,11 +14,9 @@ class Application
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="applications")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'applications')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'applications')]
     #[ORM\JoinColumn(nullable: false)]
@@ -58,7 +56,6 @@ class Application
     public function setUser(?User $user): self
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -70,7 +67,6 @@ class Application
     public function setPublication(?Publication $publication): self
     {
         $this->publication = $publication;
-
         return $this;
     }
 
@@ -79,10 +75,9 @@ class Application
         return $this->status;
     }
 
-    public function setStatus(?string $status): self
+    public function setStatus(string $status): self
     {
         $this->status = $status;
-
         return $this;
     }
 
@@ -94,7 +89,6 @@ class Application
     public function setMessage(?string $message): self
     {
         $this->message = $message;
-
         return $this;
     }
 
@@ -103,10 +97,9 @@ class Application
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -118,7 +111,6 @@ class Application
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
@@ -130,7 +122,6 @@ class Application
     public function setResumeFilename(?string $resumeFilename): self
     {
         $this->resumeFilename = $resumeFilename;
-
         return $this;
     }
 
@@ -142,7 +133,6 @@ class Application
     public function setProcessedAt(?\DateTimeImmutable $processedAt): self
     {
         $this->processedAt = $processedAt;
-
         return $this;
     }
 
@@ -154,12 +144,7 @@ class Application
     public function setFeedback(?string $feedback): self
     {
         $this->feedback = $feedback;
-
         return $this;
     }
 }
-
-
-
-
 

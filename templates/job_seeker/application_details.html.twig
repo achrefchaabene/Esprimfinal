@@ -1,0 +1,240 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la candidature{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .application-details-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .application-sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+        }
+        
+        .application-content {
+            flex: 1;
+            padding: 30px;
+            background-color: #f5f5f5;
+        }
+        
+        .profile-section {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        
+        .profile-name {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .profile-email {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 0;
+        }
+        
+        .nav-menu {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            display: block;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .nav-item.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .application-detail-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .application-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        
+        .application-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .application-status {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-pending {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .status-accepted {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .status-rejected {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .application-info {
+            margin-bottom: 25px;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .info-label {
+            width: 150px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .info-value {
+            flex: 1;
+        }
+        
+        .application-message {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .message-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .message-content {
+            white-space: pre-line;
+            color: #555;
+        }
+        
+        .job-details {
+            margin-top: 30px;
+        }
+        
+        .job-details h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .job-description {
+            white-space: pre-line;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .back-link i {
+            margin-right: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="application-details-container">
+    <!-- Sidebar -->
+    <div class="application-sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item">
+                <i class="fas fa-user"></i> Mon Profil
+            </a>
+            <a href="{{ path('job_seeker_profile_edit') }}" class="nav-item">
+                <i class="fas fa-user-edit"></i> Modifier Profil
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Offres d'emploi
+            </a>
+            <a href="{{ path('job_seeker_applications') }}" class="nav-item active">
+                <i class="fas fa-paper-plane"></i> Mes Candidatures
+            </a>
+            <a href="{{ path('conversation_index') }}" class="nav-item">
+                <i class="fas fa-comments"></i> Messages
+                {% set unread_count = unread_messages_count() %}
+                {% if unread_count > 0 %}
+                    <span class="badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{{ path('chatbot') }}" class="nav-item">
+                <i class="fas fa-robot"></i> Assistant Tchala
+            </a>
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="application-content">
+        <a href="{{ path('job_seeker_applications') }}" class="back

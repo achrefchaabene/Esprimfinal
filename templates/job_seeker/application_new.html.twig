@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle candidature{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .application-form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .publication-info {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .publication-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .publication-company {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .form-help {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .btn-submit {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-cancel {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #c0392b;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5 mb-5">
+    <div class="application-form-container">
+        <h1 class="mb-4">Postuler à une offre</h1>
+        
+        <div class="publication-info">
+            <div class="publication-title">{{ publication.title }}</div>
+            <div class="publication-company">{{ publication.user.companyName ?? publication.user.username }}</div>
+            <div class="publication-category">Catégorie: {{ publication.category }}</div>
+        </div>
+        
+        {{ form_start(form) }}
+            <div class="form-group">
+                {{ form_label(form.message, 'Message de motivation', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.message, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.message) }}
+            </div>
+            
+            <div class="form-group">
+                {{ form_label(form.resume, 'CV (PDF)', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.resume, {'attr': {'class': '

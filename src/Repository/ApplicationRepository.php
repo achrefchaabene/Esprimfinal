@@ -42,32 +42,8 @@ class ApplicationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-    /**
-     * Compte les candidatures par statut pour un utilisateur
-     */
-    public function countByStatus(User $user)
-    {
-        $result = $this->createQueryBuilder('a')
-            ->select('a.status, COUNT(a.id) as count')
-            ->andWhere('a.user = :user')
-            ->setParameter('user', $user)
-            ->groupBy('a.status')
-            ->getQuery()
-            ->getResult();
-
-        $counts = [
-            'pending' => 0,
-            'accepted' => 0,
-            'rejected' => 0,
-            'total' => 0
-        ];
-
-        foreach ($result as $row) {
-            $counts[$row['status']] = $row['count'];
-            $counts['total'] += $row['count'];
-        }
-
-        return $counts;
-    }
 }
+
+
+
+

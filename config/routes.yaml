@@ -14,6 +14,8 @@ app_first_page:
 app_entreprise_home:
     path: /entreprise
     controller: App\Controller\EntrepriseController::index
-
-
+# Assurez-vous que cette route est définie correctement
+entreprise_statistics_index:
+    path: /entreprise/statistics/
+    controller: App\Controller\Entreprise\StatisticsController::index
 

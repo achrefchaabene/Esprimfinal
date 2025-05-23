@@ -6,12 +6,14 @@ use App\Entity\Publication;
 use App\Entity\SavedJob;
 use App\Entity\Application;
 use App\Form\JobSearchType;
+use App\Form\ApplicationType;
+use App\Repository\PublicationRepository;
+use App\Repository\ApplicationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Form\ApplicationType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/job-seeker/jobs', name: 'job_seeker_jobs_')]
@@ -77,9 +79,24 @@ class JobsController extends AbstractController
     }
 
     #[Route('/apply/{id}', name: 'apply')]
-    public function apply(Publication $publication, Request $request, EntityManagerInterface $em): Response
+    public function apply(Request $request, PublicationRepository $publicationRepository, EntityManagerInterface $em, int $id): Response
     {
         $this->denyAccessUnlessGranted('ROLE_JOB_SEEKER');
+        
+        // Récupérer la publication manuellement au lieu d'utiliser le ParamConverter
+        $publication = $publicationRepository->find($id);
+        
+        // Vérifier si la publication existe
+        if (!$publication) {
+            $this->addFlash('error', 'L\'offre d\'emploi demandée n\'existe pas.');
+            return $this->redirectToRoute('job_seeker_jobs_index');
+        }
+        
+        // Vérifier que la publication est publiée
+        if (!$publication->isIsPublished()) {
+            $this->addFlash('error', 'Cette offre d\'emploi n\'est pas disponible.');
+            return $this->redirectToRoute('job_seeker_jobs_index');
+        }
         
         // Vérifier si l'utilisateur a déjà postulé
         $existingApplication = $em->getRepository(Application::class)->findOneBy([
@@ -92,17 +109,18 @@ class JobsController extends AbstractController
             return $this->redirectToRoute('job_seeker_job_details', ['id' => $publication->getId()]);
         }
         
+        // Créer une nouvelle candidature
         $application = new Application();
         $application->setUser($this->getUser());
         $application->setPublication($publication);
-        $application->setCreatedAt(new \DateTimeImmutable());
         $application->setStatus('pending');
+        $application->setCreatedAt(new \DateTimeImmutable());
         
         $form = $this->createForm(ApplicationType::class, $application);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
-            // Gestion du fichier CV
+            // Traitement du CV
             $resumeFile = $form->get('resumeFile')->getData();
             if ($resumeFile) {
                 $originalFilename = pathinfo($resumeFile->getClientOriginalName(), PATHINFO_FILENAME);
@@ -124,12 +142,12 @@ class JobsController extends AbstractController
             $em->flush();
             
             $this->addFlash('success', 'Votre candidature a été envoyée avec succès');
-            return $this->redirectToRoute('job_seeker_applications');
+            return $this->redirectToRoute('job_seeker_applications_index');
         }
         
         return $this->render('job_seeker/apply.html.twig', [
-            'form' => $form->createView(),
-            'publication' => $publication
+            'publication' => $publication,
+            'form' => $form->createView()
         ]);
     }
 
