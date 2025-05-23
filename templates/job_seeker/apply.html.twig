@@ -5,7 +5,636 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        /* Styles existants conservés */
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --light-gray: #e5e5e5;
+            --success: #28a745;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--white);
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .nav-menu {
+            margin-top: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item .badge {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item.chatbot-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-top: 1.5rem;
+            border-left: 3px solid var(--white);
+        }
+
+        .nav-item.chatbot-item:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .nav-item.chatbot-item i {
+            color: #ffcc00;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--white);
+            overflow-y: auto;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--medium-gray);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumb i {
+            margin: 0 0.5rem;
+            font-size: 0.7rem;
+            color: var(--medium-gray);
+        }
+
+        .breadcrumb span {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .alert i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-left: 4px solid #dc3545;
+        }
+
+        /* Application Card */
+        .application-card {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Application Header */
+        .application-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .application-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .company-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid var(--white);
+        }
+
+        .company-name {
+            font-weight: 500;
+        }
+
+        .job-title-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 3rem;
+            background-color: var(--light-color);
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--medium-gray);
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--medium-gray);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary-color);
+            box-shadow: 0 0 0 5px rgba(214, 40, 40, 0.2);
+        }
+
+        .step.completed .step-number {
+            background-color: var(--success);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+            font-weight: 500;
+        }
+
+        .step.active .step-label {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .step.completed .step-label {
+            color: var(--success);
+        }
+
+        /* Application Form */
+        .application-form {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.1);
+            outline: none;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-help {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-help i {
+            margin-right: 0.5rem;
+        }
+
+        /* File Upload */
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px dashed var(--medium-gray);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(214, 40, 40, 0.05);
+        }
+
+        .file-upload i {
+            font-size: 2.5rem;
+            color: var(--medium-gray);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-text {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-subtext {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            text-align: center;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+        }
+
+        /* Job Details Section */
+        .job-details-section {
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .job-detail-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .job-detail-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(214, 40, 40, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--primary-color);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .detail-content {
+            flex: 1;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Application Tips */
+        .application-tips {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #ffcc00;
+        }
+
+        .tips-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .tips-title i {
+            margin-right: 0.75rem;
+            color: #ffcc00;
+        }
+
+        .tips-list {
+            list-style: none;
+        }
+
+        .tips-list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .tips-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--medium-gray);
+            border: 1px solid var(--light-gray);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-color);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .application-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .job-title-badge {
+                margin-top: 1rem;
+            }
+        }
     </style>
 {% endblock %}
 
@@ -14,9 +643,11 @@
     {% include 'job_seeker/_sidebar.html.twig' %}
     
     <div class="application-content">
-        <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="back-link">
-            <i class="fas fa-arrow-left"></i> Retour à l'offre
-        </a>
+        <div class="page-header">
+            <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Retour à l'offre
+            </a>
+        </div>
         
         {% for label, messages in app.flashes %}
             {% for message in messages %}
@@ -26,15 +657,27 @@
             {% endfor %}
         {% endfor %}
         
-        <div class="application-card" id="application-form-container">
-            <div class="application-steps">
+        <div class="application-card">
+            <div class="card-header">
+                <h1 class="application-title">Postuler à cette offre</h1>
+                <div class="company-info">
+                    {% if publication.user.profileImage %}
+                        <img src="{{ asset(publication.user.profileImage) }}" class="company-logo" alt="Logo entreprise">
+                    {% else %}
+                        <img src="{{ asset('img/default-company.png') }}" class="company-logo" alt="Logo entreprise">
+                    {% endif %}
+                    <span class="company-name">{{ publication.user.companyName ?? publication.user.username }}</span>
+                </div>
+            </div>
+            
+            <div class="progress-steps">
                 <div class="step completed">
                     <div class="step-number"><i class="fas fa-check"></i></div>
-                    <div class="step-label">Consulter l'offre</div>
+                    <div class="step-label">Détails de l'offre</div>
                 </div>
                 <div class="step active">
                     <div class="step-number">2</div>
-                    <div class="step-label">Remplir candidature</div>
+                    <div class="step-label">Votre candidature</div>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
@@ -42,83 +685,72 @@
                 </div>
             </div>
             
-            <div class="application-header">
-                <h2 class="application-title">Postuler : {{ publication.title }}</h2>
-                <div class="company-badge">
-                    {% if publication.user.profileImage %}
-                        <img src="{{ asset(publication.user.profileImage) }}" alt="Company">
-                    {% else %}
-                        <img src="{{ asset('img/fxchat.png') }}" alt="Company">
-                    {% endif %}
-                    {{ publication.user.companyName ?? publication.user.username }}
-                </div>
-            </div>
-            
-            {{ form_start(form, {'attr': {'class': 'application-form', 'id': 'application-form'}}) }}
+            {{ form_start(form, {'attr': {'class': 'application-form'}}) }}
             
             <div class="form-section">
-                <h3>Lettre de motivation</h3>
+                <h3 class="section-title"><i class="fas fa-edit"></i> Lettre de motivation</h3>
+                
                 <div class="form-group">
-                    {{ form_label(form.message, 'Votre message', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.message, {'attr': {'class': 'form-control', 'placeholder': 'Présentez-vous et expliquez pourquoi vous êtes intéressé par ce poste...'}}) }}
-                    {{ form_errors(form.message) }}
-                    <p class="form-help">Soyez concis et mettez en avant vos compétences pertinentes pour ce poste.</p>
+                    {{ form_label(form.message, 'Pourquoi postulez-vous ?', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.message, {'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Expliquez en quelques mots pourquoi vous êtes le candidat idéal...'
+                    }}) }}
+                    <small class="text-muted">Minimum 150 caractères</small>
                 </div>
             </div>
             
             <div class="form-section">
-                <h3>Curriculum Vitae</h3>
+                <h3 class="section-title"><i class="fas fa-file-upload"></i> Documents requis</h3>
+                
                 <div class="form-group">
-                    {{ form_label(form.resumeFile, 'Votre CV', {'label_attr': {'class': 'form-label'}}) }}
-                    <div class="file-upload-container" id="file-upload-container">
-                        <i class="fas fa-file-pdf" id="file-icon"></i>
-                        <p class="file-upload-text" id="file-text">Cliquez ou glissez votre CV ici</p>
-                        {{ form_widget(form.resumeFile, {'attr': {'class': 'file-upload-input'}}) }}
-                    </div>
+                    <label class="form-label">Curriculum Vitae (PDF, max 2MB)</label>
+                    <label for="application_form_resumeFile" class="file-upload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div class="file-upload-text">Téléverser votre CV</div>
+                        <div class="file-upload-subtext">Glissez-déposez votre fichier ou cliquez pour sélectionner</div>
+                        {{ form_widget(form.resumeFile, {'attr': {'class': 'file-input'}}) }}
+                    </label>
                     {{ form_errors(form.resumeFile) }}
-                    <p class="form-help">Format accepté: PDF. Taille max: 2MB</p>
                 </div>
             </div>
             
-            <div class="job-info-section">
-                <div class="job-info-header">Détails de l'offre</div>
-                <div class="job-info-content">
-                    <div class="info-row">
-                        <div class="info-label">Entreprise</div>
-                        <div class="info-value">{{ publication.user.companyName ?? publication.user.username }}</div>
+            <div class="job-details">
+                <h3 class="section-title"><i class="fas fa-info-circle"></i> Récapitulatif de l'offre</h3>
+                
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Poste</div>
+                        <div class="detail-value">{{ publication.title }}</div>
                     </div>
-                    <div class="info-row">
-                        <div class="info-label">Poste</div>
-                        <div class="info-value">{{ publication.title }}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Catégorie</div>
-                        <div class="info-value">
+                    <div class="detail-item">
+                        <div class="detail-label">Type de contrat</div>
+                        <div class="detail-value">
                             {% if publication.category == 'job_offer' %}
-                                Offre d'emploi
+                                CDI/CDD
                             {% elseif publication.category == 'internship' %}
                                 Stage
-                            {% elseif publication.category == 'news' %}
-                                Actualité
-                            {% elseif publication.category == 'event' %}
-                                Événement
                             {% else %}
                                 {{ publication.category }}
                             {% endif %}
                         </div>
                     </div>
-                    <div class="info-row">
-                        <div class="info-label">Date de publication</div>
-                        <div class="info-value">{{ publication.createdAt|date('d/m/Y') }}</div>
+                    <div class="detail-item">
+                        <div class="detail-label">Entreprise</div>
+                        <div class="detail-value">{{ publication.user.companyName ?? publication.user.username }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Date de publication</div>
+                        <div class="detail-value">{{ publication.createdAt|date('d/m/Y') }}</div>
                     </div>
                 </div>
             </div>
             
-            <div class="btn-container">
-                <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="btn btn-secondary">
+            <div class="form-actions">
+                <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="btn btn-outline">
                     <i class="fas fa-times"></i> Annuler
                 </a>
-                <button type="submit" class="btn btn-primary" id="submit-application">
+                <button type="submit" class="btn btn-primary">
                     <i class="fas fa-paper-plane"></i> Envoyer ma candidature
                 </button>
             </div>
@@ -130,34 +762,66 @@
 {% endblock %}
 
 {% block javascripts %}
-{{ parent() }}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Gestion du téléchargement de fichier
-        const fileInput = document.querySelector('.file-upload-input');
-        const fileText = document.getElementById('file-text');
-        const fileIcon = document.getElementById('file-icon');
-        const fileContainer = document.getElementById('file-upload-container');
-        
-        if (fileInput) {
-            fileInput.addEventListener('change', function(e) {
-                if (this.files.length > 0) {
-                    const fileName = this.files[0].name;
-                    fileText.textContent = fileName;
-                    fileIcon.className = 'fas fa-check-circle';
-                    fileContainer.style.borderColor = 'var(--success-color)';
-                    fileIcon.style.color = 'var(--success-color)';
-                } else {
-                    fileText.textContent = 'Cliquez ou glissez votre CV ici';
-                    fileIcon.className = 'fas fa-file-pdf';
-                    fileContainer.style.borderColor = '';
-                    fileIcon.style.color = '';
-                }
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation au chargement
+            document.body.classList.add('loaded');
+            
+            // Gestion du style du fichier uploadé
+            const fileInput = document.getElementById('application_form_resumeFile');
+            const fileUpload = document.querySelector('.file-upload');
+            
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        const fileName = this.files[0].name;
+                        const uploadText = fileUpload.querySelector('.file-upload-text');
+                        const uploadIcon = fileUpload.querySelector('i');
+                        
+                        uploadText.textContent = fileName;
+                        uploadIcon.className = 'fas fa-check-circle';
+                        uploadIcon.style.color = 'var(--success)';
+                        fileUpload.style.borderColor = 'var(--success)';
+                        fileUpload.style.background = 'rgba(40, 167, 69, 0.05)';
+                    }
+                });
+                
+                // Gestion du drag and drop
+                fileUpload.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    fileUpload.style.borderColor = 'var(--primary)';
+                    fileUpload.style.background = 'rgba(214, 40, 40, 0.1)';
+                });
+                
+                fileUpload.addEventListener('dragleave', () => {
+                    fileUpload.style.borderColor = 'var(--light-gray)';
+                    fileUpload.style.background = 'var(--light-bg)';
+                });
+                
+                fileUpload.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    fileInput.files = e.dataTransfer.files;
+                    const event = new Event('change');
+                    fileInput.dispatchEvent(event);
+                });
+            }
+            
+            // Animation du bouton de soumission
+            const form = document.querySelector('.application-form');
+            const submitBtn = form.querySelector('.btn-primary');
+            
+            form.addEventListener('submit', function() {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+                submitBtn.disabled = true;
             });
-        }
-    });
-</script>
-{% endblock %}
+        });
+    </script>
+{% endblock %} 
+
+
+
+
 
 
 
