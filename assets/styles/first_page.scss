@@ -1,0 +1,61 @@
+// Assurez-vous que ce fichier existe pour éviter des erreurs
+// Variables
+$primary-color: #d62828;
+$secondary-color: #003049;
+$light-color: #f8f9fa;
+$dark-color: #333;
+$font-family: 'Poppins', sans-serif;
+
+// Styles de base
+.first-page {
+    font-family: $font-family;
+    
+    .hero {
+        background-color: $secondary-color;
+        color: $light-color;
+        padding: 4rem 2rem;
+        text-align: center;
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+        
+        .btn {
+            background-color: $primary-color;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            
+            &:hover {
+                background-color: darken($primary-color, 10%);
+            }
+        }
+    }
+    
+    .features {
+        padding: 4rem 2rem;
+        
+        .feature {
+            margin-bottom: 2rem;
+            
+            h3 {
+                color: $secondary-color;
+                margin-bottom: 1rem;
+            }
+            
+            p {
+                color: $dark-color;
+            }
+        }
+    }
+}

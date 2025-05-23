@@ -1,0 +1,41 @@
+{# templates/admin/gestion_utilisateurs/entreprises.html.twig #}
+{% extends 'admin/base-admin.html.twig' %}
+
+{% block title %}Gestion des entreprises{% endblock %}
+
+{% block content %}
+    <h1>Liste des entreprises</h1>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if entreprises|length > 0 %}
+            {% for entreprise in entreprises %}
+                <tr>
+                    <td>{{ entreprise.nom }}</td>
+                    <td>{{ entreprise.email }}</td>
+                    <td>
+                        {% if entreprise.isApproved %}
+                            <span class="badge bg-success">✅ Approuvée</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">⏳ En attente</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-primary">Voir détails</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr><td colspan="4" class="text-center">Aucune entreprise trouvée.</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

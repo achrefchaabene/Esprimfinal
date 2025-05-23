@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>{% block title %}Esprit Template - Index{% endblock %}</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="img/favicon.png" rel="icon">
+  <link href="img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Libraries CSS Files -->
+  {% block css%}
+  <link href="libraries/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="libraries/icofont/icofont.min.css" rel="stylesheet">
+  <link href="libraries/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link href="libraries/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="libraries/venobox/venobox.css" rel="stylesheet">
+  <link href="libraries/aos/aos.css" rel="stylesheet">
+  
+  <!-- Template Main CSS File -->
+  <link href="css/style.css" rel="stylesheet">
+  
+{% endblock %}
+
+</head>
+
+<body>
+
+ 
+
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="d-flex align-items-center" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);">
+    {% block body %}
+    <div class="container d-flex flex-column align-items-center" data-aos="zoom-in" data-aos-delay="100">
+      <h1 style="color: var(--light-color); font-size: 3.5rem; margin-bottom: 20px;">Esprit</h1>
+      <h2 style="color: var(--light-color); font-weight: 300; margin-bottom: 30px;">Creative Solutions for Modern Needs</h2>
+      <a href="about.html" class="btn-about" style="background-color: var(--accent-color); border-color: var(--accent-color); padding: 12px 30px; font-weight: 600; letter-spacing: 1px;">About Me</a>
+    </div>
+    {% endblock %}
+  </section><!-- End Hero -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" style="background-color: var(--dark-color); color: var(--light-color); padding: 30px 0;">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 text-center text-md-left">
+          <div class="copyright">
+            &copy; Copyright <strong><span>Esprit</span></strong>. All Rights Reserved
+          </div>
+        </div>
+        <div class="col-md-6 text-center text-md-right">
+          <div class="credits">
+            Designed by <a href="https://bootstrapmade.com/" style="color: var(--accent-color);">BootstrapMade</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer><!-- End Footer -->
+
+  <div id="preloader"></div>
+  <a href="#" class="back-to-top"><i class="bx bx-up-arrow-alt"></i></a>
+
+  <!-- Libraries JS Files -->
+  {% block js %}
+  <script src="libraries/jquery/jquery.min.js"></script>
+  <script src="libraries/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="libraries/jquery.easing/jquery.easing.min.js"></script>
+  <script src="libraries/php-email-form/validate.js"></script>
+  <script src="libraries/waypoints/jquery.waypoints.min.js"></script>
+  <script src="libraries/counterup/counterup.min.js"></script>
+  <script src="libraries/owl.carousel/owl.carousel.min.js"></script>
+  <script src="libraries/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="libraries/venobox/venobox.min.js"></script>
+  <script src="libraries/aos/aos.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="js/main.js"></script>
+  {% endblock %}
+
+</body>
+
+</html>

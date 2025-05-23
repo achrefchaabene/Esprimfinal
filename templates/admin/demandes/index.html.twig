@@ -1,0 +1,55 @@
+{# templates/admin/demandes/index.html.twig #}
+{% extends 'admin/base-admin.html.twig' %}
+
+{% block title %}Demandes des entreprises{% endblock %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">Demandes d'entreprises en attente</h1>
+
+        {% if entreprises|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Email</th>
+                        <th>Nom de l'entreprise</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for entreprise in entreprises %}
+                        <tr>
+                            <td>{{ entreprise.email }}</td>
+                            <td>{{ entreprise.companyName ?? '-' }}</td>
+                            <td>{{ entreprise.username }}</td>
+                            <td class="text-center">
+                                <form method="POST" action="{{ path('admin_demandes_approuver', {'email': entreprise.email}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('approve_company') }}">
+                                    <button type="submit" class="btn btn-success btn-sm"
+                                            onclick="return confirm('Voulez-vous vraiment approuver cette entreprise ?')">
+                                        ✅ Approuver
+                                    </button>
+                                </form>
+
+                                <form method="POST" action="{{ path('admin_demandes_rejeter', {'email': entreprise.email}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('reject_company') }}">
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Voulez-vous vraiment rejeter cette entreprise ? Cette action est irréversible.')">
+                                        ❌ Rejeter
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Aucune demande d'entreprise en attente.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

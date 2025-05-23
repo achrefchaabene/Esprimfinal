@@ -1,0 +1,9 @@
+<div class="profile-section">
+    {% if app.user.profileImage %}
+        <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+    {% else %}
+        <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+    {% endif %}
+    <h3 class="profile-name">{{ app.user.username }}</h3>
+    <p class="profile-email">{{ app.user.email }}</p>
+</div>

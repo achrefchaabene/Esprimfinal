@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte de Visite - {{ data.name }}</title>
+    <style>
+        body { 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            background-color: #e9ecef; 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        .business-card {
+            width: 320px;
+            height: 180px;
+            background-color: #ffffff;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+        .name { 
+            font-size: 1.4em; 
+            font-weight: 500; 
+            color: #212529; 
+            margin-bottom: 4px; 
+        }
+        .title { 
+            font-size: 0.9em; 
+            color: #6c757d; 
+            margin-bottom: 15px; 
+            letter-spacing: 0.5px; 
+        }
+        .contact-info div { 
+            margin-bottom: 3px; 
+            font-size: 0.85em; 
+            color: #495057; 
+        }
+        .contact-info a { 
+            color: #007bff; 
+            text-decoration: none; 
+        }
+        .contact-info a:hover { 
+            text-decoration: underline; 
+        }
+        .company { 
+            font-size: 0.8em; 
+            color: #adb5bd; 
+            margin-top: 15px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="business-card">
+        <div class="name">{{ data.name }}</div>
+        {% if data.title is defined and data.title %}
+            <div class="title">{{ data.title }}</div>
+        {% endif %}
+        <div class="contact-info">
+            {% if data.phone is defined and data.phone %}
+                <div>{{ data.phone }}</div>
+            {% endif %}
+            {% if data.email is defined and data.email %}
+                <div><a href="mailto:{{ data.email }}">{{ data.email }}</a></div>
+            {% endif %}
+            {% if data.website is defined and data.website %}
+                <div><a href="http://{{ data.website }}" target="_blank">{{ data.website }}</a></div>
+            {% endif %}
+        </div>
+        <div class="company">{{ data.company }}</div>
+    </div>
+</body>
+</html>

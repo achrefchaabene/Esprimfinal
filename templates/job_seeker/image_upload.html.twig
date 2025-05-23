@@ -1,0 +1,7 @@
+<form action="{{ path('job_seeker_image_upload') }}" method="post" enctype="multipart/form-data" class="image-upload-form">
+    <div class="form-group">
+        <label for="profile_image">Choisir une image de profil</label>
+        <input type="file" id="profile_image" name="profile_image" class="form-control-file" accept="image/*" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Télécharger</button>
+</form>

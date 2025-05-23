@@ -1,0 +1,39 @@
+{# templates/admin/toutes_entreprises/index.html.twig #}
+{% extends 'admin/base-admin.html.twig' %}
+
+{% block title %}Toutes les entreprises{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Liste de toutes les entreprises</h1>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Statut</th>
+            <th>Date d'inscription</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if entreprises|length > 0 %}
+            {% for entreprise in entreprises %}
+                <tr>
+                    <td>{{ entreprise.firstName ?? '-' }}</td>
+                    <td>{{ entreprise.email }}</td>
+                    <td>
+                        {% if entreprise.isApproved %}
+                            <span class="badge bg-success">✅ Approuvée</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">⏳ En attente</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ entreprise.createdAt ? entreprise.createdAt|date('d/m/Y') : '-' }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr><td colspan="4" class="text-center">Aucune entreprise trouvée.</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

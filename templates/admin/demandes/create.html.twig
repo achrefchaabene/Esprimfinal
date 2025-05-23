@@ -1,0 +1,54 @@
+{# templates/admin/create.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un administrateur{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Créer un administrateur</h1>
+
+        {# Messages flash #}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+
+        {# Formulaire Symfony #}
+        {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_label(form.username) }}
+            {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.username) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.email) }}
+            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.motdepasse) }}
+            {{ form_widget(form.motdepasse, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.motdepasse) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.prenom) }}
+            {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.prenom) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.nomComplet) }}
+            {{ form_widget(form.nomComplet, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.nomComplet) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Créer</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

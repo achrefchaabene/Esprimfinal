@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Interview Preparation | Job Seeker Dashboard{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Style inspiré du welcome-panel */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--white);
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .nav-menu {
+            margin-top: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item .badge {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Style spécial pour le bouton Chatbot */
+        .nav-item.chatbot-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-top: 1.5rem;
+            border-left: 3px solid var(--white);
+        }
+
+        .nav-item.chatbot-item:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .nav-item.chatbot-item i {
+            color: #ffcc00;
+        }
+
+        /* Main Content - Style inspiré du register-panel */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--white);
+            overflow-y: auto;
+        }
+
+        .welcome-card {
+            background: var(--light-color);
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .welcome-subtitle {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+        }
+
+        /* Interview Specific Styles */
+        .upcoming-interview {
+            background-color: rgba(214, 40, 40, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .upcoming-interview:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(214, 40, 40, 0.2);
+        }
+
+        .interview-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .interview-info p {
+            color: var(--medium-gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .interview-info strong {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 2rem 0 1.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        /* Preparation Categories */
+        .prep-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .prep-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prep-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .prep-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(214, 40, 40, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .prep-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+        }
+
+        .prep-desc {
+            color: var(--medium-gray);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .prep-link {
+            color: var(--primary-color);
+            font-weight: 500;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .prep-link i {
+            margin-left: 8px;
+            transition: var(--transition);
+        }
+
+        .prep-link:hover {
+            color: var(--secondary-color);
+        }
+
+        .prep-link:hover i {
+            transform: translateX(5px);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .progress-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 5px;
+            width: 65%;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .upcoming-interview {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+            }
+            
+            .btn-start {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .prep-categories {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 576px) {
+            .prep-categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar - Style inspiré du welcome-panel -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-file-alt"></i> My CV
+            </a>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="nav-item active">
+                <i class="fas fa-comments"></i> Interviews
+            </a>
+            <a href="{{ path('job_seeker_messages_index') }}" class="nav-item">
+                <i class="fas fa-envelope"></i> Messages
+                <span class="badge">3</span>
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Job Offers
+            </a>
+            
+            <a href="{{ path('chatbot') }}" class="nav-item chatbot-item">
+                <i class="fas fa-robot"></i> Assistant Tchala
+            </a>
+            
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content - Style inspiré du register-panel -->
+    <div class="main-content">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Interview Preparation</h1>
+            <p class="welcome-subtitle">Get ready to impress your interviewers with our comprehensive preparation resources</p>
+            <a href="#" class="btn-primary">Start Practice Session</a>
+        </div>
+        
+        <div class="upcoming-interview">
+            <div class="interview-info">
+                <h3>Upcoming Interview</h3>
+                <p><strong>Company:</strong> Tech Solutions Inc.</p>
+                <p><strong>Date:</strong> June 15, 2023 at 2:00 PM</p>
+                <p><strong>Position:</strong> Senior Developer</p>
+                <p><strong>Type:</strong> Technical + Behavioral</p>
+            </div>
+            <button class="btn-start">Start Preparation</button>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-title">Your Preparation Progress</div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-text">You've completed 65% of your preparation checklist</div>
+        </div>
+        
+        <h2 class="section-title"><i class="fas fa-th-large"></i> Preparation Categories</h2>
+        <div class="prep-categories">
+            <div class="prep-card">
+                <div class="prep-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h4 class="prep-title">Common Questions</h4>
+                <p class="prep-desc">Practice the most frequently asked interview questions in your field with our curated list and sample answers.</p>
+                <a href="#" class="prep-link">Start Practicing <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="prep-card">
+                <div class="prep-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h4 class="prep-title">Technical Challenges</h4>
+                <p class="prep-desc">Solve coding problems and technical challenges specifically designed for developer roles.</p>
+                <a href="#" class="prep-link">View Challenges <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="prep-card">
+                <div class="prep-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h4 class="prep-title">Mock Interviews</h4>
+                <p class="prep-desc">Record yourself answering questions and get feedback from our AI or human experts.</p>
+                <a href="#" class="prep-link">Start Mock Interview <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="prep-card">
+                <div class="prep-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h4 class="prep-title">Company Research</h4>
+                <p class="prep-desc">Learn about companies you're interviewing with, their culture, and recent news.</p>
+                <a href="#" class="prep-link">Research Companies <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="prep-card">
+                <div class="prep-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h4 class="prep-title">Behavioral Questions</h4>
+                <p class="prep-desc">Prepare for behavioral and situational questions using the STAR method.</p>
+                <a href="#" class="prep-link">Practice Now <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="prep-card">
+                <div class="prep-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h4 class="prep-title">Salary Negotiation</h4>
+                <p class="prep-desc">Learn how to negotiate your salary and benefits package effectively.</p>
+                <a href="#" class="prep-link">Learn Strategies <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+        
+        <h2 class="section-title"><i class="fas fa-clock"></i> Recent Practice Sessions</h2>
+        <div class="recent-activities">
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">Practiced 15 common interview questions</div>
+                    <div class="activity-date">Today, 10:30 AM | Score: 85%</div>
+                </div>
+            </div>
+            
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">Completed 3 technical challenges</div>
+                    <div class="activity-date">Yesterday, 3:45 PM | Score: 78%</div>
+                </div>
+            </div>
+            
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">Recorded mock interview session</div>
+                    <div class="activity-date">Yesterday, 10:30 AM | Score: 72%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des éléments au chargement et au scroll
+        const animateElements = function() {
+            const elements = document.querySelectorAll(
+                '.prep-card, .upcoming-interview, .activity-item, .progress-section'
+            );
+            
+            elements.forEach((element, index) => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if(elementPosition < screenPosition) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+
+        // Initial state for animation
+        const animatedItems = document.querySelectorAll(
+            '.prep-card, .upcoming-interview, .activity-item, .progress-section'
+        );
+        
+        animatedItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'all 0.5s ease';
+        });
+
+        // Délai pour l'animation séquentielle
+        animatedItems.forEach((item, index) => {
+            item.style.transitionDelay = ${index * 0.1}s;
+        });
+
+        // Trigger animations
+        window.addEventListener('load', animateElements);
+        window.addEventListener('scroll', animateElements);
+
+        // Animate progress bar
+        const progressFill = document.querySelector('.progress-fill');
+        if (progressFill) {
+            setTimeout(() => {
+                progressFill.style.width = '65%';
+            }, 300);
+        }
+
+        // Check for new messages (example - you would replace this with real logic)
+        function checkForNewMessages() {
+            const hasNewMessages = Math.random() > 0.5;
+            const messageBadge = document.querySelector('.nav-item:nth-child(5) .badge');
+            
+            if (hasNewMessages) {
+                messageBadge.style.display = 'flex';
+            } else {
+                messageBadge.style.display = 'none';
+            }
+        }
+
+        // Check for messages every 30 seconds
+        setInterval(checkForNewMessages, 30000);
+        checkForNewMessages(); // Initial check
+    });
+</script>
+</body>
+</html>

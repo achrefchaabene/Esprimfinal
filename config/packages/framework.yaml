@@ -1,0 +1,26 @@
+# config/packages/framework.yaml
+framework:
+    secret: '%env(APP_SECRET)%'
+    session:
+        handler_id: null
+        cookie_secure: auto
+        cookie_samesite: lax
+    
+    # Configuration des assets - CHOISIR UNE SEULE OPTION :
+    assets:
+        # Option 1 (recommandée avec Webpack Encore) :
+        json_manifest_path: '%kernel.project_dir%/public/build/manifest.json'
+        
+        # OU Option 2 (sans Webpack Encore) :
+        # version: 'v1'
+        # version_format: '%%s?version=%%s'
+        
+        packages:
+            app:
+                json_manifest_path: '%kernel.project_dir%/public/build/manifest.json'
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

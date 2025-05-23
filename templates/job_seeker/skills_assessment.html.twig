@@ -1,0 +1,433 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Skills Assessment{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .skills-container {
+            display: flex;
+            min-height: calc(100vh - 80px);
+            background-color: var(--light-gray);
+        }
+
+        .skills-sidebar {
+            width: 280px;
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+        }
+
+        .skills-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .skills-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .skills-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .skills-progress {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .progress-circle {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            margin-right: 1.5rem;
+        }
+
+        .progress-bg {
+            fill: none;
+            stroke: #f0f0f0;
+            stroke-width: 8;
+        }
+
+        .progress-fill {
+            fill: none;
+            stroke: var(--primary-red);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 85;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .progress-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-info p {
+            color: var(--medium-gray);
+        }
+
+        .skills-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .category-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-red);
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .category-progress {
+            display: flex;
+            align-items: center;
+        }
+
+        .category-progress-bar {
+            width: 100px;
+            height: 6px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            margin-right: 0.5rem;
+            overflow: hidden;
+        }
+
+        .category-progress-fill {
+            height: 100%;
+            background-color: var(--primary-red);
+            border-radius: 3px;
+        }
+
+        .category-progress-text {
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+        }
+
+        .skill-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .skill-item:last-child {
+            border-bottom: none;
+        }
+
+        .skill-name {
+            font-weight: 500;
+        }
+
+        .skill-level {
+            display: flex;
+            align-items: center;
+        }
+
+        .skill-dots {
+            display: flex;
+            gap: 0.3rem;
+            margin-right: 0.5rem;
+        }
+
+        .skill-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+        }
+
+        .skill-dot.filled {
+            background-color: var(--primary-red);
+        }
+
+        .btn-start {
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: var(--medium-gray);
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+        }
+
+        .empty-text {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="skills-container">
+    <!-- Sidebar (same as home) -->
+    <div class="skills-sidebar">
+        <div class="profile-section">
+            <img src="{{ asset('img/profile.jpg') }}" alt="Profile" class="profile-img">
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_skills') }}" class="nav-item active">
+                <i class="fas fa-chart-line"></i> Skills Assessment
+            </a>
+            <!-- Other menu items -->
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="skills-content">
+        <div class="skills-header">
+            <h2 class="skills-title">Skills Assessment</h2>
+        </div>
+        
+        <div class="skills-progress">
+            <div class="progress-circle">
+                <svg viewBox="0 0 100 100">
+                    <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="progress-fill" cx="50" cy="50" r="45"></circle>
+                </svg>
+                <div class="progress-text">70%</div>
+            </div>
+            
+            <div class="progress-info">
+                <h3>Your Skills Profile</h3>
+                <p>You've completed 70% of your skills assessment. Complete all assessments to get personalized 
+                recommendations for skill improvement and job matches.</p>
+            </div>
+        </div>
+        
+        <div class="skills-categories">
+            <div class="category-card">
+                <div class="category-header">
+                    <div class="category-title">Technical Skills</div>
+                    <div class="category-progress">
+                        <div class="category-progress-bar">
+                            <div class="category-progress-fill" style="width: 80%"></div>
+                        </div>
+                        <div class="category-progress-text">80%</div>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-name">JavaScript</div>
+                    <div class="skill-level">
+                        <div class="skill-dots">
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot"></div>
+                        </div>
+                        <button class="btn-start">Improve</button>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-name">React</div>
+                    <div class="skill-level">
+                        <div class="skill-dots">
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                        </div>
+                        <button class="btn-start">Improve</button>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-name">Node.js</div>
+                    <div class="skill-level">
+                        <div class="skill-dots">
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                        </div>
+                        <button class="btn-start">Improve</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-header">
+                    <div class="category-title">Soft Skills</div>
+                    <div class="category-progress">
+                        <div class="category-progress-bar">
+                            <div class="category-progress-fill" style="width: 60%"></div>
+                        </div>
+                        <div class="category-progress-text">60%</div>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-name">Communication</div>
+                    <div class="skill-level">
+                        <div class="skill-dots">
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                        </div>
+                        <button class="btn-start">Improve</button>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-name">Teamwork</div>
+                    <div class="skill-level">
+                        <div class="skill-dots">
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot"></div>
+                        </div>
+                        <button class="btn-start">Improve</button>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-name">Leadership</div>
+                    <div class="skill-level">
+                        <div class="skill-dots">
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                        </div>
+                        <button class="btn-start">Improve</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-header">
+                    <div class="category-title">Language Skills</div>
+                    <div class="category-progress">
+                        <div class="category-progress-bar">
+                            <div class="category-progress-fill" style="width: 40%"></div>
+                        </div>
+                        <div class="category-progress-text">40%</div>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-name">English</div>
+                    <div class="skill-level">
+                        <div class="skill-dots">
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                        </div>
+                        <button class="btn-start">Test</button>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-name">French</div>
+                    <div class="skill-level">
+                        <div class="skill-dots">
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot filled"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                        </div>
+                        <button class="btn-start">Test</button>
+                    </div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-name">German</div>
+                    <div class="skill-level">
+                        <div class="skill-dots">
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                            <div class="skill-dot"></div>
+                        </div>
+                        <button class="btn-start">Test</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

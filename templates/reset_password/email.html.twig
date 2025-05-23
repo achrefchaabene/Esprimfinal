@@ -1,0 +1,8 @@
+{% extends 'email/base.email.html.twig' %}
+
+{% block body %}
+    <h1>Hi!</h1>
+    <p>To reset your password, please visit the following link</p>
+    <a href="{{ url('app_reset_password', {token: resetToken}) }}">Reset my password</a>
+    <p>This link will expire in {{ tokenLifetime|date('g') }} hour(s).</p>
+{% endblock %}

@@ -1,0 +1,6 @@
+<a href="{{ path('app_entreprise_home') }}" class="nav-item {% if app.request.get('_route') == 'app_entreprise_home' %}active{% endif %}">
+    <i class="fas fa-home"></i> Dashboard
+</a>
+<a href="{{ path('entreprise_carte_visite') }}" class="nav-item {% if app.request.get('_route') == 'entreprise_carte_visite' %}active{% endif %}">
+    <i class="fas fa-id-card"></i> Carte de visite
+</a>

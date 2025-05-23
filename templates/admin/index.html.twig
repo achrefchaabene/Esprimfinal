@@ -1,0 +1,170 @@
+{% extends 'admin/base-admin.html.twig' %}
+
+{% block title %}Tableau de bord Admin{% endblock %}
+
+{% block content %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Tableau de bord Administrateur</h1>
+        </div>
+    </div>
+
+    {# Statistics Cards #}
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Utilisateurs</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalUsers }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Candidats</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalJobSeekers }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Entreprises</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalCompanies }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-building fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Entreprises en attente</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.pendingCompanies }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Action Buttons #}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Actions rapides</h6>
+                </div>
+                <div class="card-body">
+                    <a href="{{ path('admin_companies') }}" class="btn btn-primary btn-icon-split mr-2">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-building"></i>
+                        </span>
+                        <span class="text">Gérer les entreprises</span>
+                    </a>
+                    <a href="{{ path('admin_pending_companies') }}" class="btn btn-warning btn-icon-split mr-2">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-clock"></i>
+                        </span>
+                        <span class="text">Entreprises en attente</span>
+                    </a>
+                    <a href="{{ path('admin_job_seekers') }}" class="btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-user-graduate"></i>
+                        </span>
+                        <span class="text">Gérer les candidats</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Recent Companies #}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Dernières entreprises inscrites</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Date d'inscription</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for company in latestCompanies %}
+                                <tr>
+                                    <td>{{ company.companyName ?? company.firstName ~ ' ' ~ company.lastName }}</td>
+                                    <td>{{ company.email }}</td>
+                                    <td>{{ company.createdAt ? company.createdAt|date('d/m/Y') : '-' }}</td>
+                                    <td>
+                                        {% if company.isApproved %}
+                                            <span class="badge bg-success">✅ Approuvée</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">⏳ En attente</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not company.isApproved %}
+                                            <a href="{{ path('admin_approve_company', {'id': company.id}) }}" class="btn btn-success btn-sm">
+                                                ✓ Approuver
+                                            </a>
+                                        {% endif %}
+                                        <a href="{{ path('admin_delete_company', {'id': company.id}) }}" class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?')">
+                                            🗑 Supprimer
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Aucune entreprise récente</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

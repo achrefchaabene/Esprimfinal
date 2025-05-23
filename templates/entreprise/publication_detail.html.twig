@@ -1,0 +1,732 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail de la publication{% endblock %}
+
+{% block body %}
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    {% include 'entreprise/_publication_sidebar.html.twig' %}
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        
+        <div class="welcome-card">
+            <h1>Détail de la publication</h1>
+            <p class="welcome-subtitle">Consultez et gérez les informations de votre publication</p>
+            <a href="{{ path('entreprise_publication_index') }}" class="btn-primary">
+                <i class="fas fa-arrow-left"></i> Retour aux publications
+            </a>
+        </div>
+        
+        <div class="company-profile-card publication-detail-card">
+            <div class="card-header">
+                <h2>
+                    <i class="fas fa-file-alt"></i> {{ publication.title }}
+                </h2>
+                <div class="publication-meta">
+                    <div class="publication-status">
+                        {% if publication.isPublished %}
+                            <span class="status published">Publié</span>
+                        {% else %}
+                            <span class="status draft">Brouillon</span>
+                        {% endif %}
+                    </div>
+                    <div class="publication-category">
+                        {% if publication.category == 'job_offer' %}
+                            <span class="category job">Offre d'emploi</span>
+                        {% elseif publication.category == 'internship' %}
+                            <span class="category internship">Stage</span>
+                        {% elseif publication.category == 'news' %}
+                            <span class="category news">Actualité</span>
+                        {% elseif publication.category == 'event' %}
+                            <span class="category event">Événement</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-fields">
+                <div class="info-item">
+                    <i class="far fa-calendar-alt"></i>
+                    <div class="info-content">
+                        <span class="info-label">Date de création</span>
+                        <span class="info-value">{{ publication.createdAt|date('d/m/Y à H:i') }}</span>
+                    </div>
+                </div>
+                
+                {% if publication.updatedAt %}
+                <div class="info-item">
+                    <i class="far fa-edit"></i>
+                    <div class="info-content">
+                        <span class="info-label">Dernière modification</span>
+                        <span class="info-value">{{ publication.updatedAt|date('d/m/Y à H:i') }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="info-item content-item">
+                    <i class="fas fa-align-left"></i>
+                    <div class="info-content">
+                        <span class="info-label">Contenu</span>
+                        <div class="publication-content">
+                            {{ publication.content|raw }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="publication-actions">
+                {% if publication.isPublished %}
+                    <a href="{{ path('entreprise_publication_unpublish', {'id': publication.id}) }}" class="btn-action unpublish">
+                        <i class="fas fa-eye-slash"></i> Dépublier
+                    </a>
+                {% else %}
+                    <a href="{{ path('entreprise_publication_publish', {'id': publication.id}) }}" class="btn-action publish">
+                        <i class="fas fa-globe"></i> Publier
+                    </a>
+                {% endif %}
+                <a href="{{ path('entreprise_publication_edit', {'id': publication.id}) }}" class="btn-action edit">
+                    <i class="fas fa-pencil-alt"></i> Modifier
+                </a>
+                <a href="{{ path('entreprise_publication_delete', {'id': publication.id}) }}" class="btn-action delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette publication ?')">
+                    <i class="fas fa-trash-alt"></i> Supprimer
+                </a>
+            </div>
+        </div>
+        
+        <h2 class="section-title"><i class="fas fa-eye"></i> Aperçu public</h2>
+        <div class="company-profile-card preview-container">
+            <div class="card-header">
+                <div class="preview-company">
+                    {% if user.profileImage %}
+                        <img src="{{ asset(user.profileImage) }}" alt="{{ user.username }}" class="company-logo" />
+                    {% else %}
+                        <img src="{{ asset('img/fxchat.png') }}" alt="{{ user.username }}" class="company-logo" />
+                    {% endif %}
+                    <div class="company-info">
+                        <h4>{{ user.companyName ?? user.username }}</h4>
+                        <p>{{ user.industry ?? 'Entreprise' }}</p>
+                    </div>
+                </div>
+                <div class="preview-date">
+                    {{ publication.createdAt|date('d/m/Y') }}
+                </div>
+            </div>
+            
+            <div class="info-fields">
+                <h2 class="preview-title">{{ publication.title }}</h2>
+                <div class="preview-category-tag">
+                    {% if publication.category == 'job_offer' %}
+                        <span class="tag job">Offre d'emploi</span>
+                    {% elseif publication.category == 'internship' %}
+                        <span class="tag internship">Stage</span>
+                    {% elseif publication.category == 'news' %}
+                        <span class="tag news">Actualité</span>
+                    {% elseif publication.category == 'event' %}
+                        <span class="tag event">Événement</span>
+                    {% endif %}
+                </div>
+                <div class="preview-content">
+                    {{ publication.content|raw }}
+                </div>
+            </div>
+            
+            <div class="preview-footer">
+                <div class="preview-stats">
+                    <div class="stat-item">
+                        <i class="far fa-eye"></i> 0 vues
+                    </div>
+                    <div class="stat-item">
+                        <i class="far fa-bookmark"></i> 0 enregistrements
+                    </div>
+                </div>
+                <div class="preview-actions">
+                    <button class="btn-primary apply" disabled>
+                        <i class="fas fa-paper-plane"></i> Postuler
+                    </button>
+                    <button class="btn-secondary save" disabled>
+                        <i class="far fa-bookmark"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-color: #d62828;
+        --secondary-color: #ba181b;
+        --accent-color: #e5383b;
+        --light-color: #f5f3f4;
+        --white: #ffffff;
+        --dark: #161a1d;
+        --medium-gray: #b1a7a6;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--light-color);
+        color: var(--dark);
+        min-height: 100vh;
+    }
+
+    .dashboard-container {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 300px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+    }
+
+    .sidebar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        opacity: 0.15;
+        z-index: 0;
+    }
+
+    .profile-section {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: var(--white);
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--white);
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .profile-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-email {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .nav-menu {
+        margin-top: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .nav-item i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+    .nav-item:hover, .nav-item.active {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--white);
+        transform: translateX(5px);
+    }
+
+    /* Main Content */
+    .main-content {
+        flex: 1;
+        padding: 2rem;
+        background-color: var(--white);
+        overflow-y: auto;
+    }
+
+    .welcome-card {
+        background: var(--light-color);
+        border-radius: 15px;
+        padding: 2.5rem;
+        box-shadow: var(--shadow);
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .welcome-card h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark);
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+
+    .welcome-card h1::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 50px;
+        height: 4px;
+        background: var(--primary-color);
+        border-radius: 2px;
+    }
+
+    .welcome-subtitle {
+        color: var(--medium-gray);
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--white);
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+    }
+
+    .btn-secondary {
+        background-color: var(--light-color);
+        color: var(--dark);
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e9ecef;
+        transform: translateY(-3px);
+    }
+
+    /* Section Titles */
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 2rem 0 1.5rem;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-title i {
+        color: var(--primary-color);
+    }
+
+    /* Publication Detail Card */
+    .company-profile-card {
+        background: var(--white);
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .card-header h2 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-header h2 i {
+        color: var(--primary-color);
+    }
+
+    .publication-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .status, .category, .tag {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .status.published {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status.draft {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .category.job, .tag.job {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .category.internship, .tag.internship {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .category.news, .tag.news {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .category.event, .tag.event {
+        background-color: #6f42c1;
+        color: white;
+    }
+
+    .info-fields {
+        padding: 1.5rem 2rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.2rem;
+        padding-bottom: 1.2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .info-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .info-item i {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(214, 40, 40, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: var(--primary-color);
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-label {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--medium-gray);
+        margin-bottom: 0.3rem;
+    }
+
+    .info-value {
+        font-weight: 500;
+        color: var(--dark);
+    }
+
+    .content-item {
+        align-items: flex-start;
+    }
+
+    .publication-content {
+        margin-top: 0.5rem;
+        line-height: 1.8;
+        font-size: 1rem;
+    }
+
+    .publication-actions {
+        display: flex;
+        gap: 1rem;
+        padding: 1.5rem 2rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-action.edit {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .btn-action.delete {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .btn-action.publish {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .btn-action.unpublish {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    /* Styles pour l'aperçu */
+    .publication-preview {
+        margin-top: 3rem;
+    }
+    
+    .preview-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: var(--dark);
+    }
+    
+    .preview-container {
+        background: var(--white);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .preview-company {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .company-logo {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .company-info h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+    
+    .company-info p {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .preview-date {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .preview-body {
+        padding: 2rem;
+    }
+    
+    .preview-body h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+    
+    .preview-category-tag {
+        margin-bottom: 1.5rem;
+    }
+    
+    .tag {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .tag.job {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .tag.internship {
+        background-color: #17a2b8;
+        color: white;
+    }
+    
+    .tag.news {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .tag.event {
+        background-color: #6f42c1;
+        color: white;
+    }
+    
+    .preview-content {
+        line-height: 1.8;
+        font-size: 1rem;
+    }
+    
+    .preview-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 2rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: #f8f9fa;
+    }
+    
+    .preview-stats {
+        display: flex;
+        gap: 1.5rem;
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .preview-actions {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .preview-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        cursor: not-allowed;
+        opacity: 0.7;
+        transition: var(--transition);
+    }
+    
+    .preview-btn.apply {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .preview-btn.save {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    /* Styles pour les alertes */
+    .alert {
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

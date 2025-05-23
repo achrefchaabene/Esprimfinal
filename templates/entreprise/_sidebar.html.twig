@@ -1,0 +1,35 @@
+<div class="sidebar">
+    <div class="profile-section">
+        {% if app.user.profileImage %}
+            <img src="{{ asset(app.user.profileImage) }}" alt="Logo de l'entreprise" class="profile-img" />
+        {% else %}
+            <img src="{{ asset('img/fxchat.png') }}" alt="Logo par défaut" class="profile-img" />
+        {% endif %}
+        <h3 class="profile-name">{{ app.user.username }}</h3>
+        <p class="profile-email">{{ app.user.email }}</p>
+    </div>
+    
+    <div class="nav-menu">
+        <a href="{{ path('app_entreprise_home') }}" class="nav-item {% if app.request.get('_route') == 'app_entreprise_home' %}active{% endif %}">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="{{ path('entreprise_edit_profile') }}" class="nav-item {% if app.request.get('_route') == 'entreprise_edit_profile' %}active{% endif %}">
+            <i class="fas fa-user-edit"></i> Edit Profile
+        </a>
+        <a href="{{ path('entreprise_publication_index') }}" class="nav-item {% if app.request.get('_route') starts with 'entreprise_publication' %}active{% endif %}">
+            <i class="fas fa-briefcase"></i> Publications
+        </a>
+        <a href="{{ path('entreprise_applications_index') }}" class="nav-item {% if app.request.get('_route') starts with 'entreprise_applications' %}active{% endif %}">
+            <i class="fas fa-users"></i> Candidats
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-comments"></i> Entretiens
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-chart-line"></i> Statistiques
+        </a>
+        <a href="{{ path('app_logout') }}" class="nav-item">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </a>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Conversation{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    {% if app.user.profileImage %}
+                        <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img mr-3" style="width: 40px; height: 40px; border-radius: 50%;">
+                    {% else %}
+                        <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img mr-3" style="width: 40px; height: 40px; border-radius: 50%;">
+                    {% endif %}
+                    <h4 class="mb-0">Start New Conversation</h4>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        {{ form_row(form.title) }}
+                        {{ form_row(form.participants) }}
+                        
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane mr-2"></i> Start Conversation
+                            </button>
+                            <a href="{{ path('job_seeker_messages_index') }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Optionnel: Initialiser Select2 si utilisé
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: "Select participants...",
+                allowClear: true
+            });
+        });
+    </script>
+{% endblock %}

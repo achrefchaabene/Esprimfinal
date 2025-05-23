@@ -1,0 +1,381 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .settings-container {
+            display: flex;
+            min-height: calc(100vh - 80px);
+            background-color: var(--light-gray);
+        }
+
+        .settings-sidebar {
+            width: 280px;
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+        }
+
+        .settings-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .settings-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 2rem;
+        }
+
+        .settings-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            position: relative;
+            color: var(--medium-gray);
+            font-weight: 500;
+        }
+
+        .settings-tab.active {
+            color: var(--primary-red);
+        }
+
+        .settings-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-red);
+        }
+
+        .settings-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+            outline: none;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .btn-save {
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            background-color: var(--dark-red);
+        }
+
+        .notification-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-label {
+            font-weight: 500;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-red);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .danger-zone {
+            border: 1px solid #ffcccc;
+            background-color: #fff5f5;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .danger-title {
+            color: #d32f2f;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .danger-text {
+            color: #5f2120;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-danger {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="settings-container">
+    <!-- Sidebar (same as home) -->
+    <div class="settings-sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_settings') }}" class="nav-item active">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <!-- Other menu items -->
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="settings-content">
+        <div class="settings-header">
+            <h2 class="settings-title">Account Settings</h2>
+        </div>
+        
+        <div class="settings-tabs">
+            <div class="settings-tab active">Profile</div>
+            <div class="settings-tab">Notifications</div>
+            <div class="settings-tab">Security</div>
+            <div class="settings-tab">Preferences</div>
+        </div>
+        
+        <div class="settings-card">
+            <div class="card-header">
+                <h3 class="card-title">Personal Information</h3>
+            </div>
+            
+            <form>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" value="John">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" value="Doe">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" value="john.doe@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" value="+1 (123) 456-7890">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-control" value="New York, USA">
+                </div>
+                
+                <button type="submit" class="btn-save">Save Changes</button>
+            </form>
+        </div>
+        
+        <div class="settings-card">
+            <div class="card-header">
+                <h3 class="card-title">Password</h3>
+            </div>
+            
+            <form>
+                <div class="form-group">
+                    <label class="form-label">Current Password</label>
+                    <input type="password" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-control">
+                </div>
+                
+                <button type="submit" class="btn-save">Update Password</button>
+            </form>
+        </div>
+        
+        <div class="settings-card">
+            <div class="card-header">
+                <h3 class="card-title">Notification Preferences</h3>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-label">Email Notifications</div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-label">New Job Matches</div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-label">Application Updates</div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-label">Messages</div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="settings-card danger-zone">
+            <h3 class="danger-title">Danger Zone</h3>
+            <p class="danger-text">These actions are irreversible. Please proceed with caution.</p>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn-danger">
+                    <i class="fas fa-file-export"></i> Export Data
+                </button>
+                <button class="btn-danger">
+                    <i class="fas fa-trash"></i> Delete Account
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

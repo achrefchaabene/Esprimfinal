@@ -1,0 +1,913 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche d'emploi{% endblock %}
+
+{% block body %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--white);
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .nav-menu {
+            margin-top: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item.chatbot-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-top: 1.5rem;
+            border-left: 3px solid var(--white);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--white);
+            overflow-y: auto;
+        }
+
+        /* Job Search Specific Styles */
+        .search-header {
+            background: var(--light-color);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .search-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+        }
+
+        .search-results {
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+        }
+
+        .filter-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-option {
+            padding: 0.8rem 1.5rem;
+            background-color: #f5f5f5;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            border: none;
+        }
+
+        .filter-option:hover {
+            background-color: #e0e0e0;
+        }
+
+        .filter-option.active {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .job-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .job-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .job-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .job-company {
+            display: flex;
+            align-items: center;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 1px solid #eee;
+        }
+
+        .company-info h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: var(--dark);
+        }
+
+        .company-info p {
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+        }
+
+        .job-status {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .job-status.pending {
+            background-color: #fff8e1;
+            color: #ffa000;
+        }
+
+        .job-status.rejected {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+        .job-status.not-applied {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .job-content {
+            padding: 1.5rem;
+        }
+
+        .job-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .job-meta-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+        }
+
+        .job-meta-item i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .job-description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .job-footer {
+            padding: 1rem 1.5rem;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .job-date {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn-save {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: white;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--medium-gray);
+        }
+
+        .btn-save:hover, .btn-save.saved {
+            background-color: #ffebee;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-view, .btn-apply {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-view i, .btn-apply i {
+            margin-right: 0.5rem;
+        }
+
+        .btn-view {
+            background-color: #f0f0f0;
+            color: var(--dark);
+        }
+
+        .btn-view:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-apply {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-apply:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .no-results-icon {
+            font-size: 3rem;
+            color: var(--medium-gray);
+            margin-bottom: 1rem;
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .no-results p {
+            color: var(--medium-gray);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .job-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .job-status {
+                margin-top: 1rem;
+                align-self: flex-start;
+            }
+            
+            .job-footer {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .job-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* Styles pour la recherche avancée */
+        .advanced-search-container {
+            margin-bottom: 2rem;
+        }
+        
+        .btn-toggle-advanced {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-toggle-advanced:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .advanced-search-form {
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .advanced-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-reset {
+            background-color: #f0f0f0;
+            color: var(--dark);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-reset:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="" class="nav-item">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="" class="nav-item">
+                <i class="fas fa-file-alt"></i> My CV
+            </a>
+            <a href="" class="nav-item">
+                <i class="fas fa-comments"></i> Interviews
+            </a>
+            <a href="" class="nav-item">
+                <i class="fas fa-envelope"></i> Messages
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item active">
+                <i class="fas fa-briefcase"></i> Offres d'emploi
+            </a>
+            
+            <!-- Bouton Chatbot dans la navigation -->
+            <a href="{{ path('chatbot') }}" class="nav-item chatbot-item">
+                <i class="fas fa-robot"></i> Assistant Tchala
+            </a>
+            
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="search-header">
+            <h1 class="search-title">Recherche d'emploi</h1>
+            
+            <form action="{{ path('job_seeker_jobs_index') }}" method="get" class="search-form">
+                <input type="text" name="search" class="search-input" placeholder="Rechercher par titre de publication..." value="{{ searchCriteria.keywords|default('') }}">
+                <button type="submit" class="search-btn"><i class="fas fa-search"></i> Rechercher</button>
+            </form>
+            
+            <div class="search-results">{{ publications|length }} offres trouvées</div>
+        </div>
+
+        <div class="advanced-search-container">
+            <button id="toggleAdvancedSearch" class="btn-toggle-advanced">
+                <i class="fas fa-sliders-h"></i> Recherche avancée
+            </button>
+            
+            <div id="advancedSearchForm" class="advanced-search-form" style="display: none;">
+                {{ form_start(form, {'attr': {'class': 'advanced-form'}}) }}
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form_label(form.keywords) }}
+                            {{ form_widget(form.keywords) }}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form_label(form.address) }}
+                            {{ form_widget(form.address) }}
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form_label(form.industry) }}
+                            {{ form_widget(form.industry) }}
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form_label(form.dateFrom) }}
+                            {{ form_widget(form.dateFrom) }}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form_label(form.dateTo) }}
+                            {{ form_widget(form.dateTo) }}
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-apply">
+                            <i class="fas fa-search"></i> Rechercher
+                        </button>
+                        <a href="{{ path('job_seeker_jobs_index') }}" class="btn-reset">
+                            <i class="fas fa-times"></i> Réinitialiser
+                        </a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-group">
+                <div class="filter-title">Type d'offre</div>
+                <div class="filter-options">
+                    <a href="{{ path('job_seeker_jobs_index', {'search': searchCriteria.keywords|default(''), 'industry': searchCriteria.industry|default(''), 'address': searchCriteria.address|default(''), 'dateFrom': searchCriteria.dateFrom|default(''), 'dateTo': searchCriteria.dateTo|default('')}) }}" class="filter-option {{ searchCriteria.category is not defined or searchCriteria.category == 'all' ? 'active' : '' }}">Tous</a>
+                    <a href="{{ path('job_seeker_jobs_index', {'category': 'job_offer', 'search': searchCriteria.keywords|default(''), 'industry': searchCriteria.industry|default(''), 'address': searchCriteria.address|default(''), 'dateFrom': searchCriteria.dateFrom|default(''), 'dateTo': searchCriteria.dateTo|default('')}) }}" class="filter-option {{ searchCriteria.category == 'job_offer' ? 'active' : '' }}">Emploi</a>
+                    <a href="{{ path('job_seeker_jobs_index', {'category': 'internship', 'search': searchCriteria.keywords|default(''), 'industry': searchCriteria.industry|default(''), 'address': searchCriteria.address|default(''), 'dateFrom': searchCriteria.dateFrom|default(''), 'dateTo': searchCriteria.dateTo|default('')}) }}" class="filter-option {{ searchCriteria.category == 'internship' ? 'active' : '' }}">Stage</a>
+                    <a href="{{ path('job_seeker_jobs_index', {'category': 'news', 'search': searchCriteria.keywords|default(''), 'industry': searchCriteria.industry|default(''), 'address': searchCriteria.address|default(''), 'dateFrom': searchCriteria.dateFrom|default(''), 'dateTo': searchCriteria.dateTo|default('')}) }}" class="filter-option {{ searchCriteria.category == 'news' ? 'active' : '' }}">Actualité</a>
+                    <a href="{{ path('job_seeker_jobs_index', {'category': 'event', 'search': searchCriteria.keywords|default(''), 'industry': searchCriteria.industry|default(''), 'address': searchCriteria.address|default(''), 'dateFrom': searchCriteria.dateFrom|default(''), 'dateTo': searchCriteria.dateTo|default('')}) }}" class="filter-option {{ searchCriteria.category == 'event' ? 'active' : '' }}">Événement</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="job-list">
+            {% if publications|length > 0 %}
+                {% for publication in publications %}
+                    {% if publication.isPublished %}
+                        <div class="job-card" data-category="{{ publication.category }}">
+                            <div class="job-header">
+                                <div class="job-company">
+                                    {% if publication.user.profileImage is defined and publication.user.profileImage %}
+                                        <img src="img/fxchat.png" alt="{{ publication.user.companyName }}" class="company-logo">
+                                    {% else %}
+                                       <img src="img/fxchat.png" alt="{{ publication.user.companyName }}" class="company-logo">
+                                    {% endif %}
+                                    <div class="company-info">
+                                        <h3>{{ publication.title }}</h3>
+                                        <p>{{ publication.user.companyName ?? publication.user.username }}</p>
+                                    </div>
+                                </div>
+                                
+                                {% if app.user %}
+                                    {% set hasApplied = false %}
+                                    {% set applicationStatus = null %}
+                                    
+                                    {% if publication is not null and publication.id is defined %}
+                                        {% if applicationsByPublication[publication.id] is defined %}
+                                            {% for application in applicationsByPublication[publication.id] %}
+                                                {% if application.user is not null and app.user is not null and application.user.id == app.user.id %}
+                                                    {% set hasApplied = true %}
+                                                    {% set applicationStatus = application.status %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                                
+                                {% if hasApplied %}
+                                    {% if applicationStatus == 'pending' %}
+                                        <span class="job-status pending">En attente</span>
+                                    {% elseif applicationStatus == 'accepted' %}
+                                        <span class="job-status">Acceptée</span>
+                                    {% elseif applicationStatus == 'rejected' %}
+                                        <span class="job-status rejected">Refusée</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="job-status not-applied">Non postulée</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="job-content">
+                                <div class="job-meta">
+                                    <div class="job-meta-item">
+                                        <i class="fas fa-map-marker-alt"></i> 
+                                        {{ publication.user.location ?? 'Non spécifié' }}
+                                    </div>
+                                    <div class="job-meta-item">
+                                        <i class="fas fa-briefcase"></i> 
+                                        {% if publication.category == 'job_offer' %}
+                                            Offre d'emploi
+                                        {% elseif publication.category == 'internship' %}
+                                            Stage
+                                        {% elseif publication.category == 'news' %}
+                                            Actualité
+                                        {% elseif publication.category == 'event' %}
+                                            Événement
+                                        {% endif %}
+                                    </div>
+                                    <div class="job-meta-item">
+                                        <i class="far fa-calendar-alt"></i> 
+                                        Publié le {{ publication.createdAt|date('d/m/Y') }}
+                                    </div>
+                                </div>
+                                
+                                <div class="job-description">
+                                    {{ publication.content|striptags|slice(0, 200) }}{% if publication.content|length > 200 %}...{% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="job-footer">
+                                <div class="job-date">
+                                    <i class="far fa-clock"></i> 
+                                    {% if publication.updatedAt %}
+                                        Mis à jour le {{ publication.updatedAt|date('d/m/Y') }}
+                                    {% else %}
+                                        Publié le {{ publication.createdAt|date('d/m/Y') }}
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="job-actions">
+                                    {% if app.user.savedJobs is defined %}
+                                        {% set isSaved = false %}
+                                        {% for savedJob in app.user.savedJobs %}
+                                            {% if savedJob.publication.id == publication.id %}
+                                                {% set isSaved = true %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        <button class="btn-save {{ isSaved ? 'saved' : '' }}" data-id="{{ publication.id }}">
+                                            <i class="{{ isSaved ? 'fas' : 'far' }} fa-heart"></i>
+                                        </button>
+                                    {% else %}
+                                        <button class="btn-save" data-id="{{ publication.id }}">
+                                            <i class="far fa-heart"></i>
+                                        </button>
+                                    {% endif %}
+                                    
+                                    <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="btn-view">
+                                        <i class="fas fa-eye"></i> Voir détails
+                                    </a>
+                                    
+                                    {% if publication.category in ['job_offer', 'internship'] %}
+                                        <a href="{{ path('job_seeker_jobs_apply', {'id': publication.id}) }}" class="btn-apply">
+                                            <i class="fas fa-paper-plane"></i> Postuler
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="no-results">
+                    <div class="no-results-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Aucune offre trouvée</h3>
+                    <p>Aucune publication n'est disponible pour le moment. Veuillez réessayer ultérieurement ou modifier vos critères de recherche.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des cartes d'emploi
+        const jobCards = document.querySelectorAll('.job-card');
+        
+        jobCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+        
+        // Sauvegarder une offre
+        const saveButtons = document.querySelectorAll('.btn-save');
+        
+        saveButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const jobId = this.getAttribute('data-id');
+                
+                // Toggle saved state
+                this.classList.toggle('saved');
+                
+                if (this.classList.contains('saved')) {
+                    this.querySelector('i').classList.replace('far', 'fas');
+                    
+                    // AJAX call to save job
+                    fetch('/job-seeker/jobs/save/' + jobId, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                } else {
+                    this.querySelector('i').classList.replace('fas', 'far');
+                    
+                    // AJAX call to unsave job
+                    fetch('/job-seeker/jobs/unsave/' + jobId, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Gestion de la recherche avancée
+        const toggleAdvancedSearch = document.getElementById('toggleAdvancedSearch');
+        const advancedSearchForm = document.getElementById('advancedSearchForm');
+        
+        toggleAdvancedSearch.addEventListener('click', function() {
+            if (advancedSearchForm.style.display === 'none') {
+                advancedSearchForm.style.display = 'block';
+                this.innerHTML = '<i class="fas fa-times"></i> Masquer la recherche avancée';
+            } else {
+                advancedSearchForm.style.display = 'none';
+                this.innerHTML = '<i class="fas fa-sliders-h"></i> Recherche avancée';
+            }
+        });
+        
+        // Vérifier si des filtres avancés sont actifs
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('industry') || urlParams.has('address') || urlParams.has('dateFrom') || urlParams.has('dateTo')) {
+            advancedSearchForm.style.display = 'block';
+            toggleAdvancedSearch.innerHTML = '<i class="fas fa-times"></i> Masquer la recherche avancée';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,383 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Applications{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .applications-container {
+            display: flex;
+            min-height: calc(100vh - 80px);
+            background-color: var(--light-gray);
+        }
+
+        .applications-sidebar {
+            width: 280px;
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+        }
+
+        .applications-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .applications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .applications-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .applications-count {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+
+        .status-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 2rem;
+        }
+
+        .status-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            position: relative;
+            color: var(--medium-gray);
+            font-weight: 500;
+        }
+
+        .status-tab.active {
+            color: var(--primary-red);
+        }
+
+        .status-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-red);
+        }
+
+        .application-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .application-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+
+        .application-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-red);
+        }
+
+        .application-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .application-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .application-company {
+            color: var(--primary-red);
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .application-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .application-meta-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .application-meta-item i {
+            margin-right: 0.3rem;
+            font-size: 0.8rem;
+        }
+
+        .application-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-applied {
+            background-color: rgba(33, 150, 243, 0.1);
+            color: #2196F3;
+        }
+
+        .status-review {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #FF9800;
+        }
+
+        .status-interview {
+            background-color: rgba(156, 39, 176, 0.1);
+            color: #9C27B0;
+        }
+
+        .status-offer {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .status-rejected {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #F44336;
+        }
+
+        .application-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .application-date {
+            color: var(--medium-gray);
+            font-size: 0.8rem;
+        }
+
+        .application-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            background-color: white;
+            color: var(--primary-red);
+            border: 1px solid var(--primary-red);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .btn-action:hover {
+            background-color: rgba(230, 57, 70, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: var(--medium-gray);
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+        }
+
+        .empty-text {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="applications-container">
+    <!-- Sidebar (same as home) -->
+    <div class="applications-sidebar">
+        <div class="profile-section">
+            <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_applications') }}" class="nav-item active">
+                <i class="fas fa-file-alt"></i> My Applications
+            </a>
+            <!-- Other menu items -->
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="applications-content">
+        <div class="applications-header">
+            <h2 class="applications-title">My Applications</h2>
+            <div class="applications-count">5 applications</div>
+        </div>
+        
+        <div class="status-tabs">
+            <div class="status-tab active">All</div>
+            <div class="status-tab">Applied</div>
+            <div class="status-tab">Under Review</div>
+            <div class="status-tab">Interview</div>
+            <div class="status-tab">Offer</div>
+            <div class="status-tab">Rejected</div>
+        </div>
+        
+        <div class="application-list">
+            <div class="application-card">
+                <div class="application-header">
+                    <div>
+                        <h3 class="application-title">Senior Frontend Developer</h3>
+                        <div class="application-company">Tech Solutions Inc.</div>
+                    </div>
+                    <span class="application-status status-interview">Interview Scheduled</span>
+                </div>
+                
+                <div class="application-meta">
+                    <div class="application-meta-item">
+                        <i class="fas fa-map-marker-alt"></i> New York, NY
+                    </div>
+                    <div class="application-meta-item">
+                        <i class="fas fa-briefcase"></i> Full-time
+                    </div>
+                    <div class="application-meta-item">
+                        <i class="fas fa-dollar-sign"></i> $110,000 - $140,000
+                    </div>
+                </div>
+                
+                <div class="application-footer">
+                    <div class="application-date">Applied on June 5, 2023</div>
+                    <div class="application-actions">
+                        <button class="btn-action">View Job</button>
+                        <button class="btn-action">Withdraw</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="application-card">
+                <div class="application-header">
+                    <div>
+                        <h3 class="application-title">Full Stack Developer</h3>
+                        <div class="application-company">WebApps LLC</div>
+                    </div>
+                    <span class="application-status status-review">Under Review</span>
+                </div>
+                
+                <div class="application-meta">
+                    <div class="application-meta-item">
+                        <i class="fas fa-map-marker-alt"></i> Remote
+                    </div>
+                    <div class="application-meta-item">
+                        <i class="fas fa-briefcase"></i> Full-time
+                    </div>
+                    <div class="application-meta-item">
+                        <i class="fas fa-dollar-sign"></i> $90,000 - $120,000
+                    </div>
+                </div>
+                
+                <div class="application-footer">
+                    <div class="application-date">Applied on May 28, 2023</div>
+                    <div class="application-actions">
+                        <button class="btn-action">View Job</button>
+                        <button class="btn-action">Withdraw</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="application-card">
+                <div class="application-header">
+                    <div>
+                        <h3 class="application-title">UX/UI Designer</h3>
+                        <div class="application-company">Creative Minds</div>
+                    </div>
+                    <span class="application-status status-offer">Offer Received</span>
+                </div>
+                
+                <div class="application-meta">
+                    <div class="application-meta-item">
+                        <i class="fas fa-map-marker-alt"></i> San Francisco, CA
+                    </div>
+                    <div class="application-meta-item">
+                        <i class="fas fa-briefcase"></i> Contract
+                    </div>
+                    <div class="application-meta-item">
+                        <i class="fas fa-dollar-sign"></i> $50 - $70 per hour
+                    </div>
+                </div>
+                
+                <div class="application-footer">
+                    <div class="application-date">Applied on May 15, 2023</div>
+                    <div class="application-actions">
+                        <button class="btn-action">View Offer</button>
+                        <button class="btn-action">Decline</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="application-card">
+                <div class="application-header">
+                    <div>
+                        <h3 class="application-title">Backend Developer</h3>
+                        <div class="application-company">Data Systems</div>
+                    </div>
+                    <span class="application-status status-rejected">Rejected</span>
+                </div>
+                
+                <div class="application-meta">
+                    <div class="application-meta-item">
+                        <i class="fas fa-map-marker-alt"></i> Boston, MA
+                    </div>
+                    <div class="application-meta-item">
+                        <i class="fas fa-briefcase"></i> Full-time
+                    </div>
+                    <div class="application-meta-item">
+                        <i class="fas fa-dollar-sign"></i> $100,000 - $130,000
+                    </div>
+                </div>
+                
+                <div class="application-footer">
+                    <div class="application-date">Applied on May 10, 2023</div>
+                    <div class="application-actions">
+                        <button class="btn-action">View Job</button>
+                        <button class="btn-action">Request Feedback</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

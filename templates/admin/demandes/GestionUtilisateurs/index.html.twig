@@ -1,0 +1,17 @@
+{# templates/admin/gestion_utilisateurs/index.html.twig #}
+{% extends 'admin/base-admin.html.twig' %}
+
+{% block title %}Gestion des utilisateurs{% endblock %}
+
+{% block content %}
+    <h1>Gestion des utilisateurs</h1>
+
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a href="{{ path('admin_entreprises') }}">🏢 Gérer les entreprises</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{{ path('admin_chercheurs_emploi') }}">👤 Gérer les candidats</a>
+        </li>
+    </ul>
+{% endblock %}

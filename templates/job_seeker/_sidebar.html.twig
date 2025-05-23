@@ -1,0 +1,44 @@
+<div class="sidebar">
+    <div class="profile-section">
+        {% if app.user.profileImage %}
+            <img src="{{ asset(app.user.profileImage) }}?v={{ random() }}" alt="Profile" class="profile-img">
+        {% else %}
+            <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+        {% endif %}
+        <h3 class="profile-name">{{ app.user.username }}</h3>
+        <p class="profile-email">{{ app.user.email }}</p>
+    </div>
+    
+    <div class="nav-menu">
+        <a href="{{ path('job_seeker_home') }}" class="nav-item {% if app.request.get('_route') == 'job_seeker_home' %}active{% endif %}">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="{{ path('job_seeker_profile_index') }}" class="nav-item {% if app.request.get('_route') == 'job_seeker_profile_index' %}active{% endif %}">
+            <i class="fas fa-user"></i> Mon Profil
+        </a>
+        <a href="{{ path('job_seeker_profile_edit') }}" class="nav-item {% if app.request.get('_route') == 'job_seeker_profile_edit' %}active{% endif %}">
+            <i class="fas fa-user-edit"></i> Modifier Profil
+        </a>
+        <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item {% if app.request.get('_route') starts with 'job_seeker_jobs' %}active{% endif %}">
+            <i class="fas fa-briefcase"></i> Offres d'emploi
+        </a>
+        <!-- Correction de la route pour les candidatures -->
+        <span class="nav-item disabled">
+            <i class="fas fa-file-alt"></i> Mes Candidatures
+        </span>
+        <a href="{{ path('conversation_index') }}" class="nav-item {% if app.request.get('_route') == 'conversation_index' %}active{% endif %}">
+            <i class="fas fa-comments"></i> Messages
+            {% set unread_count = unread_messages_count() %}
+            {% if unread_count > 0 %}
+                <span class="badge">{{ unread_count }}</span>
+            {% endif %}
+        </a>
+        <a href="{{ path('chatbot') }}" class="nav-item {% if app.request.get('_route') == 'chatbot' %}active{% endif %}">
+            <i class="fas fa-robot"></i> Assistant Tchala
+        </a>
+        <a href="{{ path('app_logout') }}" class="nav-item">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </a>
+    </div>
+</div>
+

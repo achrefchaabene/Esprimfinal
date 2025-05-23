@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% set otherParticipants = conversation.participants|filter(p => p != app.user) %}
+    <title>Conversation avec {{ otherParticipants|map(p => p.username)|join(', ') }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --light-gray: #e9ecef;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--white);
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .nav-menu {
+            margin-top: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item .badge {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--white);
+            overflow: hidden;
+        }
+
+        /* Conversation Header */
+        .conversation-header {
+            padding: 1.5rem 2rem;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .conversation-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .conversation-title i {
+            color: var(--primary-color);
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .conversation-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-button {
+            background: none;
+            border: none;
+            color: var(--medium-gray);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-button:hover {
+            color: var(--primary-color);
+            background-color: var(--light-color);
+        }
+
+        /* Messages Container */
+        .messages-container {
+            flex: 1;
+            padding: 1.5rem 2rem;
+            overflow-y: auto;
+            background-color: var(--light-color);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 1rem;
+            border-radius: 15px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-sent {
+            align-self: flex-end;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-received {
+            align-self: flex-start;
+            background-color: var(--white);
+            color: var(--dark);
+            border-bottom-left-radius: 5px;
+            box-shadow: var(--shadow);
+        }
+
+        .message-content {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .message-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .message-time {
+            margin-left: auto;
+        }
+
+        .message-status {
+            margin-left: 5px;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .date-divider {
+            text-align: center;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .date-divider span {
+            background-color: var(--light-color);
+            padding: 0 10px;
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: var(--light-gray);
+            z-index: 0;
+        }
+
+        /* Message Form */
+        .message-form-container {
+            padding: 1.5rem 2rem;
+            background-color: var(--white);
+            border-top: 1px solid var(--light-gray);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex: 1;
+            border: 1px solid var(--light-gray);
+            border-radius: 25px;
+            padding: 0.8rem 1.2rem;
+            font-family: 'Poppins', sans-serif;
+            resize: none;
+            outline: none;
+            transition: var(--transition);
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .message-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.1);
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+            align-self: flex-end;
+        }
+
+        .send-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+        }
+
+        .send-button i {
+            font-size: 1.2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-height: 200px;
+                overflow-y: auto;
+                padding: 1rem;
+            }
+            
+            .profile-section {
+                display: flex;
+                align-items: center;
+                text-align: left;
+                margin-bottom: 1rem;
+            }
+            
+            .profile-img {
+                width: 60px;
+                height: 60px;
+                margin-right: 1rem;
+                margin-bottom: 0;
+            }
+            
+            .nav-menu {
+                display: flex;
+                overflow-x: auto;
+                margin-top: 1rem;
+                padding-bottom: 0.5rem;
+            }
+            
+            .nav-item {
+                white-space: nowrap;
+                margin-right: 0.5rem;
+                margin-bottom: 0;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .conversation-header {
+                padding: 1rem;
+            }
+            
+            .messages-container {
+                padding: 1rem;
+            }
+            
+            .message-form-container {
+                padding: 1rem;
+            }
+            
+            .conversation-title {
+                font-size: 1.2rem;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item">
+                <i class="fas fa-user-edit"></i> Profile
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Jobs
+            </a>
+            <a href="{{ path('conversation_index') }}" class="nav-item active">
+                <i class="fas fa-envelope"></i> Messages
+                {% set unread_count = unread_messages_count() %}
+                {% if unread_count > 0 %}
+                    <span class="badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{{ path('chatbot') }}" class="nav-item">
+                <i class="fas fa-robot"></i> Assistant
+            </a>
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Conversation Header -->
+        <div class="conversation-header">
+            <h2 class="conversation-title">
+                <i class="fas fa-comments"></i>
+                {% set otherParticipants = conversation.participants|filter(p => p != app.user) %}
+                {{ otherParticipants|map(p => p.username)|join(', ') }}
+            </h2>
+            <div class="conversation-actions">
+                <button class="action-button" title="Rechercher">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="action-button" title="Informations">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+                <button class="action-button" title="Plus d'options">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Messages Container -->
+        <div class="messages-container" id="messages-container">
+            {% set currentDate = null %}
+            {% for message in conversation.messages %}
+                {% set messageDate = message.createdAt|date('Y-m-d') %}
+                
+                {% if currentDate != messageDate %}
+                    <div class="date-divider">
+                        <span>{{ message.createdAt|date('d F Y') }}</span>
+                    </div>
+                    {% set currentDate = messageDate %}
+                {% endif %}
+                
+                <div class="message {% if message.sender == app.user %}message-sent{% else %}message-received{% endif %}">
+                    {% if message.sender != app.user %}
+                        <div class="message-sender">{{ message.sender.username }}</div>
+                    {% endif %}
+                    <div class="message-content">{{ message.content }}</div>
+                    <div class="message-meta">
+                        <span class="message-time">{{ message.createdAt|date('H:i') }}</span>
+                        {% if message.sender == app.user %}
+                            <span class="message-status">
+                                {% if message.isRead %}
+                                    <i class="fas fa-check-double" title="Lu"></i>
+                                {% else %}
+                                    <i class="fas fa-check" title="Envoyé"></i>
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-messages">
+                    <p>Aucun message dans cette conversation. Commencez à discuter !</p>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Message Form -->
+        <div class="message-form-container">
+            <form method="post" class="message-form">
+                <textarea name="content" class="message-input" placeholder="Écrivez votre message..." rows="1" required></textarea>
+                <button type="submit" class="send-button">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Scroll to bottom of messages container
+        const messagesContainer = document.querySelector('.messages-container');
+        if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        // Auto-resize textarea
+        const messageInput = document.querySelector('.message-input');
+        if (messageInput) {
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            
+            // Submit form on Enter (but allow Shift+Enter for new line)
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.form.submit();
+                }
+            });
+        }
+        
+        // Fonction pour mettre à jour le compteur de messages non lus
+        function updateUnreadCount() {
+            fetch('{{ path('conversation_unread_count') }}')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.querySelector('.nav-item.active .badge');
+                    if (data.count > 0) {
+                        if (!badge) {
+                            const navItem = document.querySelector('.nav-item.active');
+                            const newBadge = document.createElement('span');
+                            newBadge.className = 'badge';
+                            newBadge.textContent = data.count;
+                            navItem.appendChild(newBadge);
+                        } else {
+                            badge.textContent = data.count;
+                        }
+                    } else if (badge) {
+                        badge.remove();
+                    }
+                });
+        }
+        
+        // Vérifier périodiquement les nouveaux messages
+        setInterval(updateUnreadCount, 30000); // Vérifier toutes les 30 secondes
+        
+        // Vérifier également les nouveaux messages dans la conversation actuelle
+        function checkNewMessages() {
+            const lastMessageId = document.querySelector('.message:last-child')?.dataset?.id || 0;
+            fetch(`{{ path('conversation_check_new_messages', {'id': conversation.id}) }}?lastId=${lastMessageId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.hasNewMessages) {
+                        window.location.reload(); // Recharger la page pour afficher les nouveaux messages
+                    }
+                });
+        }
+        
+        // Vérifier les nouveaux messages toutes les 10 secondes
+        setInterval(checkNewMessages, 10000);
+    });
+</script>
+</body>
+</html>

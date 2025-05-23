@@ -1,0 +1,213 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Postuler - {{ publication.title }}{% endblock %}
+
+{% block body %}
+<div class="apply-container">
+    <div class="apply-header">
+        <h1>Postuler à l'offre : {{ publication.title }}</h1>
+        <div class="company-info">{{ publication.user.companyName }}</div>
+    </div>
+
+    <div class="apply-form">
+        {{ form_start(form) }}
+            <div class="form-group">
+                {{ form_label(form.message) }}
+                {{ form_widget(form.message) }}
+                {{ form_errors(form.message) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.resumeFile) }}
+                {{ form_widget(form.resumeFile) }}
+                {{ form_errors(form.resumeFile) }}
+                <small class="form-text text-muted">Téléchargez votre CV au format PDF (max 2Mo)</small>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="btn-cancel">Annuler</a>
+                <button type="submit" class="btn-submit">Envoyer ma candidature</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}
+
+<style>
+    .apply-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .apply-header {
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1.5rem;
+    }
+
+    .apply-header h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .job-info h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: #d62828;
+    }
+
+    .company-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: #666;
+    }
+
+    .company-name {
+        font-weight: 600;
+    }
+
+    .job-location i {
+        margin-right: 0.3rem;
+    }
+
+    .apply-content {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .apply-form-container {
+        flex: 2;
+    }
+
+    .job-details-sidebar {
+        flex: 1;
+    }
+
+    .apply-form {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-group textarea, .form-group input[type="file"] {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-family: inherit;
+    }
+
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #d62828;
+        box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.1);
+    }
+
+    .form-help {
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+    }
+
+    .btn-cancel, .btn-submit {
+        padding: 0.8rem 1.5rem;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+
+    .btn-cancel:hover {
+        background-color: #e9ecef;
+    }
+
+    .btn-submit {
+        background-color: #d62828;
+        color: white;
+        border: none;
+    }
+
+    .btn-submit:hover {
+        background-color: #ba181b;
+        transform: translateY(-2px);
+    }
+
+    .job-summary, .application-tips {
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+    }
+
+    .job-summary h3, .application-tips h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: #333;
+        border-bottom: 2px solid #d62828;
+        padding-bottom: 0.5rem;
+        display: inline-block;
+    }
+
+    .summary-item {
+        margin-bottom: 0.8rem;
+        display: flex;
+    }
+
+    .summary-label {
+        font-weight: 600;
+        width: 40%;
+        color: #666;
+    }
+
+    .summary-value {
+        width: 60%;
+    }
+
+    .tips-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .tips-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .tips-list i {
+        color: #28a745;
+
+

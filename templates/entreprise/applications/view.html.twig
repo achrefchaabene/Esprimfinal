@@ -1,0 +1,290 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail de la candidature{% endblock %}
+
+{% block body %}
+<div class="application-container">
+    <h1>Détail de la candidature</h1>
+    
+    <div class="application-info">
+        <div class="card">
+            <div class="card-header">
+                <h2>{{ application.publication.title }}</h2>
+                <span class="publication-date">Candidature reçue le {{ application.createdAt|date('d/m/Y') }}</span>
+            </div>
+            <div class="card-body">
+                <div class="candidate-info">
+                    <h3>Informations du candidat</h3>
+                    <p><strong>Nom :</strong> {{ application.user.lastName }}</p>
+                    <p><strong>Prénom :</strong> {{ application.user.firstName }}</p>
+                    <p><strong>Email :</strong> {{ application.user.email }}</p>
+                </div>
+                
+                <div class="application-message">
+                    <h3>Message de candidature</h3>
+                    <div class="message-content">
+                        {{ application.message|nl2br }}
+                    </div>
+                </div>
+                
+                {% if application.resumeFilename %}
+                <div class="resume">
+                    <h3>CV du candidat</h3>
+                    <a href="{{ asset('uploads/resumes/' ~ application.resumeFilename) }}" target="_blank" class="btn-download">
+                        <i class="fas fa-download"></i> Télécharger le CV
+                    </a>
+                </div>
+                {% endif %}
+                
+                <div class="application-status">
+                    <h3>Statut de la candidature</h3>
+                    {% if application.status == 'pending' %}
+                        <span class="status pending">En attente</span>
+                    {% elseif application.status == 'accepted' %}
+                        <span class="status accepted">Acceptée</span>
+                    {% elseif application.status == 'rejected' %}
+                        <span class="status rejected">Rejetée</span>
+                    {% endif %}
+                    
+                    {% if application.processedAt %}
+                        <p>Traitée le {{ application.processedAt|date('d/m/Y') }}</p>
+                    {% endif %}
+                    
+                    {% if application.feedback %}
+                        <div class="feedback">
+                            <h4>Commentaire</h4>
+                            <p>{{ application.feedback|nl2br }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="application-actions">
+        {% if application.status == 'pending' %}
+            <a href="{{ path('entreprise_applications_accept', {'id': application.id}) }}" class="btn-accept">
+                <i class="fas fa-check"></i> Accepter la candidature
+            </a>
+            <button type="button" class="btn-reject" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                <i class="fas fa-times"></i> Rejeter la candidature
+            </button>
+        {% elseif application.status == 'accepted' %}
+            <div class="status-badge accepted">
+                <i class="fas fa-check-circle"></i> Candidature acceptée
+            </div>
+        {% elseif application.status == 'rejected' %}
+            <div class="status-badge rejected">
+                <i class="fas fa-times-circle"></i> Candidature rejetée
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="back-link">
+        <a href="{{ path('entreprise_applications_index') }}">
+            <i class="fas fa-arrow-left"></i> Retour à la liste des candidatures
+        </a>
+    </div>
+</div>
+
+<!-- Modal de rejet - Utilisation de Bootstrap 5 -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">Rejeter la candidature</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ path('entreprise_applications_reject', {'id': application.id}) }}" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="rejection_reason" class="form-label">Motif du rejet (optionnel)</label>
+                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3"></textarea>
+                        <div class="form-text">Ce message sera visible par le candidat.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger">Confirmer le rejet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .application-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    .publication-date {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .candidate-info, .application-message, .resume, .application-status {
+        margin-bottom: 2rem;
+    }
+    
+    h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: #343a40;
+    }
+    
+    .message-content {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #6c757d;
+    }
+    
+    .btn-download {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-download:hover {
+        background-color: #0069d9;
+    }
+    
+    .status {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+    
+    .status.pending {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .status.accepted {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .status.rejected {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .feedback {
+        margin-top: 1rem;
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+    
+    .feedback h4 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .application-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .btn-accept, .btn-reject {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+    }
+    
+    .btn-accept {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .btn-accept:hover {
+        background-color: #218838;
+    }
+    
+    .btn-reject {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .btn-reject:hover {
+        background-color: #c82333;
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+    
+    .status-badge.accepted {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .status-badge.rejected {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+    
+    .back-link {
+        margin-top: 2rem;
+    }
+    
+    .back-link a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6c757d;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .back-link a:hover {
+        color: #343a40;
+    }
+</style>
+{% endblock %}

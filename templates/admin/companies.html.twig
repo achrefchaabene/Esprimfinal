@@ -1,0 +1,117 @@
+{# templates/admin/companies.html.twig #}
+
+{% extends 'admin/base-admin.html.twig' %}
+
+{% block title %}Gestion des Entreprises{% endblock %}
+
+{% block content %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Gestion des Entreprises</h1>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Liste des Entreprises</h6>
+            <div class="d-flex">
+                <input type="text" id="searchInput" class="form-control mr-2" placeholder="Rechercher...">
+                <button class="btn btn-primary" id="exportBtn">Exporter</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="companiesTable">
+                    <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Adresse</th>
+                        <th>Site Web</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for company in companies %}
+                        <tr>
+                            <td>{{ company.companyName ?? company.firstName ~ ' ' ~ company.lastName }}</td>
+                            <td>{{ company.email }}</td>
+                            <td>{{ company.phone ?? '-' }}</td>
+                            <td>{{ company.address ?? '-' }}</td>
+                            <td>
+                                {% if company.website %}
+                                    <a href="http://{{ company.website }}" target="_blank">{{ company.website }}</a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if company.isApproved %}
+                                    <span class="badge bg-success">✅ Approuvé</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">⏳ En attente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-info btn-sm">📝 Détails</a>
+                                {% if not company.isApproved %}
+                                    <a href="{{ path('admin_approve_company', {'id': company.id}) }}" class="btn btn-success btn-sm">
+                                        ✓ Approuver
+                                    </a>
+                                {% endif %}
+                                <a href="{{ path('admin_delete_company', {'id': company.id}) }}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?')">
+                                    🗑 Supprimer
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">Aucune entreprise trouvée</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction de recherche
+            const searchInput = document.getElementById('searchInput');
+            const table = document.getElementById('companiesTable');
+            const rows = table.getElementsByTagName('tr');
+
+            searchInput.addEventListener('keyup', function() {
+                const term = searchInput.value.toLowerCase();
+                
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    const cells = row.getElementsByTagName('td');
+                    let found = false;
+                    
+                    for (let j = 0; j < cells.length; j++) {
+                        const cellText = cells[j].textContent.toLowerCase();
+                        if (cellText.indexOf(term) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    row.style.display = found ? '' : 'none';
+                }
+            });
+            
+            // Fonction d'export (simple exemple)
+            document.getElementById('exportBtn').addEventListener('click', function() {
+                alert('Fonctionnalité d\'export à implémenter');
+                // Ici vous pourriez implémenter l'export en CSV ou Excel
+            });
+        });
+    </script>
+{% endblock %}

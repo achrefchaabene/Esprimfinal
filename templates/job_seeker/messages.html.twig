@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages | Job Seeker Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Style inspiré du welcome-panel */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--white);
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .nav-menu {
+            margin-top: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item .badge {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Style spécial pour le bouton Chatbot */
+        .nav-item.chatbot-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-top: 1.5rem;
+            border-left: 3px solid var(--white);
+        }
+
+        .nav-item.chatbot-item:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .nav-item.chatbot-item i {
+            color: #ffcc00;
+        }
+
+        /* Main Content - Messages */
+        .messages-main {
+            flex: 1;
+            display: flex;
+            background-color: var(--white);
+        }
+
+        /* Conversations Sidebar */
+        .conversations-sidebar {
+            width: 350px;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            background-color: var(--light-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conversations-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--white);
+        }
+
+        .conversations-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .new-message-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(214, 40, 40, 0.3);
+        }
+
+        .new-message-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(214, 40, 40, 0.4);
+        }
+
+        .conversation-search {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background-color: var(--white);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 30px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background-color: var(--light-color);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.2);
+        }
+
+        .conversation-list {
+            overflow-y: auto;
+            flex: 1;
+            background-color: var(--white);
+        }
+
+        .conversation-item {
+            display: flex;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--white);
+        }
+
+        .conversation-item:hover {
+            background-color: rgba(214, 40, 40, 0.05);
+            transform: translateX(5px);
+        }
+
+        .conversation-item.active {
+            background-color: rgba(214, 40, 40, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .conversation-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: var(--shadow);
+        }
+
+        .conversation-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .conversation-name {
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-time {
+            color: var(--medium-gray);
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            margin-left: 0.5rem;
+        }
+
+        .conversation-preview {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .unread-badge {
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            margin-left: 0.5rem;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--white);
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-user {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: var(--shadow);
+        }
+
+        .chat-user-info {
+            flex: 1;
+        }
+
+        .chat-user-name {
+            font-weight: 600;
+        }
+
+        .chat-user-status {
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--light-color);
+            border: none;
+            color: var(--dark);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chat-action-btn:hover {
+            background-color: rgba(214, 40, 40, 0.1);
+            color: var(--primary-color);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background-color: var(--light-color);
+            background-image: 
+                linear-gradient(rgba(245, 243, 244, 0.9), rgba(245, 243, 244, 0.9)),
+                url('https://www.transparenttextures.com/patterns/always-grey.png');
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            max-width: 70%;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message-incoming {
+            align-self: flex-start;
+        }
+
+        .message-outgoing {
+            align-self: flex-end;
+        }
+
+        .message-content {
+            padding: 0.9rem 1.3rem;
+            border-radius: 18px;
+            position: relative;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .message-incoming .message-content {
+            background-color: var(--white);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-outgoing .message-content {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+            margin-top: 0.3rem;
+            padding: 0 0.5rem;
+        }
+
+        .message-outgoing .message-time {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: right;
+        }
+
+        .message-incoming .message-time {
+            text-align: left;
+        }
+
+        .chat-input {
+            padding: 1.2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background-color: var(--white);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 0.9rem 1.3rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 30px;
+            resize: none;
+            height: 50px;
+            max-height: 120px;
+            background-color: var(--light-color);
+            transition: var(--transition);
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.2);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-left: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .messages-main {
+                flex-direction: column;
+            }
+            
+            .conversations-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .conversation-item {
+                padding: 1rem;
+            }
+            
+            .chat-header {
+                padding: 1rem;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+            
+            .chat-input {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar - Style inspiré du welcome-panel -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-file-alt"></i> My CV
+            </a>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="nav-item">
+                <i class="fas fa-comments"></i> Interviews
+            </a>
+            <a href="{{ path('job_seeker_messages_index') }}" class="nav-item active">
+                <i class="fas fa-envelope"></i> Messages
+                <span class="badge">3</span>
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Job Offers
+            </a>
+            
+            <a href="{{ path('chatbot') }}" class="nav-item chatbot-item">
+                <i class="fas fa-robot"></i> Assistant Tchala
+            </a>
+            
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Messages Content -->
+    <div class="messages-main">
+        <!-- Conversations Sidebar -->
+        <div class="conversations-sidebar">
+            <div class="conversations-header">
+                <h3 class="conversations-title">Messages</h3>
+                <button class="new-message-btn">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            
+            <div class="conversation-search">
+                <input type="text" class="search-input" placeholder="Search conversations...">
+            </div>
+            
+            <div class="conversation-list">
+                <div class="conversation-item active">
+                    <img src="{{ asset('img/recruiter1.jpg') }}" alt="Avatar" class="conversation-avatar">
+                    <div class="conversation-content">
+                        <div class="conversation-header">
+                            <span class="conversation-name">Sarah Johnson <span class="unread-badge">3</span></span>
+                            <span class="conversation-time">10:30 AM</span>
+                        </div>
+                        <div class="conversation-preview">Hi there! I wanted to follow up about our interview scheduled for...</div>
+                    </div>
+                </div>
+                
+                <div class="conversation-item">
+                    <img src="{{ asset('img/recruiter2.jpg') }}" alt="Avatar" class="conversation-avatar">
+                    <div class="conversation-content">
+                        <div class="conversation-header">
+                            <span class="conversation-name">TechCorp HR</span>
+                            <span class="conversation-time">Yesterday</span>
+                        </div>
+                        <div class="conversation-preview">Congratulations! Your application has been shortlisted for...</div>
+                    </div>
+                </div>
+                
+                <div class="conversation-item">
+                    <img src="{{ asset('img/recruiter3.jpg') }}" alt="Avatar" class="conversation-avatar">
+                    <div class="conversation-content">
+                        <div class="conversation-header">
+                            <span class="conversation-name">Michael Brown</span>
+                            <span class="conversation-time">Jun 12</span>
+                        </div>
+                        <div class="conversation-preview">Thanks for sending your portfolio. We'll review it and get back to you...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <div class="chat-user">
+                    <img src="{{ asset('img/recruiter1.jpg') }}" alt="Avatar" class="chat-user-avatar">
+                    <div class="chat-user-info">
+                        <div class="chat-user-name">Sarah Johnson</div>
+                        <div class="chat-user-status">Recruiter at Tech Solutions</div>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="chat-action-btn">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="chat-action-btn">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="chat-action-btn">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="chat-messages">
+                <div class="message message-incoming show">
+                    <div class="message-content">
+                        Hi John, I wanted to follow up about our interview scheduled for next Monday at 2 PM. Does that time still work for you?
+                    </div>
+                    <div class="message-time">10:30 AM</div>
+                </div>
+                
+                <div class="message message-outgoing show">
+                    <div class="message-content">
+                        Yes, that works perfectly for me. Looking forward to it!
+                    </div>
+                    <div class="message-time">10:32 AM</div>
+                </div>
+                
+                <div class="message message-incoming show">
+                    <div class="message-content">
+                        Great! We'll be discussing your experience with React and Node.js, as well as some system design concepts. 
+                        Please be prepared to share your screen for a short coding exercise.
+                    </div>
+                    <div class="message-time">10:33 AM</div>
+                </div>
+                
+                <div class="message message-outgoing show">
+                    <div class="message-content">
+                        Sounds good. I'll make sure to have my development environment ready. 
+                        Should I prepare anything else in particular?
+                    </div>
+                    <div class="message-time">10:35 AM</div>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <div class="input-group">
+                    <textarea class="message-input" placeholder="Type your message..."></textarea>
+                    <button class="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des éléments au chargement et au scroll
+        const animateElements = function() {
+            const messages = document.querySelectorAll('.message:not(.show)');
+            
+            messages.forEach((message, index) => {
+                const elementPosition = message.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if(elementPosition < screenPosition) {
+                    setTimeout(() => {
+                        message.classList.add('show');
+                    }, index * 100);
+                }
+            });
+        };
+
+        // Initial animation for existing messages
+        const existingMessages = document.querySelectorAll('.message');
+        existingMessages.forEach((message, index) => {
+            setTimeout(() => {
+                message.classList.add('show');
+            }, index * 100);
+        });
+
+        // Trigger animations on scroll
+        window.addEventListener('scroll', animateElements);
+
+        // Simulate new message arrival
+        function simulateNewMessage() {
+            const chatMessages = document.querySelector('.chat-messages');
+            const isAtBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 10;
+            
+            const newMessage = document.createElement('div');
+            newMessage.className = 'message message-incoming';
+            newMessage.innerHTML = `
+                <div class="message-content">
+                    Just one more thing - please bring examples of your previous work if possible.
+                </div>
+                <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+            `;
+            
+            chatMessages.appendChild(newMessage);
+            
+            // Animate the new message
+            setTimeout(() => {
+                newMessage.classList.add('show');
+            }, 100);
+            
+            // Scroll to bottom if user was already there
+            if (isAtBottom) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        // Check for new messages every 30 seconds (simulation)
+        setInterval(simulateNewMessage, 30000);
+
+        // Auto-resize textarea
+        const textarea = document.querySelector('.message-input');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Send message on Enter key (without Shift)
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Send message function
+        function sendMessage() {
+            const messageText = textarea.value.trim();
+            if (messageText) {
+                const chatMessages = document.querySelector('.chat-messages');
+                
+                const newMessage = document.createElement('div');
+                newMessage.className = 'message message-outgoing';
+                newMessage.innerHTML = `
+                    <div class="message-content">${messageText}</div>
+                    <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                `;
+                
+                chatMessages.appendChild(newMessage);
+                textarea.value = '';
+                textarea.style.height = '50px';
+                
+                // Animate the new message
+                setTimeout(() => {
+                    newMessage.classList.add('show');
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 100);
+            }
+        }
+
+        // Send button click handler
+        document.querySelector('.send-btn').addEventListener('click', sendMessage);
+
+        // Conversation item click handler
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.conversation-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Here you would typically load the conversation via AJAX
+                // For demo, we'll just simulate loading
+                const chatHeader = document.querySelector('.chat-user-name');
+                const chatStatus = document.querySelector('.chat-user-status');
+                const avatar = document.querySelector('.chat-user-avatar');
+                
+                if (this.querySelector('.conversation-name').textContent.includes('Sarah')) {
+                    chatHeader.textContent = 'Sarah Johnson';
+                    chatStatus.textContent = 'Recruiter at Tech Solutions';
+                    avatar.src = "{{ asset('img/recruiter1.jpg') }}";
+                } else if (this.querySelector('.conversation-name').textContent.includes('TechCorp')) {
+                    chatHeader.textContent = 'TechCorp HR';
+                    chatStatus.textContent = 'Human Resources';
+                    avatar.src = "{{ asset('img/recruiter2.jpg') }}";
+                } else {
+                    chatHeader.textContent = 'Michael Brown';
+                    chatStatus.textContent = 'Hiring Manager';
+                    avatar.src = "{{ asset('img/recruiter3.jpg') }}";
+                }
+                
+                // Clear unread badge
+                const badge = this.querySelector('.unread-badge');
+                if (badge) {
+                    badge.remove();
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

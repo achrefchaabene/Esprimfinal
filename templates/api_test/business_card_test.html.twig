@@ -1,0 +1,210 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Test de l'API de Carte de Visite{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .api-test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-section, .result-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        .btn-submit {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-submit:hover {
+            background: #0069d9;
+        }
+        .result-container {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            background: white;
+            min-height: 200px;
+        }
+        .card-preview {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            background: white;
+        }
+        .card-preview iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        .loading i {
+            font-size: 2rem;
+            color: #007bff;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="api-test-container">
+    <h1>Test de l'API de Carte de Visite</h1>
+    
+    <div class="form-section">
+        <h2>Formulaire de test</h2>
+        <form id="businessCardForm">
+            <div class="form-group">
+                <label for="name">Nom</label>
+                <input type="text" id="name" name="name" value="Jean Dupont" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="title">Titre</label>
+                <input type="text" id="title" name="title" value="Développeur Principal">
+            </div>
+            
+            <div class="form-group">
+                <label for="company">Entreprise</label>
+                <input type="text" id="company" name="company" value="Tech Solutions Inc." required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Téléphone</label>
+                <input type="text" id="phone" name="phone" value="+33 6 12 34 56 78">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="jean.dupont@techsolutions.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="website">Site web</label>
+                <input type="text" id="website" name="website" value="www.techsolutions.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="address">Adresse</label>
+                <input type="text" id="address" name="address" value="123 Rue de l'Innovation, 75001 Paris">
+            </div>
+            
+            <div class="form-group">
+                <label for="logo_url">URL du logo</label>
+                <input type="text" id="logo_url" name="logo_url" value="https://via.placeholder.com/150">
+            </div>
+            
+            <div class="form-group">
+                <label for="linkedin">LinkedIn</label>
+                <input type="text" id="linkedin" name="linkedin" value="linkedin.com/in/jeandupont">
+            </div>
+            
+            <div class="form-group">
+                <label for="twitter">Twitter</label>
+                <input type="text" id="twitter" name="twitter" value="@jeandupont_tech">
+            </div>
+            
+            <div class="form-group">
+                <label for="template_id">Template</label>
+                <select id="template_id" name="template_id">
+                    <option value="classic_blue">Classic Blue</option>
+                    <option value="modern_minimalist">Modern Minimalist</option>
+                    <option value="creative_dark">Creative Dark</option>
+                    <option value="ai_generated">AI Generated</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn-submit">Générer la carte</button>
+        </form>
+    </div>
+    
+    <div class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Génération en cours...</p>
+    </div>
+    
+    <div class="result-section" style="display: none;">
+        <h2>Résultat de l'API</h2>
+        <div class="result-container">
+            <pre id="apiResult"></pre>
+        </div>
+        
+        <div class="card-preview">
+            <h3>Aperçu de la carte</h3>
+            <iframe id="cardPreview"></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('businessCardForm');
+    const loading = document.querySelector('.loading');
+    const resultSection = document.querySelector('.result-section');
+    const apiResult = document.getElementById('apiResult');
+    const cardPreview = document.getElementById('cardPreview');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Afficher le chargement
+        loading.style.display = 'block';
+        resultSection.style.display = 'none';
+        
+        // Récupérer les données du formulaire
+        const formData = {
+            data: {
+                name: document.getElementById('name').value,
+                title: document.getElementById('title').value,
+                company: document.getElementById('company').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                website: document.getElementById('website').value,
+                address: document.getElementById('address').value,
+                logo_url: document.getElementById('logo_url').value,
+                social_media: {
+                    linkedin: document.getElementById('linkedin').value,
+                    twitter: document.getElementById('twitter').value
+                }
+            },
+            template_id: document.getElementById('template_id').value,
+            output_format: 'html'
+        };
+        
+        // Envoyer la requête à l'API
+        fetch('{{ path('api_businesscard_generate') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+       

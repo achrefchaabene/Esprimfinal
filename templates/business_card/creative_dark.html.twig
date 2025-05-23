@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte de Visite - {{ data.name }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+        
+        body { 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            background-color: #121212; 
+            font-family: 'Montserrat', sans-serif;
+        }
+        .business-card {
+            width: 350px;
+            height: 200px;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            color: #ffffff;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .business-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+        .business-card::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: -60px;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #4a4a4a, #333333);
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .header {
+            margin-bottom: 15px;
+        }
+        .name {
+            font-size: 1.6em;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+        .title {
+            font-size: 0.9em;
+            color: #ff6b6b;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .company {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+        .contact-info {
+            font-size: 0.85em;
+            color: #bbbbbb;
+        }
+        .contact-info div {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .contact-info a {
+            color: #bbbbbb;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .contact-info a:hover {
+            color: #ff6b6b;

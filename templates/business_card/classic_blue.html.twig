@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte de Visite - {{ data.name }}</title>
+    <style>
+        body { 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            background-color: #f0f0f0; 
+            font-family: 'Arial', sans-serif;
+        }
+        .business-card {
+            width: 350px;
+            height: 200px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-left: 5px solid #007bff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .header { text-align: left; }
+        .header .name { font-size: 1.5em; font-weight: bold; color: #333; }
+        .header .title { font-size: 1em; color: #007bff; margin-bottom: 10px; }
+        .company { font-size: 1.1em; font-weight: bold; color: #555; margin-bottom: 15px; }
+        .contact-info div { margin-bottom: 5px; font-size: 0.9em; color: #444; }
+        .contact-info a { color: #007bff; text-decoration: none; }
+        .logo { 
+            max-width: 60px; 
+            max-height: 60px; 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="business-card">
+        {% if data.logo_url is defined and data.logo_url %}
+            <img src="{{ data.logo_url }}" alt="Logo" class="logo">
+        {% endif %}
+        <div class="header">
+            <div class="name">{{ data.name }}</div>
+            {% if data.title is defined and data.title %}
+                <div class="title">{{ data.title }}</div>
+            {% endif %}
+        </div>
+        <div class="company">{{ data.company }}</div>
+        <div class="contact-info">
+            {% if data.phone is defined and data.phone %}
+                <div><strong>Tél:</strong> {{ data.phone }}</div>
+            {% endif %}
+            {% if data.email is defined and data.email %}
+                <div><strong>Email:</strong> <a href="mailto:{{ data.email }}">{{ data.email }}</a></div>
+            {% endif %}
+            {% if data.website is defined and data.website %}
+                <div><strong>Web:</strong> <a href="http://{{ data.website }}" target="_blank">{{ data.website }}</a></div>
+            {% endif %}
+            {% if data.address is defined and data.address %}
+                <div><strong>Adr:</strong> {{ data.address }}</div>
+            {% endif %}
+            {% if data.social_media is defined and data.social_media.linkedin is defined %}
+                <div><strong>LinkedIn:</strong> <a href="https://{{ data.social_media.linkedin }}" target="_blank">{{ data.social_media.linkedin }}</a></div>
+            {% endif %}
+            {% if data.social_media is defined and data.social_media.twitter is defined %}
+                <div><strong>Twitter:</strong> <a href="https://twitter.com/{{ data.social_media.twitter|replace({'@': ''}) }}" target="_blank">{{ data.social_media.twitter }}</a></div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

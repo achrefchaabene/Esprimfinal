@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Chatbot API</title>
+    <meta charset="UTF-8">
+    <script>
+        function testChatbot() {
+            const message = document.getElementById('message').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = 'Envoi de la requête...';
+            
+            fetch('/chatbot/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur HTTP: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                resultDiv.innerHTML = '<h3>Réponse reçue:</h3><div>' + 
+                    (data.response || data.error || 'Pas de réponse') + '</div>';
+            })
+            .catch(error => {
+                resultDiv.innerHTML = '<h3>Erreur:</h3><div>' + error.message + '</div>';
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Test de l'API Chatbot</h1>
+    <div>
+        <textarea id="message" rows="4" cols="50">Comment préparer un entretien d'embauche?</textarea>
+    </div>
+    <div>
+        <button onclick="testChatbot()">Envoyer</button>
+    </div>
+    <div id="result" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;"></div>
+</body>
+</html>

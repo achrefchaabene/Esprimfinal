@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Publications</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--white);
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .nav-menu {
+            margin-top: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item .badge {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--white);
+            overflow-y: auto;
+        }
+
+        /* Publications Card */
+        .publications-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .publications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .publications-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        .publications-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        /* Alert styles */
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            margin: 2rem 0;
+            transition: var(--transition);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: var(--medium-gray);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .empty-state p {
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Publications Grid */
+        .publications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .publication-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            position: relative;
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .publication-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .publication-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2;
+        }
+
+        .status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .status.published {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.draft {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .publication-category {
+            margin-bottom: 1rem;
+        }
+
+        .category {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .category.job {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .category.internship {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .category.news {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .category.event {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .publication-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .publication-content {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .publication-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .publication-date, .publication-updated {
+            display: flex;
+            align-items: center;
+        }
+
+        .publication-date i, .publication-updated i {
+            margin-right: 5px;
+        }
+
+        .publication-actions {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #f1f1f1;
+            padding-top: 1rem;
+        }
+
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-action.view {
+            background-color: #17a2b8;
+        }
+
+        .btn-action.edit {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .btn-action.publish {
+            background-color: #28a745;
+        }
+
+        .btn-action.unpublish {
+            background-color: #6c757d;
+        }
+
+        .btn-action.delete {
+            background-color: #dc3545;
+        }
+
+        .btn-action.display {
+            background-color: #6610f2;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+        }
+
+        .btn-primary i {
+            margin-right: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .publications-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 576px) {
+            .publications-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .publications-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    {% include 'entreprise/_publication_sidebar.html.twig' %}
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        
+        <div class="publications-header">
+            <h1 class="page-title">Mes Publications</h1>
+            <a href="{{ path('entreprise_publication_new') }}" class="btn-primary">
+                <i class="fas fa-plus"></i> Nouvelle Publication
+            </a>
+        </div>
+        
+        <div class="publications-filters">
+            <div class="filter-group">
+                <label for="status-filter">Statut</label>
+                <select id="status-filter" class="filter-select">
+                    <option value="all">Tous</option>
+                    <option value="published">Publiés</option>
+                    <option value="draft">Brouillons</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="category-filter">Catégorie</label>
+                <select id="category-filter" class="filter-select">
+                    <option value="all">Toutes</option>
+                    <option value="job_offer">Offres d'emploi</option>
+                    <option value="internship">Stages</option>
+                    <option value="news">Actualités</option>
+                    <option value="event">Événements</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="search-filter">Recherche</label>
+                <div class="search-input">
+                    <input type="text" id="search-filter" placeholder="Rechercher..." class="filter-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="publications-list">
+            {% if publications|length > 0 %}
+                {% for publication in publications %}
+                    <div class="publication-card" 
+                         data-status="{{ publication.isPublished ? 'published' : 'draft' }}"
+                         data-category="{{ publication.category }}">
+                        <div class="publication-info">
+                            <div class="publication-meta">
+                                <div class="publication-status">
+                                    {% if publication.isPublished %}
+                                        <span class="status published">Publié</span>
+                                    {% else %}
+                                        <span class="status draft">Brouillon</span>
+                                    {% endif %}
+                                </div>
+                                <div class="publication-category">
+                                    {% if publication.category == 'job_offer' %}
+                                        <span class="category job">Offre d'emploi</span>
+                                    {% elseif publication.category == 'internship' %}
+                                        <span class="category internship">Stage</span>
+                                    {% elseif publication.category == 'news' %}
+                                        <span class="category news">Actualité</span>
+                                    {% elseif publication.category == 'event' %}
+                                        <span class="category event">Événement</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <h3 class="publication-title">{{ publication.title }}</h3>
+                            
+                            <div class="publication-dates">
+                                <div class="date-item">
+                                    <i class="far fa-calendar-alt"></i> Créé le {{ publication.createdAt|date('d/m/Y') }}
+                                </div>
+                                {% if publication.updatedAt %}
+                                    <div class="date-item">
+                                        <i class="far fa-edit"></i> Modifié le {{ publication.updatedAt|date('d/m/Y') }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="publication-actions">
+                            <a href="{{ path('entreprise_publication_show', {'id': publication.id}) }}" class="btn-action view" title="Voir">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ path('entreprise_publication_edit', {'id': publication.id}) }}" class="btn-action edit" title="Modifier">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+                            <a href="{{ path('entreprise_publication_delete', {'id': publication.id}) }}" class="btn-action delete" title="Supprimer" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette publication ?')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                            <a href="{{ path('entreprise_publication_show', {'id': publication.id}) }}" class="btn-action display" title="Afficher publication">
+                                <i class="fas fa-desktop"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-publications">
+                    <div class="no-data-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3>Aucune publication</h3>
+                    <p>Vous n'avez pas encore créé de publication. Cliquez sur "Nouvelle Publication" pour commencer.</p>
+                    <a href="{{ path('entreprise_publication_new') }}" class="btn-primary">
+                        <i class="fas fa-plus"></i> Nouvelle Publication
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    function showPublicationPreview(publicationId) {
+        // Créer une fenêtre modale pour afficher la publication
+        const modal = document.createElement('div');
+        modal.className = 'publication-preview-modal';
+        modal.innerHTML = `
+            <div class="preview-content">
+                <div class="preview-header">
+                    <h2>Prévisualisation de la publication</h2>
+                    <button class="close-btn" onclick="closePreview()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="preview-body">
+                    <div class="loading">Chargement de la publication...</div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Charger le contenu de la publication (simulé ici)
+        // Dans un cas réel, vous feriez une requête AJAX pour récupérer les détails
+        setTimeout(() => {
+            const publication = document.querySelector(`.publication-card[data-id="${publicationId}"]`);
+            if (publication) {
+                const title = publication.querySelector('.publication-title').textContent;
+                const content = publication.querySelector('.publication-content').getAttribute('data-full-content');
+                const category = publication.querySelector('.category').textContent;
+                
+                const previewBody = modal.querySelector('.preview-body');
+                previewBody.innerHTML = `
+                    <h3>${title}</h3>
+                    <div class="preview-category">${category}</div>
+                    <div class="preview-text">${content}</div>
+                    <div class="preview-actions">
+                        <button class="preview-btn" onclick="closePreview()">Fermer</button>
+                    </div>
+                `;
+            }
+        }, 500);
+    }
+    
+    function closePreview() {
+        const modal = document.querySelector('.publication-preview-modal');
+        if (modal) {
+            document.body.removeChild(modal);
+        }
+    }
+</script>
+<style>
+    /* Styles pour la fenêtre modale de prévisualisation */
+    .publication-preview-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    
+    .preview-content {
+        background-color: white;
+        border-radius: 10px;
+        width: 80%;
+        max-width: 800px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .preview-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6c757d;
+    }
+    
+    .preview-body {
+        padding: 1.5rem;
+    }
+    
+    .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #6c757d;
+    }
+    
+    .preview-text {
+        margin: 1.5rem 0;
+        line-height: 1.6;
+    }
+    
+    .preview-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1.5rem;
+    }
+    
+    .preview-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

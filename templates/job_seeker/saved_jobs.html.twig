@@ -1,0 +1,380 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Saved Jobs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .saved-jobs-container {
+            display: flex;
+            min-height: calc(100vh - 80px);
+            background-color: var(--light-gray);
+        }
+
+        .saved-jobs-sidebar {
+            width: 280px;
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+        }
+
+        .saved-jobs-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .saved-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .saved-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .saved-count {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+
+        .saved-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 2rem;
+        }
+
+        .tab-item {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            position: relative;
+            color: var(--medium-gray);
+            font-weight: 500;
+        }
+
+        .tab-item.active {
+            color: var(--primary-red);
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-red);
+        }
+
+        .job-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .job-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-red);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .job-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .job-company {
+            color: var(--primary-red);
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .job-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .job-meta-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .job-meta-item i {
+            margin-right: 0.3rem;
+            font-size: 0.8rem;
+        }
+
+        .job-description {
+            color: var(--dark-gray);
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .job-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .job-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .job-tag {
+            background-color: rgba(230, 57, 70, 0.1);
+            color: var(--primary-red);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-apply {
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-apply:hover {
+            background-color: var(--dark-red);
+        }
+
+        .btn-remove {
+            background-color: white;
+            color: var(--primary-red);
+            border: 1px solid var(--primary-red);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-remove:hover {
+            background-color: rgba(230, 57, 70, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: var(--medium-gray);
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+        }
+
+        .empty-text {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="saved-jobs-container">
+    <!-- Sidebar (same as home) -->
+    <div class="saved-jobs-sidebar">
+        <div class="profile-section">
+           <img src="{{ asset('img/google.png') }}" alt="Profile" class="profile-img">
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_saved_jobs') }}" class="nav-item active">
+                <i class="fas fa-heart"></i> Saved Jobs
+            </a>
+            <!-- Other menu items -->
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="saved-jobs-content">
+        <div class="saved-header">
+            <h2 class="saved-title">Saved Jobs</h2>
+            <div class="saved-count">3 saved jobs</div>
+        </div>
+        
+        <div class="saved-tabs">
+            <div class="tab-item active">All Jobs</div>
+            <div class="tab-item">Applied</div>
+            <div class="tab-item">Interviewing</div>
+            <div class="tab-item">Archived</div>
+        </div>
+        
+        <div class="job-list">
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Senior Frontend Developer</h3>
+                        <div class="job-company">Tech Solutions Inc.</div>
+                    </div>
+                    <div style="color: var(--medium-gray); font-size: 0.9rem;">Saved 2 days ago</div>
+                </div>
+                
+                <div class="job-meta">
+                    <div class="job-meta-item">
+                        <i class="fas fa-map-marker-alt"></i> New York, NY
+                    </div>
+                    <div class="job-meta-item">
+                        <i class="fas fa-briefcase"></i> Full-time
+                    </div>
+                    <div class="job-meta-item">
+                        <i class="fas fa-dollar-sign"></i> $110,000 - $140,000
+                    </div>
+                </div>
+                
+                <div class="job-description">
+                    We're looking for an experienced Frontend Developer to join our team. You'll be responsible for 
+                    building user interfaces using React, Redux, and TypeScript. Experience with modern frontend 
+                    tooling and a strong eye for design are required.
+                </div>
+                
+                <div class="job-footer">
+                    <div class="job-tags">
+                        <div class="job-tag">React</div>
+                        <div class="job-tag">TypeScript</div>
+                        <div class="job-tag">Redux</div>
+                    </div>
+                    
+                    <div class="job-actions">
+                        <button class="btn-remove">Remove</button>
+                        <button class="btn-apply">Apply Now</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Full Stack Developer</h3>
+                        <div class="job-company">WebApps LLC</div>
+                    </div>
+                    <div style="color: var(--medium-gray); font-size: 0.9rem;">Saved 1 week ago</div>
+                </div>
+                
+                <div class="job-meta">
+                    <div class="job-meta-item">
+                        <i class="fas fa-map-marker-alt"></i> Remote
+                    </div>
+                    <div class="job-meta-item">
+                        <i class="fas fa-briefcase"></i> Full-time
+                    </div>
+                    <div class="job-meta-item">
+                        <i class="fas fa-dollar-sign"></i> $90,000 - $120,000
+                    </div>
+                </div>
+                
+                <div class="job-description">
+                    Join our team as a Full Stack Developer working with Node.js, React, and MongoDB. 
+                    You'll be involved in all aspects of development from designing APIs to building 
+                    responsive user interfaces. Experience with AWS is a plus.
+                </div>
+                
+                <div class="job-footer">
+                    <div class="job-tags">
+                        <div class="job-tag">Node.js</div>
+                        <div class="job-tag">React</div>
+                        <div class="job-tag">MongoDB</div>
+                    </div>
+                    
+                    <div class="job-actions">
+                        <button class="btn-remove">Remove</button>
+                        <button class="btn-apply">Applied</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">UX/UI Designer</h3>
+                        <div class="job-company">Creative Minds</div>
+                    </div>
+                    <div style="color: var(--medium-gray); font-size: 0.9rem;">Saved 3 days ago</div>
+                </div>
+                
+                <div class="job-meta">
+                    <div class="job-meta-item">
+                        <i class="fas fa-map-marker-alt"></i> San Francisco, CA
+                    </div>
+                    <div class="job-meta-item">
+                        <i class="fas fa-briefcase"></i> Contract
+                    </div>
+                    <div class="job-meta-item">
+                        <i class="fas fa-dollar-sign"></i> $50 - $70 per hour
+                    </div>
+                </div>
+                
+                <div class="job-description">
+                    We're seeking a talented UX/UI Designer to create beautiful and functional interfaces 
+                    for our clients. You should have experience with Figma, Adobe XD, and user research 
+                    methodologies. Portfolio required.
+                </div>
+                
+                <div class="job-footer">
+                    <div class="job-tags">
+                        <div class="job-tag">Figma</div>
+                        <div class="job-tag">UI Design</div>
+                        <div class="job-tag">User Research</div>
+                    </div>
+                    
+                    <div class="job-actions">
+                        <button class="btn-remove">Remove</button>
+                        <button class="btn-apply">Apply Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
