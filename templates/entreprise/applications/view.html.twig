@@ -4,90 +4,184 @@
 
 {% block body %}
 <div class="application-container">
-    <h1>Détail de la candidature</h1>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('app_entreprise_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('entreprise_edit_profile') }}" class="nav-item">
+                <i class="fas fa-user"></i> Mon Profil
+            </a>
+            <a href="{{ path('entreprise_publication_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Mes Offres
+            </a>
+            <a href="{{ path('entreprise_applications_index') }}" class="nav-item active">
+                <i class="fas fa-paper-plane"></i> Candidatures
+            </a>
+            <a href="{{ path('conversation_index') }}" class="nav-item">
+                <i class="fas fa-comments"></i> Messages
+                {% if unread_messages_count is defined %}
+                    {% set unread_count = unread_messages_count() %}
+                    {% if unread_count > 0 %}
+                        <span class="badge">{{ unread_count }}</span>
+                    {% endif %}
+                {% endif %}
+            </a>
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </a>
+        </div>
+    </div>
     
-    <div class="application-info">
-        <div class="card">
+    <!-- Main Content -->
+    <div class="application-content">
+        <div class="back-link">
+            <a href="{{ path('entreprise_applications_index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Retour aux candidatures
+            </a>
+        </div>
+        
+        <div class="application-header">
+            <h1 class="application-title">Détail de la candidature</h1>
+        </div>
+        
+        <div class="application-card">
             <div class="card-header">
-                <h2>{{ application.publication.title }}</h2>
-                <span class="publication-date">Candidature reçue le {{ application.createdAt|date('d/m/Y') }}</span>
+                <div class="application-job">
+                    <h2>{{ application.publication.title }}</h2>
+                    <div class="job-company">
+                        <i class="fas fa-building"></i> {{ application.publication.user.companyName }}
+                    </div>
+                </div>
+                <div class="application-date">
+                    <i class="far fa-calendar-alt"></i> Postulé le {{ application.createdAt|date('d/m/Y') }}
+                </div>
             </div>
+            
             <div class="card-body">
-                <div class="candidate-info">
-                    <h3>Informations du candidat</h3>
-                    <p><strong>Nom :</strong> {{ application.user.lastName }}</p>
-                    <p><strong>Prénom :</strong> {{ application.user.firstName }}</p>
-                    <p><strong>Email :</strong> {{ application.user.email }}</p>
+                <div class="section">
+                    <h3 class="section-title">
+                        <i class="fas fa-user-circle"></i> Informations du candidat
+                    </h3>
+                    <div class="candidate-profile">
+                        <div class="candidate-avatar">
+                            {% if application.user.profileImage %}
+                                <img src="{{ asset(application.user.profileImage) }}" alt="{{ application.user.username }}">
+                            {% else %}
+                                <img src="{{ asset('img/fxchat.png') }}" alt="{{ application.user.username }}">
+                            {% endif %}
+                        </div>
+                        <div class="candidate-details">
+                            <div class="candidate-name">{{ application.user.firstName }} {{ application.user.lastName }}</div>
+                            <div class="candidate-email">
+                                <i class="fas fa-envelope"></i> {{ application.user.email }}
+                            </div>
+                            {% if application.user.phone %}
+                            <div class="candidate-phone">
+                                <i class="fas fa-phone"></i> {{ application.user.phone }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="application-message">
-                    <h3>Message de candidature</h3>
+                <div class="section">
+                    <h3 class="section-title">
+                        <i class="fas fa-comment-alt"></i> Message de candidature
+                    </h3>
                     <div class="message-content">
                         {{ application.message|nl2br }}
                     </div>
                 </div>
                 
                 {% if application.resumeFilename %}
-                <div class="resume">
-                    <h3>CV du candidat</h3>
+                <div class="section">
+                    <h3 class="section-title">
+                        <i class="fas fa-file-alt"></i> CV du candidat
+                    </h3>
                     <a href="{{ asset('uploads/resumes/' ~ application.resumeFilename) }}" target="_blank" class="btn-download">
                         <i class="fas fa-download"></i> Télécharger le CV
                     </a>
                 </div>
                 {% endif %}
                 
-                <div class="application-status">
-                    <h3>Statut de la candidature</h3>
-                    {% if application.status == 'pending' %}
-                        <span class="status pending">En attente</span>
-                    {% elseif application.status == 'accepted' %}
-                        <span class="status accepted">Acceptée</span>
-                    {% elseif application.status == 'rejected' %}
-                        <span class="status rejected">Rejetée</span>
-                    {% endif %}
-                    
-                    {% if application.processedAt %}
-                        <p>Traitée le {{ application.processedAt|date('d/m/Y') }}</p>
-                    {% endif %}
-                    
-                    {% if application.feedback %}
-                        <div class="feedback">
-                            <h4>Commentaire</h4>
-                            <p>{{ application.feedback|nl2br }}</p>
-                        </div>
-                    {% endif %}
+                <div class="section">
+                    <h3 class="section-title">
+                        <i class="fas fa-info-circle"></i> Statut de la candidature
+                    </h3>
+                    <div class="status-container">
+                        {% if application.status == 'pending' %}
+                            <span class="application-status status-pending">En attente</span>
+                        {% elseif application.status == 'accepted' %}
+                            <span class="application-status status-accepted">Acceptée</span>
+                            {% if application.processedAt %}
+                                <div class="processed-date">
+                                    <i class="far fa-calendar-check"></i> Traitée le {{ application.processedAt|date('d/m/Y') }}
+                                </div>
+                            {% endif %}
+                        {% elseif application.status == 'rejected' %}
+                            <span class="application-status status-rejected">Rejetée</span>
+                            {% if application.processedAt %}
+                                <div class="processed-date">
+                                    <i class="far fa-calendar-check"></i> Traitée le {{ application.processedAt|date('d/m/Y') }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        
+                        {% if application.feedback %}
+                            <div class="feedback">
+                                <h4 class="feedback-title">
+                                    <i class="fas fa-comment-dots"></i> Commentaire
+                                </h4>
+                                <div class="feedback-content">
+                                    {{ application.feedback|nl2br }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
+            </div>
+            
+            <div class="card-footer">
+                {% if application.status == 'pending' %}
+                    <div class="application-actions">
+                        <a href="{{ path('entreprise_applications_accept', {'id': application.id}) }}" class="btn-action btn-accept">
+                            <i class="fas fa-check"></i> Accepter
+                        </a>
+                        <button type="button" class="btn-action btn-reject" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                            <i class="fas fa-times"></i> Rejeter
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="status-info">
+                        {% if application.status == 'accepted' %}
+                            <div class="status-badge accepted">
+                                <i class="fas fa-check-circle"></i> Candidature acceptée
+                            </div>
+                        {% elseif application.status == 'rejected' %}
+                            <div class="status-badge rejected">
+                                <i class="fas fa-times-circle"></i> Candidature rejetée
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
-    
-    <div class="application-actions">
-        {% if application.status == 'pending' %}
-            <a href="{{ path('entreprise_applications_accept', {'id': application.id}) }}" class="btn-accept">
-                <i class="fas fa-check"></i> Accepter la candidature
-            </a>
-            <button type="button" class="btn-reject" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                <i class="fas fa-times"></i> Rejeter la candidature
-            </button>
-        {% elseif application.status == 'accepted' %}
-            <div class="status-badge accepted">
-                <i class="fas fa-check-circle"></i> Candidature acceptée
-            </div>
-        {% elseif application.status == 'rejected' %}
-            <div class="status-badge rejected">
-                <i class="fas fa-times-circle"></i> Candidature rejetée
-            </div>
-        {% endif %}
-    </div>
-    
-    <div class="back-link">
-        <a href="{{ path('entreprise_applications_index') }}">
-            <i class="fas fa-arrow-left"></i> Retour à la liste des candidatures
-        </a>
-    </div>
 </div>
 
-<!-- Modal de rejet - Utilisation de Bootstrap 5 -->
+<!-- Modal de rejet -->
 <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -97,9 +191,9 @@
             </div>
             <form action="{{ path('entreprise_applications_reject', {'id': application.id}) }}" method="post">
                 <div class="modal-body">
-                    <div class="mb-3">
+                    <div class="form-group">
                         <label for="rejection_reason" class="form-label">Motif du rejet (optionnel)</label>
-                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3"></textarea>
+                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="4"></textarea>
                         <div class="form-text">Ce message sera visible par le candidat.</div>
                     </div>
                 </div>
@@ -113,178 +207,598 @@
 </div>
 
 <style>
-    .application-container {
-        max-width: 900px;
-        margin: 2rem auto;
-        padding: 0 1rem;
+    :root {
+        --primary-color: #d62828;
+        --secondary-color: #f77f00;
+        --accent-color: #fcbf49;
+        --dark: #003049;
+        --medium-gray: #6c757d;
+        --light-gray: #dee2e6;
+        --white: #ffffff;
+        --light-color: #f8f9fa;
+        --light-bg: #f5f5f5;
+        --success: #28a745;
+        --danger: #dc3545;
+        --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
     }
     
-    .card {
+    .application-container {
+        display: flex;
+        min-height: 100vh;
+    }
+    
+    .sidebar {
+        width: 250px;
+        background-color: var(--dark);
+        color: var(--white);
+        padding: 0;
+        box-shadow: var(--shadow);
+    }
+    
+    .application-content {
+        flex: 1;
+        padding: 2rem;
+        background-color: var(--light-bg);
+    }
+    
+    .profile-section {
+        text-align: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+    
+    .profile-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+        border: 3px solid var(--white);
+        box-shadow: var(--shadow);
+    }
+    
+    .profile-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+    }
+    
+    .profile-email {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .nav-menu {
+        padding: 1rem 0;
+    }
+    
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: var(--transition);
+        position: relative;
+    }
+    
+    .nav-item i {
+        margin-right: 0.8rem;
+        width: 20px;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+    
+    .nav-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--white);
+    }
+    
+    .nav-item.active {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: var(--white);
+        font-weight: 500;
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .badge {
+        position: absolute;
+        right: 15px;
+        background-color: var(--accent-color);
+        color: var(--dark);
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.2rem 0.5rem;
         border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .back-link {
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        color: var(--medium-gray);
+        text-decoration: none;
+        transition: var(--transition);
+        font-weight: 500;
+    }
+    
+    .btn-back i {
+        margin-right: 0.5rem;
+    }
+    
+    .btn-back:hover {
+        color: var(--primary-color);
+    }
+    
+    .application-header {
         margin-bottom: 2rem;
+    }
+    
+    .application-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark);
+    }
+    
+    .application-card {
+        background: var(--white);
+        border-radius: 15px;
+        box-shadow: var(--shadow);
         overflow: hidden;
+        margin-bottom: 2rem;
     }
     
     .card-header {
-        background-color: #f8f9fa;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         padding: 1.5rem;
-        border-bottom: 1px solid #e9ecef;
+        color: var(--white);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     
-    .card-header h2 {
-        margin: 0;
+    .application-job h2 {
         font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--white);
     }
     
-    .publication-date {
-        color: #6c757d;
+    .job-company {
+        display: flex;
+        align-items: center;
         font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .job-company i {
+        margin-right: 0.5rem;
+    }
+    
+    .application-date {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .application-date i {
+        margin-right: 0.5rem;
     }
     
     .card-body {
-        padding: 1.5rem;
+        padding: 2rem;
     }
     
-    .candidate-info, .application-message, .resume, .application-status {
-        margin-bottom: 2rem;
+    .section {
+        margin-bottom: 2.5rem;
     }
     
-    h3 {
+    .section-title {
         font-size: 1.2rem;
-        margin-bottom: 1rem;
-        color: #343a40;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+    }
+    
+    .section-title i {
+        margin-right: 0.8rem;
+        color: var(--primary-color);
+    }
+    
+    .candidate-profile {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .candidate-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+    
+    .candidate-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .candidate-details {
+        flex: 1;
+    }
+    
+    .candidate-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+    }
+    
+    .candidate-email, .candidate-phone {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        color: var(--medium-gray);
+        margin-bottom: 0.3rem;
+    }
+    
+    .candidate-email i, .candidate-phone i {
+        margin-right: 0.5rem;
     }
     
     .message-content {
-        background-color: #f8f9fa;
-        padding: 1rem;
-        border-radius: 8px;
-        border-left: 4px solid #6c757d;
+        background-color: var(--light-color);
+        padding: 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid var(--primary-color);
+        line-height: 1.6;
     }
     
     .btn-download {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background-color: #007bff;
-        color: white;
-        border-radius: 5px;
+        padding: 0.8rem 1.5rem;
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: var(--white);
+        border-radius: 8px;
+        font-weight: 600;
         text-decoration: none;
-        transition: background-color 0.3s;
+        transition: var(--transition);
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+    }
+    
+    .btn-download i {
+        margin-right: 0.5rem;
     }
     
     .btn-download:hover {
-        background-color: #0069d9;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
     }
     
-    .status {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
+    .status-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .application-status {
+        padding: 0.6rem 1.2rem;
         border-radius: 20px;
+        font-size: 0.9rem;
         font-weight: 600;
-        font-size: 0.875rem;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
     }
     
-    .status.pending {
-        background-color: #ffc107;
-        color: #212529;
+    .application-status i {
+        margin-right: 0.5rem;
     }
     
-    .status.accepted {
-        background-color: #28a745;
-        color: white;
+    .status-pending {
+        background-color: var(--accent-color);
+        color: var(--dark);
     }
     
-    .status.rejected {
-        background-color: #dc3545;
-        color: white;
+    .status-accepted {
+        background-color: var(--success);
+        color: var(--white);
+    }
+    
+    .status-rejected {
+        background-color: var(--danger);
+        color: var(--white);
+    }
+    
+    .processed-date {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        color: var(--medium-gray);
+    }
+    
+    .processed-date i {
+        margin-right: 0.5rem;
     }
     
     .feedback {
+        background-color: var(--light-color);
+        padding: 1.5rem;
+        border-radius: 10px;
         margin-top: 1rem;
-        background-color: #f8f9fa;
-        padding: 1rem;
-        border-radius: 8px;
     }
     
-    .feedback h4 {
+    .feedback-title {
         font-size: 1rem;
-        margin-bottom: 0.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .feedback-title i {
+        margin-right: 0.5rem;
+        color: var(--primary-color);
+    }
+    
+    .feedback-content {
+        line-height: 1.6;
+    }
+    
+    .card-footer {
+        padding: 1.5rem;
+        background-color: var(--light-color);
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
     }
     
     .application-actions {
         display: flex;
         gap: 1rem;
-        margin-bottom: 2rem;
     }
     
-    .btn-accept, .btn-reject {
-        padding: 0.75rem 1.5rem;
+    .btn-action {
+        padding: 0.8rem 1.5rem;
         border-radius: 8px;
         font-weight: 600;
+        font-size: 0.9rem;
         cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-        text-decoration: none;
         border: none;
     }
     
+    .btn-action i {
+        margin-right: 0.5rem;
+    }
+    
     .btn-accept {
-        background-color: #28a745;
-        color: white;
+        background: linear-gradient(135deg, var(--success), #218838);
+        color: var(--white);
+        box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
     }
     
     .btn-accept:hover {
-        background-color: #218838;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
     }
     
     .btn-reject {
-        background-color: #dc3545;
-        color: white;
+        background: linear-gradient(135deg, var(--danger), #c82333);
+        color: var(--white);
+        box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
     }
     
     .btn-reject:hover {
-        background-color: #c82333;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
+    }
+    
+    .status-info {
+        display: flex;
+        justify-content: center;
     }
     
     .status-badge {
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: 600;
+    }
+    
+    .status-badge i {
+        margin-right: 0.5rem;
+        font-size: 1.1rem;
     }
     
     .status-badge.accepted {
         background-color: rgba(40, 167, 69, 0.1);
-        color: #28a745;
+        color: var(--success);
     }
     
     .status-badge.rejected {
         background-color: rgba(220, 53, 69, 0.1);
-        color: #dc3545;
+        color: var(--danger);
     }
     
-    .back-link {
-        margin-top: 2rem;
+    /* Modal Styles */
+    .modal-content {
+        border-radius: 15px;
+        overflow: hidden;
+        border: none;
+        box-shadow: var(--shadow);
     }
     
-    .back-link a {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #6c757d;
-        text-decoration: none;
-        transition: color 0.3s;
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--white);
+        border-bottom: none;
     }
     
-    .back-link a:hover {
-        color: #343a40;
+    .modal-title {
+        font-weight: 600;
+    }
+    
+    .btn-close {
+        filter: invert(1);
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        padding: 0.8rem;
+        border: 1px solid var(--light-gray);
+        transition: var(--transition);
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(214, 40, 40, 0.25);
+    }
+    
+    .form-text {
+        font-size: 0.8rem;
+        color: var(--medium-gray);
+        margin-top: 0.5rem;
+    }
+    
+    .modal-footer {
+        border-top: none;
+        padding: 1.5rem;
+    }
+    
+    .btn-secondary {
+        background-color: var(--medium-gray);
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger), #c82333);
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .application-container {
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            width: 100%;
+            order: 2;
+        }
+        
+        .application-content {
+            order: 1;
+        }
+        
+        .profile-section {
+            padding: 1rem;
+        }
+        
+        .profile-img {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0.5rem;
+        }
+        
+        .nav-item {
+            flex: 1 0 auto;
+            min-width: 120px;
+            justify-content: center;
+            padding: 0.8rem;
+        }
+        
+        .nav-item i {
+            margin-right: 0;
+            margin-bottom: 0.3rem;
+            font-size: 1.2rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .candidate-profile {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .application-actions {
+            flex-direction: column;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des éléments
+        const animateElements = function() {
+            const elements = document.querySelectorAll('.section, .card-footer');
+            
+            elements.forEach((element, index) => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if(elementPosition < screenPosition) {
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        };
+        
+        // Initial state for animation
+        const animatedItems = document.querySelectorAll('.section, .card-footer');
+        
+        animatedItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'all 0.5s ease';
+        });
+        
+        // Trigger animations
+        window.addEventListener('load', animateElements);
+        window.addEventListener('scroll', animateElements);
+    });
+</script>
 {% endblock %}

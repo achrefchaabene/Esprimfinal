@@ -3,163 +3,610 @@
 {% block title %}Candidatures reçues{% endblock %}
 
 {% block body %}
-<div class="applications-container">
-    <h1>Candidatures reçues</h1>
-    
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">
-            {{ message }}
-        </div>
-    {% endfor %}
-    
-    {% if applications is empty %}
-        <div class="no-applications">
-            <p>Vous n'avez pas encore reçu de candidatures.</p>
-        </div>
-    {% else %}
-        <div class="applications-filters">
-            <div class="filter-group">
-                <label for="status-filter">Filtrer par statut:</label>
-                <select id="status-filter" class="form-select">
-                    <option value="all">Tous</option>
-                    <option value="pending">En attente</option>
-                    <option value="accepted">Acceptées</option>
-                    <option value="rejected">Rejetées</option>
-                </select>
-            </div>
+<div class="application-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
         </div>
         
-        <div class="applications-list">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Candidat</th>
-                        <th>Offre</th>
-                        <th>Date</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for application in applications %}
-                        <tr class="application-row" data-status="{{ application.status }}">
-                            <td>
-                                <div class="candidate-name">
-                                    {{ application.user.firstName }} {{ application.user.lastName }}
-                                </div>
-                            </td>
-                            <td>{{ application.publication.title }}</td>
-                            <td>{{ application.createdAt|date('d/m/Y') }}</td>
-                            <td>
-                                {% if application.status == 'pending' %}
-                                    <span class="status pending">En attente</span>
-                                {% elseif application.status == 'accepted' %}
-                                    <span class="status accepted">Acceptée</span>
-                                {% elseif application.status == 'rejected' %}
-                                    <span class="status rejected">Rejetée</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="{{ path('entreprise_applications_view', {'id': application.id}) }}" class="btn-view">
-                                    <i class="fas fa-eye"></i> Voir
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="nav-menu">
+            <a href="{{ path('app_entreprise_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('entreprise_edit_profile') }}" class="nav-item">
+                <i class="fas fa-user"></i> Mon Profil
+            </a>
+            <a href="{{ path('entreprise_publication_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Mes Offres
+            </a>
+            <a href="{{ path('entreprise_applications_index') }}" class="nav-item active">
+                <i class="fas fa-paper-plane"></i> Candidatures
+            </a>
+            <a href="{{ path('conversation_index') }}" class="nav-item">
+                <i class="fas fa-comments"></i> Messages
+                {% if unread_messages_count is defined %}
+                    {% set unread_count = unread_messages_count() %}
+                    {% if unread_count > 0 %}
+                        <span class="badge">{{ unread_count }}</span>
+                    {% endif %}
+                {% endif %}
+            </a>
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </a>
         </div>
-    {% endif %}
+    </div>
+    
+    <!-- Main Content -->
+    <div class="application-content">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <div class="applications-header">
+            <h1 class="applications-title">Candidatures reçues</h1>
+            <div class="applications-count">{{ applications|length }} candidature(s)</div>
+        </div>
+        
+        {% if applications is empty %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3 class="empty-title">Aucune candidature</h3>
+                <p class="empty-text">Vous n'avez pas encore reçu de candidatures pour vos offres d'emploi.</p>
+                <a href="{{ path('entreprise_publication_index') }}" class="btn-action">Voir mes offres</a>
+            </div>
+        {% else %}
+            <div class="status-tabs">
+                <div class="status-tab active" data-status="all">
+                    <i class="fas fa-list"></i> Toutes
+                </div>
+                <div class="status-tab" data-status="pending">
+                    <i class="fas fa-clock"></i> En attente
+                </div>
+                <div class="status-tab" data-status="accepted">
+                    <i class="fas fa-check-circle"></i> Acceptées
+                </div>
+                <div class="status-tab" data-status="rejected">
+                    <i class="fas fa-times-circle"></i> Rejetées
+                </div>
+            </div>
+            
+            <div class="applications-table-container">
+                <table class="applications-table">
+                    <thead>
+                        <tr>
+                            <th>Candidat</th>
+                            <th>Offre</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for application in applications %}
+                            <tr class="application-row" data-status="{{ application.status }}">
+                                <td>
+                                    <div class="candidate-info">
+                                        <div class="candidate-avatar">
+                                            {% if application.user.profileImage %}
+                                                <img src="{{ asset(application.user.profileImage) }}" alt="{{ application.user.username }}">
+                                            {% else %}
+                                                <img src="{{ asset('img/fxchat.png') }}" alt="{{ application.user.username }}">
+                                            {% endif %}
+                                        </div>
+                                        <div class="candidate-details">
+                                            <div class="candidate-name">{{ application.user.firstName }} {{ application.user.lastName }}</div>
+                                            <div class="candidate-email">{{ application.user.email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="job-title">{{ application.publication.title }}</div>
+                                    <div class="job-company">{{ application.publication.user.companyName }}</div>
+                                </td>
+                                <td>
+                                    <div class="application-date">
+                                        <i class="far fa-calendar-alt"></i> {{ application.createdAt|date('d/m/Y') }}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if application.status == 'pending' %}
+                                        <span class="application-status status-pending">En attente</span>
+                                    {% elseif application.status == 'accepted' %}
+                                        <span class="application-status status-accepted">Acceptée</span>
+                                    {% elseif application.status == 'rejected' %}
+                                        <span class="application-status status-rejected">Rejetée</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="application-actions">
+                                        <a href="{{ path('entreprise_applications_view', {'id': application.id}) }}" class="btn-action">
+                                            <i class="fas fa-eye"></i> Voir
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
 </div>
 
 <style>
-    .applications-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
+    :root {
+        --primary-color: #d62828;
+        --secondary-color: #f77f00;
+        --accent-color: #fcbf49;
+        --dark: #003049;
+        --medium-gray: #6c757d;
+        --light-gray: #dee2e6;
+        --white: #ffffff;
+        --light-color: #f8f9fa;
+        --light-bg: #f5f5f5;
+        --success: #28a745;
+        --danger: #dc3545;
+        --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
     }
     
-    h1 {
+    .application-container {
+        display: flex;
+        min-height: 100vh;
+    }
+    
+    .sidebar {
+        width: 250px;
+        background-color: var(--dark);
+        color: var(--white);
+        padding: 0;
+        box-shadow: var(--shadow);
+    }
+    
+    .application-content {
+        flex: 1;
+        padding: 2rem;
+        background-color: var(--light-bg);
+    }
+    
+    .profile-section {
+        text-align: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+    
+    .profile-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+        border: 3px solid var(--white);
+        box-shadow: var(--shadow);
+    }
+    
+    .profile-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+    }
+    
+    .profile-email {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .nav-menu {
+        padding: 1rem 0;
+    }
+    
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: var(--transition);
+        position: relative;
+    }
+    
+    .nav-item i {
+        margin-right: 0.8rem;
+        width: 20px;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+    
+    .nav-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--white);
+    }
+    
+    .nav-item.active {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: var(--white);
+        font-weight: 500;
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .badge {
+        position: absolute;
+        right: 15px;
+        background-color: var(--accent-color);
+        color: var(--dark);
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.2rem 0.5rem;
+        border-radius: 10px;
+    }
+    
+    .applications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 2rem;
     }
     
-    .no-applications {
-        background-color: #f8f9fa;
-        padding: 2rem;
+    .applications-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark);
+    }
+    
+    .applications-count {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--white);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        box-shadow: var(--shadow);
+    }
+    
+    .status-tabs {
+        display: flex;
+        background-color: var(--white);
         border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+    }
+    
+    .status-tab {
+        flex: 1;
+        padding: 1rem;
         text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+        color: var(--medium-gray);
+        border-bottom: 3px solid transparent;
     }
     
-    .applications-filters {
-        margin-bottom: 1.5rem;
-        display: flex;
-        justify-content: flex-end;
+    .status-tab i {
+        margin-right: 0.5rem;
     }
     
-    .filter-group {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+    .status-tab:hover {
+        background-color: var(--light-color);
     }
     
-    .form-select {
-        padding: 0.375rem 2.25rem 0.375rem 0.75rem;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
+    .status-tab.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+        background-color: rgba(214, 40, 40, 0.05);
     }
     
-    .table {
+    .applications-table-container {
+        background: var(--white);
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+    
+    .applications-table {
         width: 100%;
         border-collapse: collapse;
     }
     
-    .table th {
-        background-color: #f8f9fa;
-        padding: 1rem;
+    .applications-table th {
+        background-color: var(--light-color);
+        padding: 1.2rem 1.5rem;
         text-align: left;
         font-weight: 600;
+        color: var(--dark);
     }
     
-    .table td {
-        padding: 1rem;
-        border-top: 1px solid #e9ecef;
+    .applications-table td {
+        padding: 1.2rem 1.5rem;
+        border-top: 1px solid var(--light-gray);
+    }
+    
+    .applications-table tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+    
+    .candidate-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .candidate-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+    
+    .candidate-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
     
     .candidate-name {
+        font-weight: 600;
+        color: var(--dark);
+    }
+    
+    .candidate-email {
+        font-size: 0.8rem;
+        color: var(--medium-gray);
+    }
+    
+    .job-title {
         font-weight: 500;
+        color: var(--dark);
     }
     
-    .status {
-        display: inline-block;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        font-weight: 500;
+    .job-company {
+        font-size: 0.9rem;
+        color: var(--medium-gray);
     }
     
-    .status.pending {
-        background-color: #ffc107;
-        color: #212529;
+    .application-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--medium-gray);
+        font-size: 0.9rem;
     }
     
-    .status.accepted {
-        background-color: #28a745;
-        color: white;
-    }
-    
-    .status.rejected {
-        background-color: #dc3545;
-        color: white;
-    }
-    
-    .btn-view {
+    .application-status {
         padding: 0.5rem 1rem;
-        border-radius: 4px;
-        text-decoration: none;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    
+    .status-pending {
+        background-color: var(--accent-color);
+        color: var(--dark);
+    }
+    
+    .status-accepted {
+        background-color: var(--success);
+        color: var(--white);
+    }
+    
+    .status-rejected {
+        background-color: var(--danger);
+        color: var(--white);
+    }
+    
+    .application-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
         font-size: 0.9rem;
         cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: var(--white);
         border: none;
-        background-color: #6c757d;
-        color: white;
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+    }
+    
+    .btn-action i {
+        margin-right: 0.5rem;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background-color: var(--white);
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        color: var(--light-gray);
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+    
+    .empty-text {
+        color: var(--medium-gray);
+        margin-bottom: 1.5rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .application-container {
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            width: 100%;
+            order: 2;
+        }
+        
+        .application-content {
+            order: 1;
+        }
+        
+        .profile-section {
+            padding: 1rem;
+        }
+        
+        .profile-img {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0.5rem;
+        }
+        
+        .nav-item {
+            flex: 1 0 auto;
+            min-width: 120px;
+            justify-content: center;
+            padding: 0.8rem;
+        }
+        
+        .nav-item i {
+            margin-right: 0;
+            margin-bottom: 0.3rem;
+            font-size: 1.2rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .applications-table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .status-tabs {
+            flex-wrap: wrap;
+        }
+        
+        .status-tab {
+            flex: 1 0 50%;
+            padding: 0.8rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .applications-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .applications-count {
+            align-self: flex-start;
+        }
+        
+        .status-tab {
+            flex: 1 0 100%;
+        }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filtrage par statut
+        const statusTabs = document.querySelectorAll('.status-tab');
+        const applicationRows = document.querySelectorAll('.application-row');
+        
+        statusTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Mettre à jour l'onglet actif
+                statusTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filtrer les candidatures
+                const status = this.getAttribute('data-status');
+                
+                applicationRows.forEach(row => {
+                    if (status === 'all' || row.getAttribute('data-status') === status) {
+                        row.style.display = 'table-row';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Animation des éléments au chargement et au scroll
+        const animateElements = function() {
+            const elements = document.querySelectorAll('.application-row');
+            
+            elements.forEach((element, index) => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if(elementPosition < screenPosition) {
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        };
+        
+        // Initial state for animation
+        const animatedItems = document.querySelectorAll('.application-row');
+        
+        animatedItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'all 0.5s ease';
+        });
+        
+        // Trigger animations
+        window.addEventListener('load', animateElements);
+        window.addEventListener('scroll', animateElements);
+    });
+</script>
 {% endblock %}
