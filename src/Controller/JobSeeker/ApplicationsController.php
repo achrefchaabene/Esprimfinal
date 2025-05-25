@@ -2,6 +2,7 @@
 
 namespace App\Controller\JobSeeker;
 
+use App\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,7 +21,7 @@ class ApplicationsController extends AbstractController
         }
         
         // Récupérer les candidatures de l'utilisateur
-        $applications = $entityManager->getRepository(YourApplicationEntity::class)
+        $applications = $entityManager->getRepository(Application::class)
             ->findBy(['user' => $user]);
         
         return $this->render('job_seeker/applications.html.twig', [

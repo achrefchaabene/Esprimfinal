@@ -22,10 +22,9 @@
         <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item {% if app.request.get('_route') starts with 'job_seeker_jobs' %}active{% endif %}">
             <i class="fas fa-briefcase"></i> Offres d'emploi
         </a>
-        <!-- Correction de la route pour les candidatures -->
-        <span class="nav-item disabled">
+        <a href="{{ path('job_seeker_applications_index') }}" class="nav-item {% if app.request.get('_route') == 'job_seeker_applications_index' %}active{% endif %}">
             <i class="fas fa-file-alt"></i> Mes Candidatures
-        </span>
+        </a>
         <a href="{{ path('conversation_index') }}" class="nav-item {% if app.request.get('_route') == 'conversation_index' %}active{% endif %}">
             <i class="fas fa-comments"></i> Messages
             {% set unread_count = unread_messages_count() %}

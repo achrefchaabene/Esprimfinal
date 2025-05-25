@@ -1,213 +1,926 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Postuler - {{ publication.title }}{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --light-gray: #e5e5e5;
+            --success: #28a745;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
 
-{% block title %}Postuler - {{ publication.title }}{% endblock %}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block body %}
-<div class="apply-container">
-    <div class="apply-header">
-        <h1>Postuler à l'offre : {{ publication.title }}</h1>
-        <div class="company-info">{{ publication.user.companyName }}</div>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Style inspiré du welcome-panel */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--white);
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .nav-menu {
+            margin-top: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item .badge {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item.chatbot-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-top: 1.5rem;
+            border-left: 3px solid var(--white);
+        }
+
+        .nav-item.chatbot-item:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .nav-item.chatbot-item i {
+            color: #ffcc00;
+        }
+
+        /* Main Content - Style inspiré du register-panel */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--white);
+            overflow-y: auto;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--medium-gray);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumb i {
+            margin: 0 0.5rem;
+            font-size: 0.7rem;
+            color: var(--medium-gray);
+        }
+
+        .breadcrumb span {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .alert i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-left: 4px solid #dc3545;
+        }
+
+        /* Application Card */
+        .application-card {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Application Header */
+        .application-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .application-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .company-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid var(--white);
+        }
+
+        .company-name {
+            font-weight: 500;
+        }
+
+        .job-title-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 3rem;
+            background-color: var(--light-color);
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--medium-gray);
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--medium-gray);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .step.active .step-number {
+            background-color: var(--primary-color);
+            box-shadow: 0 0 0 5px rgba(214, 40, 40, 0.2);
+        }
+
+        .step.completed .step-number {
+            background-color: var(--success);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+            font-weight: 500;
+        }
+
+        .step.active .step-label {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .step.completed .step-label {
+            color: var(--success);
+        }
+
+        /* Application Form */
+        .application-form {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.1);
+            outline: none;
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-help {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-help i {
+            margin-right: 0.5rem;
+        }
+
+        /* File Upload */
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            border: 2px dashed var(--medium-gray);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(214, 40, 40, 0.05);
+        }
+
+        .file-upload i {
+            font-size: 2.5rem;
+            color: var(--medium-gray);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-text {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-subtext {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            text-align: center;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+        }
+
+        /* Job Details Section */
+        .job-details-section {
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .job-detail-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .job-detail-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(214, 40, 40, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--primary-color);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .detail-content {
+            flex: 1;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Application Tips */
+        .application-tips {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #ffcc00;
+        }
+
+        .tips-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .tips-title i {
+            margin-right: 0.75rem;
+            color: #ffcc00;
+        }
+
+        .tips-list {
+            list-style: none;
+        }
+
+        .tips-list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .tips-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--medium-gray);
+            border: 1px solid var(--light-gray);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-color);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .application-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .job-title-badge {
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar - Style inspiré du welcome-panel -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-file-alt"></i> My CV
+            </a>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="nav-item">
+                <i class="fas fa-comments"></i> Interviews
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item active">
+                <i class="fas fa-briefcase"></i> Job Offers
+            </a>
+            <a href="{{ path('job_seeker_jobs_applications') }}" class="nav-item">
+                <i class="fas fa-paper-plane"></i> My Applications
+            </a>
+            <a href="{{ path('conversation_index') }}" class="nav-item">
+                <i class="fas fa-envelope"></i> Messages
+                {% set unread_count = unread_messages_count() %}
+                {% if unread_count > 0 %}
+                    <span class="badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{{ path('chatbot') }}" class="nav-item">
+                <i class="fas fa-robot"></i> Assistant Tchala
+            </a>
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
     </div>
-
-    <div class="apply-form">
-        {{ form_start(form) }}
-            <div class="form-group">
-                {{ form_label(form.message) }}
-                {{ form_widget(form.message) }}
-                {{ form_errors(form.message) }}
+    
+    <!-- Main Content - Style inspiré du register-panel -->
+    <div class="main-content">
+        <div class="page-header">
+            <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Retour à l'offre
+            </a>
+        </div>
+        
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <div class="application-card">
+            <div class="card-header">
+                <h1 class="application-title">Postuler à cette offre</h1>
+                <div class="company-info">
+                    {% if publication.user.profileImage %}
+                        <img src="{{ asset(publication.user.profileImage) }}" class="company-logo" alt="Logo entreprise">
+                    {% else %}
+                        <img src="{{ asset('img/default-company.png') }}" class="company-logo" alt="Logo entreprise">
+                    {% endif %}
+                    <span class="company-name">{{ publication.user.companyName ?? publication.user.username }}</span>
+                </div>
             </div>
-
-            <div class="form-group">
-                {{ form_label(form.resumeFile) }}
-                {{ form_widget(form.resumeFile) }}
-                {{ form_errors(form.resumeFile) }}
-                <small class="form-text text-muted">Téléchargez votre CV au format PDF (max 2Mo)</small>
+            
+            <div class="progress-steps">
+                <div class="step completed">
+                    <div class="step-number"><i class="fas fa-check"></i></div>
+                    <div class="step-label">Détails de l'offre</div>
+                </div>
+                <div class="step active">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Votre candidature</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Confirmation</div>
+                </div>
             </div>
-
+            
+            {{ form_start(form, {'attr': {'class': 'application-form'}}) }}
+            
+            <div class="form-section">
+                <h3 class="section-title"><i class="fas fa-edit"></i> Lettre de motivation</h3>
+                
+                <div class="form-group">
+                    {{ form_label(form.message, 'Pourquoi postulez-vous ?', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.message, {'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Expliquez en quelques mots pourquoi vous êtes le candidat idéal...'
+                    }}) }}
+                    <small class="text-muted">Minimum 150 caractères</small>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3 class="section-title"><i class="fas fa-file-upload"></i> Documents requis</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Curriculum Vitae (PDF, max 2MB)</label>
+                    <div class="file-upload" id="file-upload-container">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div class="file-upload-text">Téléverser votre CV</div>
+                        <div class="file-upload-subtext">Glissez-déposez votre fichier ou cliquez pour sélectionner</div>
+                        {{ form_widget(form.resumeFile, {'attr': {'class': 'file-input', 'accept': '.pdf', 'style': 'position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer;'}}) }}
+                    </div>
+                    {{ form_errors(form.resumeFile) }}
+                </div>
+            </div>
+            
+            <div class="job-details">
+                <h3 class="section-title"><i class="fas fa-info-circle"></i> Récapitulatif de l'offre</h3>
+                
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Poste</div>
+                        <div class="detail-value">{{ publication.title }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Type de contrat</div>
+                        <div class="detail-value">
+                            {% if publication.category == 'job_offer' %}
+                                CDI/CDD
+                            {% elseif publication.category == 'internship' %}
+                                Stage
+                            {% else %}
+                                {{ publication.category }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Entreprise</div>
+                        <div class="detail-value">{{ publication.user.companyName ?? publication.user.username }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Date de publication</div>
+                        <div class="detail-value">{{ publication.createdAt|date('d/m/Y') }}</div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="form-actions">
-                <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="btn-cancel">Annuler</a>
-                <button type="submit" class="btn-submit">Envoyer ma candidature</button>
+                <a href="{{ path('job_seeker_job_details', {'id': publication.id}) }}" class="btn btn-outline">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Envoyer ma candidature
+                </button>
             </div>
-        {{ form_end(form) }}
+            
+            {{ form_end(form) }}
+        </div>
     </div>
 </div>
-{% endblock %}
 
-<style>
-    .apply-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-    }
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des éléments au chargement et au scroll
+        const animateElements = function() {
+            const elements = document.querySelectorAll(
+                '.application-card, .form-section, .job-details'
+            );
+            
+            elements.forEach((element, index) => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if(elementPosition < screenPosition) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
 
-    .apply-header {
-        margin-bottom: 2rem;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 1.5rem;
-    }
+        // Initial state for animation
+        const animatedItems = document.querySelectorAll(
+            '.application-card, .form-section, .job-details'
+        );
+        
+        animatedItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'all 0.5s ease';
+            item.style.transitionDelay = `${index * 0.1}s`;
+        });
 
-    .apply-header h1 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        color: #333;
-    }
-
-    .job-info h2 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        color: #d62828;
-    }
-
-    .company-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        color: #666;
-    }
-
-    .company-name {
-        font-weight: 600;
-    }
-
-    .job-location i {
-        margin-right: 0.3rem;
-    }
-
-    .apply-content {
-        display: flex;
-        gap: 2rem;
-    }
-
-    .apply-form-container {
-        flex: 2;
-    }
-
-    .job-details-sidebar {
-        flex: 1;
-    }
-
-    .apply-form {
-        background: #fff;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .form-group textarea, .form-group input[type="file"] {
-        width: 100%;
-        padding: 0.8rem;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-family: inherit;
-    }
-
-    .form-group textarea:focus {
-        outline: none;
-        border-color: #d62828;
-        box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.1);
-    }
-
-    .form-help {
-        margin-top: 0.5rem;
-        font-size: 0.85rem;
-        color: #666;
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 2rem;
-    }
-
-    .btn-cancel, .btn-submit {
-        padding: 0.8rem 1.5rem;
-        border-radius: 5px;
-        font-weight: 600;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .btn-cancel {
-        background-color: #f8f9fa;
-        color: #333;
-        border: 1px solid #ddd;
-    }
-
-    .btn-cancel:hover {
-        background-color: #e9ecef;
-    }
-
-    .btn-submit {
-        background-color: #d62828;
-        color: white;
-        border: none;
-    }
-
-    .btn-submit:hover {
-        background-color: #ba181b;
-        transform: translateY(-2px);
-    }
-
-    .job-summary, .application-tips {
-        background: #fff;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        margin-bottom: 1.5rem;
-    }
-
-    .job-summary h3, .application-tips h3 {
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-        color: #333;
-        border-bottom: 2px solid #d62828;
-        padding-bottom: 0.5rem;
-        display: inline-block;
-    }
-
-    .summary-item {
-        margin-bottom: 0.8rem;
-        display: flex;
-    }
-
-    .summary-label {
-        font-weight: 600;
-        width: 40%;
-        color: #666;
-    }
-
-    .summary-value {
-        width: 60%;
-    }
-
-    .tips-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .tips-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
-        margin-bottom: 0.8rem;
-    }
-
-    .tips-list i {
-        color: #28a745;
-
-
+        // Trigger animations
+        window.addEventListener('load', animateElements);
+        window.addEventListener('scroll', animateElements);
+        
+        // Gestion du style du fichier uploadé
+        const fileInput = document.querySelector('.file-input');
+        const fileUpload = document.getElementById('file-upload-container');
+        
+        if (fileInput) {
+            // Rendre toute la zone cliquable
+            fileUpload.addEventListener('click', function(e) {
+                if (e.target !== fileInput) {
+                    fileInput.click();
+                }
+            });
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    const fileName = this.files[0].name;
+                    const uploadText = fileUpload.querySelector('.file-upload-text');
+                    const uploadIcon = fileUpload.querySelector('i');
+                    
+                    uploadText.textContent = fileName;
+                    uploadIcon.className = 'fas fa-check-circle';
+                    uploadIcon.style.color = 'var(--success)';
+                    fileUpload.style.borderColor = 'var(--success)';
+                    fileUpload.style.background = 'rgba(40, 167, 69, 0.05)';
+                }
+            });
+            
+            // Gestion du drag and drop
+            fileUpload.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                fileUpload.style.borderColor = 'var(--primary-color)';
+                fileUpload.style.background = 'rgba(214, 40, 40, 0.1)';
+            });
+            
+            fileUpload.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                fileUpload.style.borderColor = 'var(--medium-gray)';
+                fileUpload.style.background = 'rgba(255, 255, 255, 0.5)';
+            });
+            
+            fileUpload.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    
+                    // Déclencher manuellement l'événement change
+                    const event = new Event('change', { bubbles: true });
+                    fileInput.dispatchEvent(event);
+                }
+            });
+        }
+        
+        // S'assurer que le formulaire a l'attribut enctype correct
+        const form = document.querySelector('.application-form');
+        if (form) {
+            form.setAttribute('enctype', 'multipart/form-data');
+            
+            // Animation du bouton de soumission
+            const submitBtn = form.querySelector('.btn-primary');
+            
+            form.addEventListener('submit', function(e) {
+                // Vérifier si un fichier a été sélectionné
+                if (fileInput && fileInput.files.length === 0) {
+                    e.preventDefault();
+                    alert('Veuillez sélectionner un CV à télécharger');
+                    return false;
+                }
+                
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+                submitBtn.disabled = true;
+            });
+        }
+    });
+</script>
+</body>
+</html>

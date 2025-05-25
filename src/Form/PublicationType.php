@@ -42,6 +42,15 @@ class PublicationType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
+            ->add('skills', TextType::class, [
+                'label' => 'Compétences requises',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'Séparez les compétences par des virgules',
+                    'class' => 'form-control'
+                ],
+                'mapped' => false
+            ])
         ;
     }
 

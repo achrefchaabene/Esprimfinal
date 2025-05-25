@@ -104,6 +104,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime_immutable')]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: PreparationProgress::class, cascade: ['persist', 'remove'])]
+    private ?PreparationProgress $preparationProgress = null;
+
     public function __construct()
     {
         $this->jobs = new ArrayCollection();
@@ -577,6 +580,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getPreparationProgress(): ?PreparationProgress
+    {
+        return $this->preparationProgress;
+    }
+
+    public function setPreparationProgress(?PreparationProgress $preparationProgress): self
+    {
+        $this->preparationProgress = $preparationProgress;
+        
+        // Set the owning side of the relation if necessary
+        if ($preparationProgress !== null && $preparationProgress->getUser() !== $this) {
+            $preparationProgress->setUser($this);
+        }
+        
         return $this;
     }
 }

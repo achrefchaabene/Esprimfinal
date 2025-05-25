@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mock Interviews | Interview Preparation{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .badge {
+            background: var(--white);
+            color: var(--primary-color);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        /* Main Content styles */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--white);
+            overflow-y: auto;
+        }
+
+        .welcome-card {
+            background: var(--light-color);
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .welcome-subtitle {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: var(--light-color);
+            color: var(--dark);
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid var(--medium-gray);
+        }
+
+        .btn-secondary:hover {
+            background: var(--medium-gray);
+            color: var(--white);
+        }
+
+        /* Mock Interview styles */
+        .mock-interview-container {
+            margin-top: 2rem;
+        }
+
+        .mock-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .mock-option-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mock-option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .mock-option-card.premium {
+            border: 2px solid #ffd700;
+        }
+
+        .mock-option-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffd700;
+            color: var(--dark);
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .mock-option-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--light-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .mock-option-icon i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .mock-option-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .mock-option-desc {
+            color: var(--medium-gray);
+            margin-bottom: 1rem;
+        }
+
+        .mock-option-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .mock-option-features li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .mock-option-features li i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .btn-start-mock {
+            padding: 0.75rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            margin-top: auto;
+        }
+
+        .btn-start-mock:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-start-mock.premium {
+            background: #ffd700;
+            color: var(--dark);
+        }
+
+        .btn-start-mock.premium:hover {
+            background: #e6c200;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .recent-mocks {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .recent-mock-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .recent-mock-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .recent-mock-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .recent-mock-type {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .recent-mock-type i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .recent-mock-date {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+
+        .recent-mock-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .mock-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+        }
+
+        .recent-mock-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-view-recording, .btn-view-feedback {
+            flex: 1;
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view-recording {
+            background: var(--light-color);
+            color: var(--dark);
+        }
+
+        .btn-view-recording:hover {
+            background: var(--medium-gray);
+            color: white;
+        }
+
+        .btn-view-feedback {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-view-feedback:hover {
+            background: var(--secondary-color);
+        }
+
+        .no-mocks {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            grid-column: 1 / -1;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .interview-setup {
+            margin-top: 1.5rem;
+        }
+
+        .interview-setup h3 {
+            margin-bottom: 1rem;
+        }
+
+        .interview-types, .difficulty-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .interview-type-btn, .difficulty-option-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: 5px;
+            background: var(--light-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interview-type-btn.active, .difficulty-option-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .duration-slider {
+            margin-bottom: 1.5rem;
+        }
+
+        .slider {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .camera-preview {
+            margin: 1.5rem 0;
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #cameraPreview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .camera-controls button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .camera-controls button:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        #startAiInterview {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .welcome-card {
+                padding: 1.5rem;
+            }
+            
+            .mock-options, .recent-mocks {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+            
+            .interview-types, .difficulty-options {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    {% include 'job_seeker/_sidebar.html.twig' with {'active': 'interviews'} %}
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Mock Interviews</h1>
+            <p class="welcome-subtitle">Practice with realistic interview simulations and get feedback to improve your performance</p>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back to Preparation</a>
+        </div>
+        
+        <div class="mock-interview-container">
+            <div class="mock-options">
+                <div class="mock-option-card">
+                    <div class="mock-option-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="mock-option-title">AI-Powered Interview</h3>
+                    <p class="mock-option-desc">Practice with our AI interviewer that adapts to your responses and provides instant feedback.</p>
+                    <ul class="mock-option-features">
+                        <li><i class="fas fa-check"></i> Available 24/7</li>
+                        <li><i class="fas fa-check"></i> Instant feedback</li>
+                        <li><i class="fas fa-check"></i> Multiple interview types</li>
+                        <li><i class="fas fa-check"></i> Voice recognition</li>
+                    </ul>
+                    <button class="btn-start-mock" data-type="ai">Start AI Interview</button>
+                </div>
+                
+                <div class="mock-option-card">
+                    <div class="mock-option-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3 class="mock-option-title">Self-Recording Session</h3>
+                    <p class="mock-option-desc">Record yourself answering interview questions and review your performance.</p>
+                    <ul class="mock-option-features">
+                        <li><i class="fas fa-check"></i> Practice at your own pace</li>
+                        <li><i class="fas fa-check"></i> Review and self-assess</li>
+                        <li><i class="fas fa-check"></i> Customizable questions</li>
+                        <li><i class="fas fa-check"></i> Save recordings for later</li>
+                    </ul>
+                    <button class="btn-start-mock" data-type="self">Start Recording Session</button>
+                </div>
+                
+                <div class="mock-option-card premium">
+                    <div class="mock-option-badge">Premium</div>
+                    <div class="mock-option-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3 class="mock-option-title">Expert Interview Coach</h3>
+                    <p class="mock-option-desc">Schedule a mock interview with a professional career coach for personalized feedback.</p>
+                    <ul class="mock-option-features">
+                        <li><i class="fas fa-check"></i> Industry-specific experts</li>
+                        <li><i class="fas fa-check"></i> Detailed personalized feedback</li>
+                        <li><i class="fas fa-check"></i> Career advice and tips</li>
+                        <li><i class="fas fa-check"></i> Follow-up session included</li>
+                    </ul>
+                    <button class="btn-start-mock premium" data-type="expert">Schedule with Expert</button>
+                </div>
+            </div>
+            
+            <h2 class="section-title"><i class="fas fa-history"></i> Recent Mock Interviews</h2>
+            
+            <div class="recent-mocks">
+                {% if recentMocks is defined and recentMocks|length > 0 %}
+                    {% for mock in recentMocks %}
+                        <div class="recent-mock-card">
+                            <div class="recent-mock-info">
+                                <div class="recent-mock-type">
+                                    {% if mock.type == 'ai' %}
+                                        <i class="fas fa-robot"></i> AI Interview
+                                    {% elseif mock.type == 'self' %}
+                                        <i class="fas fa-video"></i> Self Recording
+                                    {% else %}
+                                        <i class="fas fa-user-tie"></i> Expert Session
+                                    {% endif %}
+                                </div>
+                                <div class="recent-mock-date">{{ mock.date|date('M d, Y') }}</div>
+                            </div>
+                            <div class="recent-mock-stats">
+                                <div class="mock-stat">
+                                    <span class="stat-label">Duration</span>
+                                    <span class="stat-value">{{ mock.duration }} min</span>
+                                </div>
+                                <div class="mock-stat">
+                                    <span class="stat-label">Questions</span>
+                                    <span class="stat-value">{{ mock.questionCount }}</span>
+                                </div>
+                                <div class="mock-stat">
+                                    <span class="stat-label">Score</span>
+                                    <span class="stat-value">{{ mock.score }}%</span>
+                                </div>
+                            </div>
+                            <div class="recent-mock-actions">
+                                <a href="#" class="btn-view-recording">View Recording</a>
+                                <a href="#" class="btn-view-feedback">View Feedback</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-mocks">
+                        <p>You haven't completed any mock interviews yet. Start your first one today!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Interview Modal -->
+<div id="aiInterviewModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>AI-Powered Mock Interview</h2>
+        
+        <div class="interview-setup">
+            <h3>Choose Interview Type</h3>
+            <div class="interview-types">
+                <button class="interview-type-btn active" data-type="general">General</button>
+                <button class="interview-type-btn" data-type="technical">Technical</button>
+                <button class="interview-type-btn" data-type="behavioral">Behavioral</button>
+            </div>
+            
+            <h3>Interview Duration</h3>
+            <div class="duration-slider">
+                <input type="range" min="5" max="30" value="15" class="slider" id="durationSlider">
+                <span id="durationValue">15 minutes</span>
+            </div>
+            
+            <h3>Difficulty Level</h3>
+            <div class="difficulty-options">
+                <button class="difficulty-option-btn" data-difficulty="easy">Easy</button>
+                <button class="difficulty-option-btn active" data-difficulty="medium">Medium</button>
+                <button class="difficulty-option-btn" data-difficulty="hard">Hard</button>
+            </div>
+            
+            <div class="camera-preview">
+                <video id="cameraPreview" autoplay muted></video>
+                <div class="camera-controls">
+                    <button id="toggleCamera"><i class="fas fa-video"></i></button>
+                    <button id="toggleMic"><i class="fas fa-microphone"></i></button>
+                </div>
+            </div>
+            
+            <button id="startAiInterview" class="btn-primary">Start Interview</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Modal functionality
+        const aiModal = document.getElementById('aiInterviewModal');
+        const startAiButtons = document.querySelectorAll('.btn-start-mock[data-type="ai"]');
+        const closeModal = document.querySelector('.close-modal');
+        
+        // Add event listener for self-recording session buttons
+        const startSelfButtons = document.querySelectorAll('.btn-start-mock[data-type="self"]');
+        startSelfButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Redirect to the self-recording session page
+                window.location.href = "{{ path('job_seeker_interviews_self_recording') }}";
+            });
+        });
+        
+        startAiButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                aiModal.style.display = 'block';
+                setupCamera();
+            });
+        });
+        
+        closeModal.addEventListener('click', function() {
+            aiModal.style.display = 'none';
+            stopCamera();
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target == aiModal) {
+                aiModal.style.display = 'none';
+                stopCamera();
+            }
+        });
+        
+        // Interview type selection
+        const interviewTypeButtons = document.querySelectorAll('.interview-type-btn');
+        interviewTypeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                interviewTypeButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Difficulty selection
+        const difficultyButtons = document.querySelectorAll('.difficulty-option-btn');
+        difficultyButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                difficultyButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Ajout des fonctions manquantes pour la caméra
+        let stream = null;
+        
+        function setupCamera() {
+            const cameraPreview = document.getElementById('cameraPreview');
+            
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                    .then(function(mediaStream) {
+                        stream = mediaStream;
+                        cameraPreview.srcObject = mediaStream;
+                        cameraPreview.play();
+                    })
+                    .catch(function(error) {
+                        console.error('Could not access camera:', error);
+                        alert('Please allow camera access to continue with the interview.');
+                    });
+            } else {
+                alert('Your browser does not support camera access. Please use a modern browser.');
+            }
+        }
+        
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                stream = null;
+            }
+        }
+        
+        // Contrôles de caméra et micro
+        const toggleCamera = document.getElementById('toggleCamera');
+        const toggleMic = document.getElementById('toggleMic');
+        
+        toggleCamera.addEventListener('click', function() {
+            if (stream) {
+                const videoTrack = stream.getVideoTracks()[0];
+                videoTrack.enabled = !videoTrack.enabled;
+                this.innerHTML = videoTrack.enabled ? 
+                    '<i class="fas fa-video"></i>' : 
+                    '<i class="fas fa-video-slash"></i>';
+            }
+        });
+        
+        toggleMic.addEventListener('click', function() {
+            if (stream) {
+                const audioTrack = stream.getAudioTracks()[0];
+                audioTrack.enabled = !audioTrack.enabled;
+                this.innerHTML = audioTrack.enabled ? 
+                    '<i class="fas fa-microphone"></i>' : 
+                    '<i class="fas fa-microphone-slash"></i>';
+            }
+        });
+        
+        // Slider de durée
+        const durationSlider = document.getElementById('durationSlider');
+        const durationValue = document.getElementById('durationValue');
+        
+        durationSlider.addEventListener('input', function() {
+            durationValue.textContent = this.value + ' minutes';
+        });
+        
+        // Bouton de démarrage d'interview
+        const startAiInterview = document.getElementById('startAiInterview');
+        
+        startAiInterview.addEventListener('click', function() {
+            const interviewType = document.querySelector('.interview-type-btn.active').getAttribute('data-type');
+            const difficulty = document.querySelector('.difficulty-option-btn.active').getAttribute('data-difficulty');
+            const duration = durationSlider.value;
+            
+            // Rediriger vers la page d'interview avec les paramètres
+            window.location.href = `/job-seeker/interviews/ai-interview?type=${interviewType}&difficulty=${difficulty}&duration=${duration}`;
+        });
+    });
+</script>
+
+
+
+

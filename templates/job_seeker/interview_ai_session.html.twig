@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Session</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .badge {
+            background-color: var(--white);
+            color: var(--primary-color);
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .interview-container {
+            max-width: 900px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .interview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .interview-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .info-item {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            box-shadow: var(--shadow);
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info-item i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .question-container {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .question-number {
+            font-size: 14px;
+            color: var(--medium-gray);
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        #userVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--dark);
+            background: var(--light-color);
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-control {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-control i {
+            margin-right: 8px;
+        }
+
+        .btn-record {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-record:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        .btn-next {
+            background: #007bff;
+            color: var(--white);
+        }
+
+        .btn-next:hover {
+            background: #0069d9;
+            transform: translateY(-3px);
+        }
+
+        .btn-finish {
+            background: #28a745;
+            color: var(--white);
+        }
+
+        .btn-finish:hover {
+            background: #218838;
+            transform: translateY(-3px);
+        }
+
+        .feedback-container {
+            background: var(--light-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .feedback-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .feedback-title i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .feedback-content {
+            font-size: 15px;
+            line-height: 1.6;
+            padding: 15px;
+            background: var(--white);
+            border-radius: 8px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .interview-info {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .interview-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .control-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-file-alt"></i> My CV
+            </a>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="nav-item active">
+                <i class="fas fa-comments"></i> Interviews
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Job Offers
+            </a>
+            <a href="{{ path('conversation_index') }}" class="nav-item">
+                <i class="fas fa-envelope"></i> Messages
+                {% set unread_count = unread_messages_count() %}
+                {% if unread_count > 0 %}
+                    <span class="badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            
+            <a href="{{ path('chatbot') }}" class="nav-item">
+                <i class="fas fa-robot"></i> Assistant Tchala
+            </a>
+            
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="interview-container">
+            <div class="interview-header">
+                <h1>AI Interview Session</h1>
+                <a href="{{ path('job_seeker_interviews_mock_interview') }}" class="btn-control btn-record">
+                    <i class="fas fa-times"></i> Exit Interview
+                </a>
+            </div>
+            
+            <div class="interview-info">
+                <div class="info-item">
+                    <i class="fas fa-tag"></i>
+                    <span>Type: {{ type|capitalize }}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Difficulty: {{ difficulty|capitalize }}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Duration: {{ duration }} minutes</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Questions: {{ questions|length }}</span>
+                </div>
+            </div>
+            
+            <div id="questionContainer" class="question-container">
+                <div class="question-number">Question <span id="currentQuestionNum">1</span> of {{ questions|length }}</div>
+                <div id="questionText" class="question-text">{{ questions[0].text }}</div>
+                
+                <div class="video-container">
+                    <video id="userVideo" autoplay muted></video>
+                </div>
+                
+                <div class="controls">
+                    <div class="timer" id="timer">00:00</div>
+                    <div class="control-buttons">
+                        <button id="recordButton" class="btn-control btn-record">
+                            <i class="fas fa-microphone"></i> Start Recording
+                        </button>
+                        <button id="nextButton" class="btn-control btn-next" disabled>
+                            <i class="fas fa-arrow-right"></i> Next Question
+                        </button>
+                        <button id="finishButton" class="btn-control btn-finish" style="display: none;">
+                            <i class="fas fa-check"></i> Finish Interview
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="feedbackContainer" class="feedback-container">
+                    <div class="feedback-title">
+                        <i class="fas fa-robot"></i> AI Feedback
+                    </div>
+                    <div id="feedbackContent" class="feedback-content">
+                        Your answer will be analyzed here...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des éléments au chargement et au scroll
+        const animateElements = function() {
+            const elements = document.querySelectorAll(
+                '.interview-container, .interview-header, .interview-info, .question-container, .controls, .feedback-container'
+            );
+            
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        };
+
+        // Trigger animations
+        setTimeout(animateElements, 300);
+
+        // Variables
+        const questions = {{ questions|json_encode|raw }};
+        let currentQuestionIndex = 0;
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let timerInterval;
+        let seconds = 0;
+        let stream;
+        
+        // Elements
+        const questionText = document.getElementById('questionText');
+        const currentQuestionNum = document.getElementById('currentQuestionNum');
+        const recordButton = document.getElementById('recordButton');
+        const nextButton = document.getElementById('nextButton');
+        const finishButton = document.getElementById('finishButton');
+        const timer = document.getElementById('timer');
+        const userVideo = document.getElementById('userVideo');
+        const feedbackContainer = document.getElementById('feedbackContainer');
+        const feedbackContent = document.getElementById('feedbackContent');
+        
+        // Setup camera
+        async function setupCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                userVideo.srcObject = stream;
+                
+                // Setup media recorder
+                mediaRecorder = new MediaRecorder(stream);
+                
+                mediaRecorder.ondataavailable = function(e) {
+                    audioChunks.push(e.data);
+                };
+                
+                mediaRecorder.onstop = function() {
+                    // Process recording
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    
+                    // Simulate AI feedback (in a real app, you'd send this to your backend)
+                    setTimeout(() => {
+                        generateFeedback();
+                    }, 1500);
+                };
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                alert('Please allow camera and microphone access to continue with the interview.');
+            }
+        }
+        
+        // Start setup
+        setupCamera();
+        
+        // Record button
+        recordButton.addEventListener('click', function() {
+            if (!isRecording) {
+                // Start recording
+                audioChunks = [];
+                mediaRecorder.start();
+                isRecording = true;
+                
+                // Update UI
+                recordButton.innerHTML = '<i class="fas fa-stop"></i> Stop Recording';
+                recordButton.classList.add('recording');
+                
+                // Start timer
+                seconds = 0;
+                timer.textContent = '00:00';
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    const minutes = Math.floor(seconds / 60);
+                    const remainingSeconds = seconds % 60;
+                    timer.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            } else {
+                // Stop recording
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                // Update UI
+                recordButton.innerHTML = '<i class="fas fa-microphone"></i> Start Recording';
+                recordButton.classList.remove('recording');
+                
+                // Stop timer
+                clearInterval(timerInterval);
+                
+                // Enable next button
+                nextButton.disabled = false;
+            }
+        });
+        
+        // Next button
+        nextButton.addEventListener('click', function() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                // Show next question
+                updateQuestion();
+                
+                // Reset UI
+                nextButton.disabled = true;
+                feedbackContainer.style.display = 'none';
+            } else {
+                // End of interview
+                finishInterview();
+            }
+        });
+        
+        // Finish button
+        finishButton.addEventListener('click', function() {
+            // Redirect to results page (in a real app)
+            window.location.href = '{{ path('job_seeker_interviews_mock_interview') }}';
+        });
+        
+        // Update question
+        function updateQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionText.textContent = question.text;
+            currentQuestionNum.textContent = currentQuestionIndex + 1;
+            
+            // Show finish button on last question
+            if (currentQuestionIndex === questions.length - 1) {
+                nextButton.style.display = 'none';
+                finishButton.style.display = 'block';
+            }
+        }
+        
+        // Generate feedback
+        function generateFeedback() {
+            // Sample feedback templates
+            const feedbackTemplates = [
+                "Your answer was clear and structured. You provided good examples to support your points. To improve, consider adding more specific details about the outcomes of your actions.",
+                "You demonstrated good communication skills in your response. Your answer could be strengthened by more clearly connecting your experience to the specific requirements of the role.",
+                "Your answer showed your problem-solving abilities. For improvement, try to be more concise and focus on the most relevant aspects of your experience.",
+                "You provided a thoughtful response with good examples. To enhance your answer, consider using the STAR method (Situation, Task, Action, Result) more explicitly.",
+                "Your answer highlighted your relevant skills well. To make it even stronger, quantify your achievements with specific metrics or results when possible."
+            ];
+            
+            // Select random feedback
+            const feedback = feedbackTemplates[Math.floor(Math.random() * feedbackTemplates.length)];
+            
+            // Display feedback
+            feedbackContent.textContent = feedback;
+            feedbackContainer.style.display = 'block';
+        }
+        
+        // Finish interview
+        function finishInterview() {
+            // In a real app, you would save the interview results to the database
+            alert('Interview completed! Redirecting to summary...');
+            window.location.href = '{{ path('job_seeker_interviews_mock_interview') }}';
+        }
+    });
+</script>

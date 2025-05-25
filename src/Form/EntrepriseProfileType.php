@@ -156,11 +156,3 @@ class EntrepriseProfileType extends AbstractType
         ]);
     }
 }
-
-
-
-
-
-
-
-

@@ -365,7 +365,7 @@
             <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item active">
                 <i class="fas fa-briefcase"></i> Offres d'emploi
             </a>
-            <a href="{{ path('job_seeker_applications') }}" class="nav-item">
+            <a href="{{ path('job_seeker_applications_index') }}" class="nav-item">
                 <i class="fas fa-paper-plane"></i> Mes candidatures
             </a>
             <a href="" class="nav-item">
@@ -416,7 +416,11 @@
         </div>
         
         <div class="job-content">
-            {{ publication.content|raw }}
+            {% if publication.content %}
+                {{ publication.content|raw }}
+            {% else %}
+                <p>Aucun contenu disponible pour cette publication.</p>
+            {% endif %}
         </div>
         
         <div class="job-actions">

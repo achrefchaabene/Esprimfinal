@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Behavioral Question</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Style inspiré du welcome-panel */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name {
+            color: var(--white);
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+
+        .profile-email {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        .badge {
+            background-color: var(--white);
+            color: var(--primary-color);
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        /* Main Content - Style inspiré du register-panel */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--white);
+            overflow-y: auto;
+        }
+
+        .practice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+        
+        .question-card {
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .question-category {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .recording-controls {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+        
+        .btn-record {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+        }
+        
+        .btn-record:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+        }
+        
+        .btn-record.recording {
+            background: linear-gradient(135deg, #dc3545, #c81f2d);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+            }
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-left: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .feedback-section {
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+        
+        .feedback-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        #feedbackContent {
+            background-color: var(--white);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        
+        .tips-section {
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+        
+        .tips-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tips-section h3 i {
+            color: var(--primary-color);
+        }
+        
+        .tips-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .tips-list li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .tips-list li:before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+        
+        .btn-primary, .btn-secondary {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            box-shadow: 0 4px 15px rgba(214, 40, 40, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(214, 40, 40, 0.4);
+        }
+        
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark);
+            border: none;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--medium-gray);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .practice-container {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .recording-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .timer {
+                margin-left: 0;
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar - Style inspiré du welcome-panel -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-file-alt"></i> My CV
+            </a>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="nav-item active">
+                <i class="fas fa-comments"></i> Interviews
+            </a>
+            <a href="{{ path('job_seeker_messages_index') }}" class="nav-item">
+                <i class="fas fa-envelope"></i> Messages
+                <span class="badge">3</span>
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Job Offers
+            </a>
+            <a href="{{ path('conversation_index') }}" class="nav-item">
+                <i class="fas fa-envelope"></i> Messages
+                {% set unread_count = unread_messages_count() %}
+                {% if unread_count > 0 %}
+                    <span class="badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            
+            <a href="{{ path('chatbot') }}" class="nav-item">
+                <i class="fas fa-robot"></i> Assistant Tchala
+            </a>
+            
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="practice-container">
+            <h1 class="mb-4">Practice Your Answer</h1>
+            
+            <div class="question-card">
+                <span class="question-category">{{ question.category }}</span>
+                <p class="question-text">{{ question.text }}</p>
+            </div>
+            
+            <div class="recording-controls">
+                <button id="recordButton" class="btn-record">
+                    <i class="fas fa-microphone"></i> Start Recording
+                </button>
+                <div id="timer" class="timer">00:00</div>
+            </div>
+            
+            <form id="practiceForm" action="{{ path('job_seeker_interview_practice_question', {'id': question.id}) }}" method="post" style="display: none;">
+                <input type="hidden" name="recording_url" id="recordingUrl" value="">
+                <input type="hidden" name="feedback" id="feedbackInput" value="">
+                
+                <div class="feedback-section">
+                    <h3><i class="fas fa-robot"></i> AI Feedback</h3>
+                    <div id="feedbackContent">
+                        <p>Your answer will be analyzed here...</p>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="{{ path('job_seeker_interview_behavioral_questions') }}" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Questions
+                    </a>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Save Practice Session
+                    </button>
+                </div>
+            </form>
+            
+            <div class="tips-section">
+                <h3><i class="fas fa-lightbulb"></i> Tips for Answering Behavioral Questions</h3>
+                <ul class="tips-list">
+                    <li>Use the STAR method: Situation, Task, Action, Result</li>
+                    <li>Be specific and provide concrete examples</li>
+                    <li>Focus on your individual contribution, even when discussing team efforts</li>
+                    <li>Keep your answer concise and relevant</li>
+                    <li>Practice your delivery, but avoid sounding rehearsed</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des éléments au chargement et au scroll
+        const animateElements = function() {
+            const elements = document.querySelectorAll(
+                '.practice-container, .recording-controls, .feedback-section, .tips-section, .action-buttons'
+            );
+            
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        };
+
+        // Initial state for animation
+        const animatedItems = document.querySelectorAll(
+            '.practice-container, .recording-controls, .feedback-section, .tips-section, .action-buttons'
+        );
+        
+        animatedItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+        });
+
+        // Trigger animations
+        window.addEventListener('load', animateElements);
+
+        // Fonctionnalité d'enregistrement
+        const recordButton = document.getElementById('recordButton');
+        const timerElement = document.getElementById('timer');
+        const practiceForm = document.getElementById('practiceForm');
+        const feedbackContent = document.getElementById('feedbackContent');
+        const feedbackInput = document.getElementById('feedbackInput');
+        
+        let isRecording = false;
+        let timerInterval;
+        let seconds = 0;
+        let mediaRecorder;
+        let audioChunks = [];
+        
+        recordButton.addEventListener('click', function() {
+            if (!isRecording) {
+                // Démarrer l'enregistrement
+                startRecording();
+            } else {
+                // Arrêter l'enregistrement
+                stopRecording();
+            }
+        });
+        
+        function startRecording() {
+            // Demander l'accès au microphone
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    
+                    mediaRecorder.ondataavailable = function(e) {
+                        audioChunks.push(e.data);
+                    };
+                    
+                    mediaRecorder.onstop = function() {
+                        // Créer un blob audio à partir des chunks
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                        
+                        // Simuler l'analyse de l'IA (dans une application réelle, vous enverriez l'audio à un serveur)
+                        setTimeout(() => {
+                            // Afficher le formulaire avec le feedback
+                            practiceForm.style.display = 'block';
+                            
+                            // Exemple de feedback (à remplacer par une vraie analyse)
+                            const feedback = "Your answer demonstrates good structure using the STAR method. You provided a clear situation and explained your actions well. To improve, consider adding more specific metrics about the results you achieved.";
+                            
+                            feedbackContent.innerHTML = `<p>${feedback}</p>`;
+                            feedbackInput.value = feedback;
+                            
+                            // Créer une URL pour l'audio enregistré
+                            const audioUrl = URL.createObjectURL(audioBlob);
+                            document.getElementById('recordingUrl').value = audioUrl;
+                            
+                            // Ajouter un lecteur audio
+                            const audioElement = document.createElement('audio');
+                            audioElement.src = audioUrl;
+                            audioElement.controls = true;
+                            audioElement.style.width = '100%';
+                            audioElement.style.marginTop = '1rem';
+                            
+                            feedbackContent.appendChild(audioElement);
+                        }, 1500);
+                    };
+                    
+                    // Démarrer l'enregistrement
+                    mediaRecorder.start();
+                    audioChunks = [];
+                    isRecording = true;
+                    
+                    // Mettre à jour l'interface
+                    recordButton.innerHTML = '<i class="fas fa-stop"></i> Stop Recording';
+                    recordButton.classList.add('recording');
+                    
+                    // Démarrer le timer
+                    seconds = 0;
+                    timerElement.textContent = '00:00';
+                    timerInterval = setInterval(() => {
+                        seconds++;
+                        const minutes = Math.floor(seconds / 60);
+                        const remainingSeconds = seconds % 60;
+                        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                    }, 1000);
+                })
+                .catch(error => {
+                    console.error('Error accessing microphone:', error);
+                    alert('Please allow microphone access to record your answer.');
+                });
+        }
+        
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                // Arrêter l'enregistrement
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                
+                // Arrêter le timer
+                clearInterval(timerInterval);
+                
+                // Mettre à jour l'interface
+                isRecording = false;
+                recordButton.innerHTML = '<i class="fas fa-microphone"></i> Start Recording';
+                recordButton.classList.remove('recording');
+            }
+        }
+    });
+</script>
+
+

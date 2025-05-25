@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Interview Preparation{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Style inspiré du welcome-panel */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .badge {
+            background: var(--white);
+            color: var(--primary-color);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        /* Main Content - Style inspiré du register-panel */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--white);
+            overflow-y: auto;
+        }
+
+        .welcome-card {
+            background: var(--light-color);
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .welcome-subtitle {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Progress Overview */
+        .progress-overview {
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .progress-bar-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .progress-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: var(--light-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* Preparation Categories */
+        .preparation-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--light-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .category-icon i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .category-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .category-desc {
+            color: var(--medium-gray);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+        
+        .category-progress {
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .welcome-card {
+                padding: 1.5rem;
+            }
+            
+            .preparation-categories {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .preparation-categories {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar - Style inspiré du welcome-panel -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-file-alt"></i> My CV
+            </a>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="nav-item active">
+                <i class="fas fa-comments"></i> Interviews
+            </a>
+            <a href="{{ path('job_seeker_messages_index') }}" class="nav-item">
+                <i class="fas fa-envelope"></i> Messages
+                <span class="badge">3</span>
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Job Offers
+            </a>
+            <a href="{{ path('conversation_index') }}" class="nav-item">
+                <i class="fas fa-envelope"></i> Messages
+                {% set unread_count = unread_messages_count() %}
+                {% if unread_count > 0 %}
+                    <span class="badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            
+            <a href="{{ path('chatbot') }}" class="nav-item">
+                <i class="fas fa-robot"></i> Assistant Tchala
+            </a>
+            
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Interview Preparation</h1>
+            <p class="welcome-subtitle">Prepare for your interviews with our comprehensive tools and resources</p>
+        </div>
+        
+        <div class="progress-overview">
+            <div class="progress-bar-container">
+                <div class="progress-label">Overall Progress</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ progress.totalProgress }}%;">
+                        <span class="progress-text">{{ progress.totalProgress }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preparation-categories">
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h3 class="category-title">Common Questions</h3>
+                <p class="category-desc">Practice answering frequently asked interview questions</p>
+                <div class="category-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ progress.commonQuestionsProgress }}%;">
+                            <span class="progress-text">{{ progress.commonQuestionsProgress }}%</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ path('job_seeker_interviews_common_questions') }}" class="btn-primary">Start Practicing</a>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 class="category-title">Technical Challenges</h3>
+                <p class="category-desc">Solve coding problems and technical challenges</p>
+                <div class="category-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ progress.technicalChallengesProgress }}%;">
+                            <span class="progress-text">{{ progress.technicalChallengesProgress }}%</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ path('job_seeker_interviews_technical_challenges') }}" class="btn-primary">Solve Challenges</a>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 class="category-title">Behavioral Questions</h3>
+                <p class="category-desc">Practice answering behavioral and situational questions</p>
+                <div class="category-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ progress.behavioralQuestionsProgress }}%;">
+                            <span class="progress-text">{{ progress.behavioralQuestionsProgress }}%</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ path('job_seeker_interviews_behavioral_questions') }}" class="btn-primary">Start Practicing</a>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h3 class="category-title">Mock Interviews</h3>
+                <p class="category-desc">Practice with realistic interview simulations</p>
+                <div class="category-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ progress.mockInterviewCompleted ? 100 : 0 }}%;">
+                            <span class="progress-text">{{ progress.mockInterviewCompleted ? '1/1' : '0/1' }}</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ path('job_seeker_interviews_mock_interview') }}" class="btn-primary">Start Mock Interview</a>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3 class="category-title">Company Research</h3>
+                <p class="category-desc">Learn how to research companies effectively</p>
+                <div class="category-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ progress.companyResearchProgress }}%;">
+                            <span class="progress-text">{{ progress.companyResearchProgress }}%</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ path('job_seeker_interviews_company_research') }}" class="btn-primary">Start Learning</a>
+            </div>
+            
+            <div class="category-card">
+                <div class="category-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <h3 class="category-title">Salary Negotiation</h3>
+                <p class="category-desc">Learn effective salary negotiation techniques</p>
+                <div class="category-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ progress.salaryNegotiationProgress }}%;">
+                            <span class="progress-text">{{ progress.salaryNegotiationProgress }}%</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ path('job_seeker_interviews_salary_negotiation') }}" class="btn-primary">Start Learning</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des éléments au chargement et au scroll
+        const animateElements = function() {
+            const elements = document.querySelectorAll(
+                '.progress-overview, .category-card'
+            );
+            
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        };
+
+        // Exécuter l'animation après un court délai
+        setTimeout(animateElements, 300);
+
+        // Animation au scroll
+        window.addEventListener('scroll', function() {
+            const elements = document.querySelectorAll(
+                '.category-card:not([style*="opacity: 1"])'
+            );
+            
+            elements.forEach((element, index) => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if(elementPosition < screenPosition) {
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, 100 * index);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
+
+
+
+
+
+

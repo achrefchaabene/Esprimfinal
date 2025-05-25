@@ -16,6 +16,8 @@ class Publication{
     #[ORM\Column(nullable: true)]    private ?\DateTimeImmutable $updatedAt = null;
     #[ORM\ManyToOne(inversedBy: 'publications')]
     #[ORM\JoinColumn(nullable: false)]    private ?User $user = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $skills = null;
     public function getId(): ?int
     {        return $this->id;
     }
@@ -56,6 +58,15 @@ class Publication{
         return $this->user;    }
     public function setUser(?User $user): static
     {        $this->user = $user;
+        return $this;
+    }
+    public function getSkills(): ?string
+    {
+        return $this->skills;
+    }
+    public function setSkills(?string $skills): self
+    {
+        $this->skills = $skills;
         return $this;
     }
 }

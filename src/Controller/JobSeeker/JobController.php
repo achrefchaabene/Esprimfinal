@@ -27,8 +27,15 @@ class JobController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_JOB_SEEKER');
         
+        $publication = $publicationRepository->find($id);
+        
+        // Vérifiez que la publication existe
+        if (!$publication) {
+            throw $this->createNotFoundException('Publication non trouvée');
+        }
+        
         return $this->render('job_seeker/job_details.html.twig', [
-            'publication' => $publicationRepository->find($id),
+            'publication' => $publication,
         ]);
     }
 }
