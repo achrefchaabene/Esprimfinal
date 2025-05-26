@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Salary Negotiation | Interview Preparation{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .badge {
+            background: var(--white);
+            color: var(--primary-color);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        /* Main Content styles */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--white);
+            overflow-y: auto;
+        }
+
+        .welcome-card {
+            background: var(--light-color);
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .welcome-subtitle {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: var(--light-color);
+            color: var(--dark);
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid var(--medium-gray);
+        }
+
+        .btn-secondary:hover {
+            background: var(--medium-gray);
+            color: var(--white);
+        }
+
+        /* Salary Negotiation specific styles */
+        .negotiation-container {
+            margin-top: 2rem;
+        }
+
+        .negotiation-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .negotiation-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-card {
+            background: var(--light-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .step-number {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border-radius: 0 10px 0 10px;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding-right: 2.5rem;
+        }
+
+        .step-description {
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .tips-list {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .tips-list li {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .tips-list li:before {
+            content: '\f0da';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+
+        .calculator-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .calculator-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .calculator-result {
+            background: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .result-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .result-explanation {
+            color: var(--medium-gray);
+        }
+
+        .btn-calculate {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-calculate:hover {
+            background: var(--secondary-color);
+        }
+
+        .resources-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .resource-card {
+            background: var(--light-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .resource-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .resource-icon i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .resource-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .resource-description {
+            color: var(--medium-gray);
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .btn-resource {
+            display: inline-block;
+            background: white;
+            color: var(--dark);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid var(--medium-gray);
+        }
+
+        .btn-resource:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .welcome-card {
+                padding: 1.5rem;
+            }
+            
+            .negotiation-steps, .resources-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    {% include 'job_seeker/_sidebar.html.twig' with {'active': 'interviews'} %}
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Salary Negotiation</h1>
+            <p class="welcome-subtitle">Learn effective strategies to negotiate your compensation package and maximize your value</p>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back to Preparation</a>
+        </div>
+        
+        <!-- Moved calculator section to top of page -->
+        <div class="calculator-section">
+            <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+            <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+            
+            <div class="calculator-form">
+                <div class="form-group">
+                    <label for="position">Position</label>
+                    <input type="text" id="position" placeholder="e.g., Software Developer">
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience">Years of Experience</label>
+                    <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" placeholder="e.g., New York">
+                </div>
+                
+                <div class="form-group">
+                    <label for="industry">Industry</label>
+                    <input type="text" id="industry" placeholder="e.g., Technology">
+                </div>
+            </div>
+            
+            <!-- Added calculate button -->
+            <button id="calculateButton" class="btn-calculate">
+                <i class="fas fa-calculator"></i> Calculate Salary Range
+            </button>
+            
+            <div class="calculator-result" id="calculatorResult">
+                <h3 class="result-title">Estimated Salary Range</h3>
+                <div class="result-value" id="salaryRange">$0 - $0</div>
+                <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+            </div>
+        </div>
+        
+        <div class="negotiation-container">
+            <div class="negotiation-section" id="introduction">
+                <h2 class="section-title"><i class="fas fa-info-circle"></i> Introduction to Salary Negotiation</h2>
+                <p>Negotiating your salary is a critical part of the job search process. Research shows that failing to negotiate your starting salary can cost you up to $500,000 over the course of your career. This guide will help you prepare for salary discussions and maximize your compensation package.</p>
+                
+                <div class="negotiation-steps">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">Research Market Rates</h3>
+                        <p class="step-description">Before any negotiation, research salary ranges for your position, industry, and location using resources like Glassdoor, PayScale, and industry reports.</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">Know Your Value</h3>
+                        <p class="step-description">Identify your unique skills, experiences, and achievements that make you valuable to the employer and justify your desired compensation.</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">Consider the Full Package</h3>
+                        <p class="step-description">Look beyond base salary to benefits, bonuses, stock options, flexible work arrangements, and professional development opportunities.</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <h3 class="step-title">Practice Your Pitch</h3>
+                        <p class="step-description">Rehearse your negotiation conversation, including how you'll respond to pushback or difficult questions.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="negotiation-section" id="tips">
+                <h2 class="section-title"><i class="fas fa-lightbulb"></i> Key Negotiation Strategies</h2>
+                
+                <ul class="tips-list">
+                    <li><strong>Let them make the first offer.</strong> If possible, avoid being the first to name a number. When asked about salary expectations, you can redirect by asking about their budget for the role.</li>
+                    <li><strong>Use a salary range.</strong> When you do share your expectations, provide a range with your target salary at the lower end.</li>
+                    <li><strong>Focus on value, not need.</strong> Base your negotiation on the value you bring to the company, not on your personal financial needs.</li>
+                    <li><strong>Be collaborative, not adversarial.</strong> Frame the negotiation as finding a solution that works for both parties.</li>
+                    <li><strong>Get it in writing.</strong> Once you've reached an agreement, request a written offer that includes all the details you've negotiated.</li>
+                    <li><strong>Don't rush.</strong> It's acceptable to ask for time to consider an offer. Use this time to evaluate all aspects of the package.</li>
+                    <li><strong>Practice silence.</strong> After stating your case, resist the urge to fill silence. Let the other party respond.</li>
+                </ul>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">
+                    <h3 class="result-title">Estimated Salary Range</h3>
+                    <div class="result-value" id="salaryRange">$0 - $0</div>
+                    <p class="result-explanation" id="resultExplanation">Complete the form and click calculate to see your estimated salary range.</p>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> Salary Calculator</h2>
+                <p>Use this calculator to determine a target salary range based on your experience, skills, and market data.</p>
+                
+                <div class="calculator-form">
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" placeholder="e.g., Software Developer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <input type="number" id="experience" min="0" max="50" placeholder="e.g., 5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="e.g., New York">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" placeholder="e.g., Technology">
+                    </div>
+                </div>
+                
+                <div class="calculator-result" id="calculatorResult">

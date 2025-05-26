@@ -493,14 +493,49 @@
 
                 <div class="form-group">
                     <i class="fas fa-industry input-icon"></i>
-                    {{ form_row(registrationForm.industry, {
-                        'label': 'Industry',
-                        'attr': {
-                            'class': 'form-control select-industry',
-                            'placeholder': 'Select your industry'
-                        }
-                    }) }}
+                    <label for="industry">Industry</label>
+                    <select id="industry" name="industry" class="form-control select-industry" onchange="checkOtherIndustry()">
+                        <option value="">Sélectionnez un secteur</option>
+                        <option value="Informatique / IT">Informatique / IT</option>
+                        <option value="Marketing / Communication">Marketing / Communication</option>
+                        <option value="Finance / Banque">Finance / Banque</option>
+                        <option value="Santé / Médical">Santé / Médical</option>
+                        <option value="Éducation / Formation">Éducation / Formation</option>
+                        <option value="Ingénierie / Technique">Ingénierie / Technique</option>
+                        <option value="Commerce / Vente">Commerce / Vente</option>
+                        <option value="Mécanique / Automobile">Mécanique / Automobile</option>
+                        <option value="Bâtiment / Construction">Bâtiment / Construction</option>
+                        <option value="Hôtellerie / Restauration">Hôtellerie / Restauration</option>
+                        <option value="Transport / Logistique">Transport / Logistique</option>
+                        <option value="Juridique / Droit">Juridique / Droit</option>
+                        <option value="Ressources Humaines">Ressources Humaines</option>
+                        <option value="Autre">Autre</option>
+                    </select>
                 </div>
+
+                <div id="otherIndustryGroup" class="form-group" style="display: none;">
+                    <i class="fas fa-pencil-alt input-icon"></i>
+                    <label for="otherIndustry">Précisez votre secteur</label>
+                    <input type="text" id="otherIndustry" name="otherIndustry" class="form-control" placeholder="Précisez votre secteur d'activité">
+                </div>
+
+                <script>
+                    function checkOtherIndustry() {
+                        const industrySelect = document.getElementById('industry');
+                        const otherIndustryGroup = document.getElementById('otherIndustryGroup');
+                        
+                        if (industrySelect.value === 'Autre') {
+                            otherIndustryGroup.style.display = 'block';
+                        } else {
+                            otherIndustryGroup.style.display = 'none';
+                        }
+                    }
+                    
+                    // Vérifier l'état initial au chargement de la page
+                    document.addEventListener('DOMContentLoaded', function() {
+                        checkOtherIndustry();
+                    });
+                </script>
 
                 {% if registrationForm.address is defined %}
                 <div class="form-group">

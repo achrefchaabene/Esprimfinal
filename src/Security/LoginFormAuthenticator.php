@@ -57,25 +57,21 @@ class LoginFormAuthenticator extends AbstractAuthenticator
 
         $user = $token->getUser();
         
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            return new RedirectResponse($this->urlGenerator->generate('admin_dashboard'));
+        }
+        
         if (in_array('ROLE_JOB_SEEKER', $user->getRoles())) {
             return new RedirectResponse($this->urlGenerator->generate('job_seeker_home'));
         }
         
         if (in_array('ROLE_COMPANY', $user->getRoles())) {
-            // Utiliser la route correcte app_entreprise_home
             return new RedirectResponse($this->urlGenerator->generate('app_entreprise_home'));
         }
-        
-        if (in_array('ROLE_ADMIN', $user->getRoles())) {
-            return new RedirectResponse($this->urlGenerator->generate('admin_dashboard'));
-        }
-        if (in_array('admin', $user->getRoles())) {
-            return new RedirectResponse($this->urlGenerator->generate('admin_dashboard'));
-
 
         // Par défaut, rediriger vers la page d'accueil
-        return new RedirectResponse($this->urlGenerator->generate('app_first_page'));
-    }}
+        return new RedirectResponse($this->urlGenerator->generate('app_home'));
+    }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {

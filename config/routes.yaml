@@ -3,19 +3,28 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
-app_first_page:
-    path: /
-    controller: App\Controller\FirstPageController::index
-# Remove this conflicting route definition
-# entreprise_edit_profile:
-#    path: /entreprise/profile/edit
-#    controller: App\Controller\EntrepriseController::editProfile
-# Si vous préférez définir la route ici plutôt que d'utiliser les attributs
-app_entreprise_home:
-    path: /entreprise
-    controller: App\Controller\EntrepriseController::index
-# Assurez-vous que cette route est définie correctement
-entreprise_statistics_index:
-    path: /entreprise/statistics/
-    controller: App\Controller\Entreprise\StatisticsController::index
+
+# Routes pour l'administration
+admin_home:
+    path: /admin
+    controller: App\Controller\AdminController::index
+
+admin_dashboard:
+    path: /admin/dashboard
+    controller: App\Controller\AdminController::dashboard
+
+admin_companies:
+    path: /admin/companies
+    controller: App\Controller\AdminController::companies
+
+admin_job_seekers:
+    path: /admin/job-seekers
+    controller: App\Controller\AdminController::jobSeekers
+
+admin_approve_company:
+    path: /admin/company/{id}/approve
+    controller: App\Controller\AdminController::approveCompany
+
+
+
 

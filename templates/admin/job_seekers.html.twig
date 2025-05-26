@@ -1,62 +1,240 @@
-{# templates/admin/job_seekers.html.twig #}
 {% extends 'admin/base-admin.html.twig' %}
 
 {% block title %}Gestion des Candidats{% endblock %}
 
-{% block content %}
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h1>Gestion des Candidats</h1>
-        </div>
-    </div>
+{# --- Ajout du bloc stylesheets pour intégrer le CSS --- #}
+{% block stylesheets %}
+    {{ parent() }} {# Gardez ceci si base-admin.html.twig étend un autre template #}
+    <style>
+        /* admin_custom_styles.css intégré avec améliorations et styles pour job_seekers */
 
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Liste des Candidats</h6>
-            <div class="d-flex">
-                <input type="text" class="form-control mr-2" placeholder="Rechercher...">
-                <button class="btn btn-primary">Exporter</button>
+        /* Variables de couleur */
+        :root {
+            --admin-primary-red: #B83227;
+            --admin-card-bg: #ffffff;
+            --admin-card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            --admin-card-radius: 15px;
+            --admin-text-dark: #333;
+            --admin-text-light: #fff;
+            --admin-btn-radius: 8px;
+            --admin-content-bg: #f8f9fa;
+            --admin-info-blue: #17a2b8; /* Couleur pour bouton Info */
+            --admin-warning-orange: #ffc107; /* Couleur pour bouton Warning */
+            --admin-danger-red: #dc3545; /* Couleur pour bouton Danger */
+            --admin-grey-badge: #6c757d; /* Couleur pour badges compétences */
+        }
+
+        /* Style général */
+        .admin-content-area {
+            padding: 2rem;
+            background-color: var(--admin-content-bg);
+            min-height: calc(100vh - 56px);
+        }
+
+        /* Style des cartes */
+        .card.shadow.mb-4 {
+            border: none;
+            border-radius: var(--admin-card-radius);
+            box-shadow: var(--admin-card-shadow);
+            background-color: var(--admin-card-bg);
+        }
+
+        .card.shadow.mb-4 .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid #eee;
+            padding: 1rem 1.25rem;
+            border-top-left-radius: var(--admin-card-radius);
+            border-top-right-radius: var(--admin-card-radius);
+            display: flex; /* Pour aligner titre et boutons/recherche */
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Titres des cartes en rouge */
+        .card.shadow.mb-4 .card-header h1,
+        .card.shadow.mb-4 .card-header h6 {
+            color: var(--admin-primary-red);
+            font-weight: bold;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        /* Style pour la zone de recherche et export */
+        .card-header .search-export-zone {
+            display: flex;
+            align-items: center;
+        }
+        .card-header .search-export-zone .form-control {
+            border-radius: var(--admin-btn-radius);
+            margin-right: 0.5rem;
+            max-width: 250px; /* Limiter la largeur */
+        }
+        .card-header .search-export-zone .btn-primary {
+            background-color: var(--admin-primary-red);
+            border-color: var(--admin-primary-red);
+            color: var(--admin-text-light);
+            border-radius: var(--admin-btn-radius);
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+        }
+        .card-header .search-export-zone .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Style de base pour la table */
+        .table {
+            margin-bottom: 0;
+        }
+        .table thead th {
+            border-bottom: 2px solid #dee2e6;
+            color: var(--admin-text-dark);
+            font-weight: 600;
+            white-space: nowrap; /* Empêcher le retour à la ligne des titres */
+        }
+        .table tbody tr:hover {
+            background-color: rgba(0,0,0,0.03);
+        }
+        .table td, .table th {
+            vertical-align: middle; /* Centrer verticalement le contenu */
+        }
+
+        /* Style des badges compétences */
+        .badge.bg-primary {
+            background-color: var(--admin-grey-badge) !important; /* Utiliser gris pour compétences */
+            border-radius: var(--admin-btn-radius);
+            padding: 0.4em 0.7em;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 3px; /* Espacement entre badges */
+            margin-bottom: 3px; /* Espacement vertical */
+            display: inline-block;
+        }
+
+        /* Style des boutons d'action dans le tableau */
+        .table .btn {
+            border-radius: var(--admin-btn-radius);
+            padding: 0.375rem 0.9rem;
+            font-size: 0.75rem; /* Plus petit pour actions */
+            font-weight: 600;
+            color: var(--admin-text-light);
+            border: none;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-right: 5px; /* Espacement entre boutons */
+        }
+        .table .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+        .table .btn-info {
+            background-color: var(--admin-info-blue);
+        }
+        .table .btn-warning {
+            background-color: var(--admin-warning-orange);
+            color: var(--admin-text-dark); /* Texte sombre sur orange */
+        }
+        .table .btn-danger {
+            background-color: var(--admin-danger-red);
+        }
+
+        /* Ajustements pour les messages flash */
+        .alert {
+            border-radius: var(--admin-btn-radius);
+            box-shadow: var(--admin-card-shadow);
+            border: none;
+        }
+
+        /* Titre principal H1 */
+        .admin-content-area > h1 {
+            color: var(--admin-text-dark);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+    </style>
+{% endblock %}
+{# --- Fin du bloc stylesheets --- #}
+
+{% block content %}
+    <div class="admin-content-area">
+        {# Titre principal de la page #}
+        <h1>Gestion des Candidats</h1>
+
+        {# Affichage des messages flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show mb-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {# Carte contenant le tableau des candidats #}
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                {# Titre de la carte #}
+                <h6 class="m-0">Liste des Candidats</h6>
+                {# Zone de recherche et export #}
+                <div class="search-export-zone">
+                    <input type="text" class="form-control" placeholder="Rechercher...">
+                    <button class="btn btn-primary">Exporter</button>
+                </div>
             </div>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Nom Complet</th>
-                        <th>Email</th>
-                        <th>Téléphone</th>
-                        <th>Adresse</th>
-                        <th>Formation</th>
-                        <th>Expérience</th>
-                        <th>Compétences</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for seeker in jobSeekers %}
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
                         <tr>
-                            <td>{{ seeker.firstName }} {{ seeker.lastName }}</td>
-                            <td>{{ seeker.email }}</td>
-                            <td>{{ seeker.phone }}</td>
-                            <td>{{ seeker.address }}</td>
-                            <td>{{ seeker.education }}</td>
-                            <td>{{ seeker.experience }}</td>
-                            <td>
-                                {% for skill in seeker.skills %}
-                                    <span class="badge bg-primary">{{ skill }}</span>
-                                {% endfor %}
-                            </td>
-                            <td>
-                                <button class="btn btn-info btn-sm">📝 Voir CV</button>
-                                <button class="btn btn-warning btn-sm">✉ Contacter</button>
-                                <button class="btn btn-danger btn-sm">🗑 Supprimer</button>
-                            </td>
+                            <th>Nom Complet</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Adresse</th>
+                            {# <th>Formation</th> -- Commenté car non présent dans User Entity par défaut #}
+                            {# <th>Expérience</th> -- Commenté car non présent dans User Entity par défaut #}
+                            <th>Compétences</th>
+                            <th>Actions</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {# Boucle sur la variable jobSeekers fournie par le contrôleur #}
+                        {% for seeker in jobSeekers %}
+                            <tr>
+                                <td>{{ seeker.firstName | default('') }} {{ seeker.lastName | default('') }}</td>
+                                <td>{{ seeker.email }}</td>
+                                <td>{{ seeker.phone | default('N/A') }}</td>
+                                <td>{{ seeker.address | default('N/A') }}</td>
+                                {# <td>{{ seeker.education | default('N/A') }}</td> #}
+                                {# <td>{{ seeker.experience | default('N/A') }}</td> #}
+                                <td>
+                                    {# Vérifie si skills est un tableau avant de boucler #}
+                                    {% if seeker.skills is iterable %}
+                                        {% for skill in seeker.skills %}
+                                            <span class="badge bg-primary">{{ skill }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        {{ seeker.skills | default('N/A') }} {# Affiche comme texte si ce n'est pas un tableau #}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {# Adaptez les liens/actions si nécessaire #}
+                                    <button class="btn btn-info btn-sm">📝 Voir CV</button>
+                                    <button class="btn btn-warning btn-sm">✉ Contacter</button>
+                                    <button class="btn btn-danger btn-sm">🗑 Supprimer</button>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">Aucun candidat trouvé.</td> {# Ajustez colspan selon les colonnes visibles #}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+
+    </div> {# Fin de .admin-content-area #}
 {% endblock %}

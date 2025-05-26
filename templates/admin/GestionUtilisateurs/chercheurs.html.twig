@@ -1,4 +1,4 @@
-{# templates/admin/gestion_utilisateurs/chercheurs.html.twig #}
+{# templates/admin/GestionUtilisateurs/chercheurs.html.twig #}
 {% extends 'admin/base-admin.html.twig' %}
 
 {% block title %}Gestion des candidats{% endblock %}
@@ -24,6 +24,7 @@
                     <td>{{ user.createdAt ? user.createdAt|date('d/m/Y') : '-' }}</td>
                     <td>
                         <a href="#" class="btn btn-sm btn-primary">Voir profil</a>
+                        <a href="#" class="btn btn-sm btn-danger">Supprimer</a>
                     </td>
                 </tr>
             {% endfor %}

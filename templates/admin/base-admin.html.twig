@@ -10,30 +10,97 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     {% block stylesheets %}
         <style>
+            /* === Barre latérale animée en rouge et gris === */
             .sidebar {
                 min-height: 100vh;
-                background-color: #343a40;
+                background-color: dimgray;
+                color: var(--admin-text-dark);
                 padding-top: 20px;
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+                transition: all 0.3s ease-in-out;
             }
+
+            /* Titre/logo dans la sidebar */
+            .sidebar .sidebar-header {
+                padding: 20px;
+                text-align: center;
+                border-bottom: 1px solid #e9ecef;
+                font-weight: bold;
+                font-size: 1.2rem;
+                color: var(--admin-primary-red); /* Rouge principal */
+                letter-spacing: 1px;
+            }
+
+            /* Liens du menu */
             .sidebar a {
-                color: white;
-                text-decoration: none;
                 display: block;
-                padding: 10px 15px;
+                color: var(--admin-text-dark);
+                text-decoration: none;
+                padding: 12px 20px;
+                position: relative;
+                transition: background-color 0.3s ease, color 0.3s ease, padding-left 0.2s ease;
             }
+
             .sidebar a:hover {
-                background-color: #495057;
+                background-color: var(--admin-primary-red);
+                color: var(--admin-text-light);
+                padding-left: 25px;
             }
+
+            .sidebar i {
+                margin-right: 10px;
+                font-size: 1.1rem;
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar a:hover i {
+                transform: scale(1.1) rotate(5deg);
+            }
+
+            /* Icônes actives ou courantes */
+            .sidebar a.active {
+                background-color: var(--admin-primary-red);
+                color: red;
+                border-radius: 5px;
+                font-weight: bold;
+            }
+
+            /* Sous-menu déroulant (optionnel) */
+            .sidebar .submenu {
+                margin-left: 15px;
+                padding-left: 10px;
+                border-left: 2px solid var(--admin-primary-red);
+            }
+
+            /* Zone principale */
             .main-content {
                 padding: 20px;
+                background-color:whitesmoke;
+                min-height: 100vh;
             }
+
+            /* Bloc d'information actuelle */
             .current-info {
-                background-color: #f8f9fa;
+                background-color: #be2b2b;
                 padding: 15px;
                 margin-bottom: 20px;
-                border-radius: 5px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                border-left: 4px solid var(--admin-primary-red);
             }
-        </style>
+            /* Style pour le titre "Admin Panel" */
+            .sidebar .sidebar-header {
+                padding: 20px;
+                text-align: center;
+                border-bottom: 1px solid red;
+            }
+
+            .sidebar .sidebar-header h2 {
+                margin: 0;
+                font-size: 1.5rem;
+                color: white /* Rouge principal */
+            }
+            </style>
     {% endblock %}
 </head>
 <body>
@@ -46,6 +113,7 @@
                 <a href="{{ path('admin_home') }}">Tableau de bord</a>
                 <a href="{{ path('admin_companies') }}">Entreprises</a>
                 <a href="{{ path('admin_job_seekers') }}">Candidats</a>
+                <a href="{{ path('admin_create_admin') }}">Créer un administrateur</a>
                 <a href="{{ path('app_logout') }}">Déconnexion</a>
             </nav>
         </div>

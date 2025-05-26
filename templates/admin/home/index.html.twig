@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Job Portal{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Job Portal</h1>
+
+        {% if app.user %}
+            <div class="alert alert-info">
+                <p>Connecté en tant que : {{ app.user.email }}</p>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('admin_home') }}" class="btn btn-primary">Panel d'administration</a>
+                {% elseif is_granted('ROLE_JOB_SEEKER') %}
+                    <a href="{{ path('job_seeker_home') }}" class="btn btn-primary">Espace Candidat</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="jumbotron">
+                <h2>Bienvenue sur le Job Portal</h2>
+                <p class="lead">Trouvez votre prochain emploi ou le candidat idéal.</p>
+                <hr class="my-4">
+                <p>Connectez-vous pour accéder à toutes les fonctionnalités.</p>
+                <a href="{{ path('app_login') }}" class="btn btn-primary btn-lg">Se connecter</a>
+                <a href="{{ path('app_register_choice') }}" class="btn btn-secondary btn-lg">S'inscrire</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -8,6 +8,9 @@ parameters:
     company_logos_directory: '%kernel.project_dir%/public/uploads/company_logos'
     resumes_directory: '%kernel.project_dir%/public/uploads/resumes'
     voice_messages_directory: '%kernel.project_dir%/public/voice_messages'
+    admin_registration_code: 'admin123' # Code pour l'inscription des administrateurs
+    photos_directory: '%kernel.project_dir%/public/uploads/photos'
+    admin_photos_directory: '%kernel.project_dir%/public/uploads/admin_photos'
 
 services:
     # default configuration for services in *this* file
@@ -35,8 +38,19 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-        
-    
+    # Ajoutez cette configuration si vous utilisez App\Mailer\ResetPasswordEmail
+    App\Mailer\ResetPasswordEmail:
+        arguments:
+            $mailer: '@mailer'
+
+
+
+
+
+
+
+
+
 
 
 

@@ -17,10 +17,18 @@ framework:
         
         packages:
             app:
-                json_manifest_path: '%kernel.project_dir%/public/build/manifest.json'
+                base_path: '/'
+
+when@dev:
+    framework:
+        profiler: 
+            collect: true
+            collect_parameter: true
+            only_exceptions: false
 
 when@test:
     framework:
         test: true
         session:
             storage_factory_id: session.storage.factory.mock_file
+

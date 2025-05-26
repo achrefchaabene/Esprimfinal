@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Technical Challenges | Interview Preparation{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Style inspiré du welcome-panel */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item i {
+            margin-right: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        .badge {
+            background-color: var(--white);
+            color: var(--primary-color);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        /* Main content - Style inspiré du register-panel */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+            opacity: 0.2;
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .welcome-subtitle {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+            max-width: 80%;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(214, 40, 40, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(214, 40, 40, 0.3);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.6rem 1.2rem;
+            background: var(--light-color);
+            color: var(--dark);
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary i {
+            margin-right: 0.5rem;
+        }
+
+        /* Challenges specific styles */
+        .challenges-container {
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .challenges-filter, .difficulty-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-btn, .difficulty-btn {
+            padding: 0.5rem 1rem;
+            background: var(--light-color);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .difficulty-btn {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.8rem;
+        }
+        
+        .difficulty-btn.active[data-difficulty="easy"] {
+            background: #28a745;
+            color: white;
+        }
+        
+        .difficulty-btn.active[data-difficulty="medium"] {
+            background: #ffc107;
+            color: white;
+        }
+        
+        .difficulty-btn.active[data-difficulty="hard"] {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .challenges-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .challenge-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.8rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            border-left: 5px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, var(--light-color) 0%, transparent 70%);
+            opacity: 0.5;
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+        
+        .challenge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .challenge-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .challenge-difficulty {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .challenge-difficulty.easy {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+        
+        .challenge-difficulty.medium {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+        
+        .challenge-difficulty.hard {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        
+        .challenge-description {
+            margin-bottom: 1.5rem;
+            color: var(--medium-gray);
+        }
+        
+        .challenge-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+        }
+        
+        .challenge-meta i {
+            margin-right: 0.3rem;
+        }
+        
+        .challenge-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn-solve, .btn-save {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .btn-solve {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(214, 40, 40, 0.2);
+        }
+        
+        .btn-save {
+            background: var(--light-color);
+            color: var(--dark);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-solve:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(214, 40, 40, 0.3);
+        }
+        
+        .btn-save:hover {
+            background: #e0e0e0;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .no-challenges {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .welcome-card {
+                padding: 1.5rem;
+            }
+            
+            .challenges-filter {
+                overflow-x: auto;
+                padding-bottom: 1rem;
+                justify-content: flex-start;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .challenge-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+            
+            .challenge-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-solve, .btn-save {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar - Style inspiré du welcome-panel -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item">
+                <i class="fas fa-user"></i> My Profile
+            </a>
+            
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Find Jobs
+            </a>
+            
+            <a href="{{ path('job_seeker_applications_index') }}" class="nav-item">
+                <i class="fas fa-heart"></i> My Applications
+            </a>
+            
+            <a href="{{ path('job_seeker_interviews_index') }}" class="nav-item active">
+                <i class="fas fa-comments"></i> Interview Prep
+            </a>
+            
+            <a href="{{ path('conversation_index') }}" class="nav-item">
+                <i class="fas fa-envelope"></i> Messages
+                {% set unread_count = unread_messages_count() %}
+                {% if unread_count > 0 %}
+                    <span class="badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            
+            <a href="{{ path('chatbot') }}" class="nav-item">
+                <i class="fas fa-robot"></i> Assistant Tchala
+            </a>
+            
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content - Style inspiré du register-panel -->
+    <div class="main-content">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Technical Challenges</h1>
+            <p class="welcome-subtitle">Solve coding problems and technical challenges to prepare for technical interviews</p>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back to Preparation</a>
+        </div>
+        
+        <div class="challenges-container">
+            <div class="challenges-filter">
+                <button class="filter-btn active" data-filter="all">All Challenges</button>
+                <button class="filter-btn" data-filter="algorithms">Algorithms</button>
+                <button class="filter-btn" data-filter="data-structures">Data Structures</button>
+                <button class="filter-btn" data-filter="system-design">System Design</button>
+                <button class="filter-btn" data-filter="database">Database</button>
+            </div>
+            
+            <div class="difficulty-filter">
+                <span>Difficulty:</span>
+                <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+                <button class="difficulty-btn active" data-difficulty="medium">Medium</button>
+                <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+            </div>
+            
+            <div class="challenges-list">
+                {% if challenges|length > 0 %}
+                    {% for challenge in challenges %}
+                        <div class="challenge-card" data-category="{{ challenge.category }}" data-difficulty="{{ challenge.difficulty }}">
+                            <div class="challenge-header">
+                                <h3 class="challenge-title">{{ challenge.title }}</h3>
+                                <div class="challenge-difficulty {{ challenge.difficulty }}">
+                                    {{ challenge.difficulty|capitalize }}
+                                </div>
+                            </div>
+                            
+                            <div class="challenge-description">
+                                <p>{{ challenge.description }}</p>
+                            </div>
+                            
+                            <div class="challenge-meta">
+                                <span class="challenge-time"><i class="fas fa-clock"></i> {{ challenge.estimatedTime }} min</span>
+                                <span class="challenge-success-rate"><i class="fas fa-chart-line"></i> {{ challenge.successRate }}% success rate</span>
+                            </div>
+                            
+                            <div class="challenge-actions">
+                                <a href="{{ path('job_seeker_interviews_challenge_solve', {'id': challenge.id}) }}" class="btn-solve">Solve Challenge</a>
+                                <button class="btn-save">Save for Later</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-challenges">
+                        <p>No technical challenges available at the moment. Please check back later.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des éléments au chargement et au scroll
+        const animateElements = function() {
+            // Animate challenges container
+            const challengesContainer = document.querySelector('.challenges-container');
+            challengesContainer.style.opacity = '1';
+            challengesContainer.style.transform = 'translateY(0)';
+            
+            // Animate challenge cards with sequential delay
+            const challengeCards = document.querySelectorAll('.challenge-card');
+            challengeCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        };
+
+        // Initial state for animation
+        const animatedItems = document.querySelectorAll('.challenge-card');
+        animatedItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'all 0.5s ease';
+        });
+
+        // Trigger animations
+        setTimeout(animateElements, 300);
+
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+        const challengeCards = document.querySelectorAll('.challenge-card');
+        
+        // Filter by category
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                // Show/hide cards based on filter
+                challengeCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Re-animate visible cards
+                setTimeout(() => {
+                    const visibleCards = document.querySelectorAll('.challenge-card[style="display: block"]');
+                    visibleCards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    });
+                }, 100);
+            });
+        });
+        
+        // Filter by difficulty
+        difficultyButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Toggle active class
+                this.classList.toggle('active');
+                
+                // Get all active difficulties
+                const activeDifficulties = [];
+                difficultyButtons.forEach(btn => {
+                    if (btn.classList.contains('active')) {
+                        activeDifficulties.push(btn.getAttribute('data-difficulty'));
+                    }
+                });
+                
+                // If no difficulties are selected, show all
+                if (activeDifficulties.length === 0) {
+                    challengeCards.forEach(card => {
+                        card.style.display = 'block';
+                    });
+                } else {
+                    // Show/hide cards based on difficulty
+                    challengeCards.forEach(card => {
+                        if (activeDifficulties.includes(card.getAttribute('data-difficulty'))) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                }
+                
+                // Re-animate visible cards
+                setTimeout(() => {
+                    const visibleCards = document.querySelectorAll('.challenge-card[style="display: block"]');
+                    visibleCards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    });
+                }, 100);
+            });
+        });
+        
+        // Save for later functionality
+        const saveButtons = document.querySelectorAll('.btn-save');
+        saveButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const card = this.closest('.challenge-card');
+                const challengeTitle = card.querySelector('.challenge-title').textContent;
+                
+                // Toggle saved state
+                if (this.classList.contains('saved')) {
+                    this.classList.remove('saved');
+                    this.textContent = 'Save for Later';
+                    this.style.background = 'var(--light-color)';
+                    this.style.color = 'var(--dark)';
+                    
+                    // Show notification
+                    alert(`${challengeTitle} removed from saved challenges`);
+                } else {
+                    this.classList.add('saved');
+                    this.textContent = 'Saved';
+                    this.style.background = '#28a745';
+                    this.style.color = 'white';
+                    
+                    // Show notification
+                    alert(`${challengeTitle} saved for later`);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
+
+

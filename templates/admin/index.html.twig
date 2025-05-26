@@ -1,167 +1,293 @@
 {% extends 'admin/base-admin.html.twig' %}
-
 {% block title %}Tableau de bord Admin{% endblock %}
 
+{# --- Ajout du bloc stylesheets pour intégrer le CSS --- #}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Variables de couleur inspirées du modèle /register/choice */
+        :root {
+            --admin-primary-red: #B83227; /* Rouge principal (ajustez si nécessaire) */
+            --admin-card-bg: #ffffff;
+            --admin-card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            --admin-card-radius: 15px;
+            --admin-text-dark: #333;
+            --admin-text-light: #fff;
+            --admin-btn-radius: 8px;
+            --admin-approve-green: #28a745; /* Vert standard pour approuver */
+            --admin-reject-red: #dc3545;    /* Rouge standard pour rejeter */
+            --admin-content-bg: #f8f9fa; /* Fond gris clair pour la zone de contenu */
+        }
+
+        .admin-content-area {
+            padding: 2rem;
+            background-color: var(--admin-content-bg);
+            min-height: calc(100vh - 56px);
+        }
+
+        .card.border-left-primary,
+        .card.border-left-success,
+        .card.border-left-info,
+        .card.border-left-warning {
+            border-left: none !important;
+            border-radius: var(--admin-card-radius);
+            box-shadow: var(--admin-card-shadow);
+            background-color: var(--admin-card-bg);
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 0.8rem 1.5rem rgba(0, 0, 0, 0.15);
+        }
+
+        .card .text-primary,
+        .card .text-success,
+        .card .text-info,
+        .card .text-warning {
+            color: var(--admin-primary-red) !important;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .card .text-gray-800 {
+            color: var(--admin-text-dark) !important;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .card .fa-users,
+        .card .fa-user-graduate,
+        .card .fa-building,
+        .card .fa-clock {
+            color: #dee2e6 !important;
+            font-size: 2.5rem;
+            opacity: 0.7;
+        }
+
+        .card.shadow.mb-4 {
+            border: none;
+            border-radius: var(--admin-card-radius);
+            box-shadow: var(--admin-card-shadow);
+            background-color: var(--admin-card-bg);
+        }
+
+        .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid #eee;
+            padding: 1rem 1.25rem;
+            border-top-left-radius: var(--admin-card-radius);
+            border-top-right-radius: var(--admin-card-radius);
+        }
+
+        .card-header h6 {
+            color: var(--admin-primary-red);
+            font-weight: bold;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .table .btn {
+            border-radius: var(--admin-btn-radius);
+            padding: 0.375rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--admin-text-light);
+            border: none;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .table .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn-success {
+            background-color: var(--admin-approve-green);
+        }
+
+        .btn-danger {
+            background-color: var(--admin-reject-red);
+        }
+
+        .alert {
+            border-radius: var(--admin-btn-radius);
+            box-shadow: var(--admin-card-shadow);
+            border: none;
+        }
+
+        h1 {
+            color: var(--admin-text-dark);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+{% endblock %}
+{# --- Fin du bloc stylesheets --- #}
+
 {% block content %}
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h1>Tableau de bord Administrateur</h1>
+    <div class="admin-content-area">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h1>Tableau de bord Administrateur</h1>
+            </div>
         </div>
-    </div>
 
-    {# Statistics Cards #}
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Total Utilisateurs</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalUsers }}</div>
+        {# Messages flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {# Statistiques #}
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total Utilisateurs</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalUsers | default(0) }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Candidats</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ candidateCount | default(0) }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Entreprises</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ companyCount | default(0) }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-building fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    En attente d'approbation</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ pendingCompanyCount | default(0) }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clock fa-2x text-gray-300"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Candidats</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalJobSeekers }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
-                        </div>
+        {# Tableaux dynamiques #}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0">Derniers Candidats Inscrits</h6>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Entreprises</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.totalCompanies }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-building fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Entreprises en attente</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.pendingCompanies }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-clock fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {# Action Buttons #}
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Actions rapides</h6>
-                </div>
-                <div class="card-body">
-                    <a href="{{ path('admin_companies') }}" class="btn btn-primary btn-icon-split mr-2">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-building"></i>
-                        </span>
-                        <span class="text">Gérer les entreprises</span>
-                    </a>
-                    <a href="{{ path('admin_pending_companies') }}" class="btn btn-warning btn-icon-split mr-2">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-clock"></i>
-                        </span>
-                        <span class="text">Entreprises en attente</span>
-                    </a>
-                    <a href="{{ path('admin_job_seekers') }}" class="btn btn-success btn-icon-split">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-user-graduate"></i>
-                        </span>
-                        <span class="text">Gérer les candidats</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {# Recent Companies #}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Dernières entreprises inscrites</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Nom</th>
-                                <th>Email</th>
-                                <th>Date d'inscription</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for company in latestCompanies %}
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
                                 <tr>
-                                    <td>{{ company.companyName ?? company.firstName ~ ' ' ~ company.lastName }}</td>
-                                    <td>{{ company.email }}</td>
-                                    <td>{{ company.createdAt ? company.createdAt|date('d/m/Y') : '-' }}</td>
-                                    <td>
-                                        {% if company.isApproved %}
-                                            <span class="badge bg-success">✅ Approuvée</span>
-                                        {% else %}
-                                            <span class="badge bg-warning text-dark">⏳ En attente</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if not company.isApproved %}
-                                            <a href="{{ path('admin_approve_company', {'id': company.id}) }}" class="btn btn-success btn-sm">
-                                                ✓ Approuver
-                                            </a>
-                                        {% endif %}
-                                        <a href="{{ path('admin_delete_company', {'id': company.id}) }}" class="btn btn-danger btn-sm"
-                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?')">
-                                            🗑 Supprimer
-                                        </a>
-                                    </td>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Compétences</th>
                                 </tr>
-                            {% else %}
+                                </thead>
+                                <tbody>
+                                {% for candidate in lastCandidates %}
+                                    <tr>
+                                        <td>{{ candidate.firstName | default('') }} {{ candidate.lastName | default('') }}</td>
+                                        <td>{{ candidate.email }}</td>
+                                        <td>{{ candidate.skills | default('N/A') }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">Aucun candidat récent trouvé.</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0">Entreprises en Attente</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
                                 <tr>
-                                    <td colspan="5" class="text-center">Aucune entreprise récente</td>
+                                    <th>Entreprise</th>
+                                    <th>Email</th>
+                                    <th>Actions</th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                {% for company in pendingCompanies %}
+                                    <tr>
+                                        <td>{{ company.companyName | default('N/A') }}</td>
+                                        <td>{{ company.email }}</td>
+                                        <td>
+                                            <form action="{{ path('admin_approve_company', {'id': company.id}) }}" method="post" style="display: inline-block; margin-right: 5px;">
+                                                <button type="submit" class="btn btn-success btn-sm">✓ Approuver</button>
+                                            </form>
+                                            <form action="{{ path('admin_reject_company', {'id': company.id}) }}" method="post" style="display: inline-block;">
+                                                <button type="submit" class="btn btn-danger btn-sm">× Rejeter</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">Aucune entreprise en attente d'approbation.</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

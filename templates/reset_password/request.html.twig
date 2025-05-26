@@ -11,6 +11,10 @@
                         <h1 class="h3 mb-3 font-weight-normal">Reset your password</h1>
                     </div>
                     <div class="card-body">
+                        {% for flashError in app.flashes('reset_password_error') %}
+                            <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+                        {% endfor %}
+                        
                         {{ form_start(requestForm) }}
                             {{ form_row(requestForm.email) }}
                             <div class="form-group">

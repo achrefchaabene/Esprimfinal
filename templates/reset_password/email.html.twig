@@ -1,8 +1,18 @@
 {% extends 'email/base.email.html.twig' %}
 
+{% block title %}Password Reset{% endblock %}
+
+{% block header %}Password Reset Request{% endblock %}
+
 {% block body %}
-    <h1>Hi!</h1>
-    <p>To reset your password, please visit the following link</p>
-    <a href="{{ url('app_reset_password', {token: resetToken}) }}">Reset my password</a>
+    <h2>Hi!</h2>
+    <p>To reset your password, please click the button below:</p>
+    
+    <a href="{{ url('app_reset_password', {token: resetToken}) }}" class="btn">Reset my password</a>
+    
     <p>This link will expire in {{ tokenLifetime|date('g') }} hour(s).</p>
+    
+    <p>If you did not request a password reset, please ignore this email.</p>
+    
+    <p>Best regards,<br>The Job Seeker Team</p>
 {% endblock %}

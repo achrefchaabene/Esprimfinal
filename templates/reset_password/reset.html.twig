@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="h3 mb-3 font-weight-normal">Reset your password</h1>
+                </div>
+                <div class="card-body">
+                    {% for flashError in app.flashes('reset_password_error') %}
+                        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+                    {% endfor %}
+                    
+                    <p>Enter your new password below:</p>
+                    
+                    {# Ici, vous devrez ajouter un formulaire pour la réinitialisation du mot de passe #}
+                    <form method="post">
+                        <div class="form-group">
+                            <label for="plainPassword">New password</label>
+                            <input type="password" name="plainPassword" id="plainPassword" class="form-control" required>
+                        </div>
+                        
+                        <input type="hidden" name="token" value="{{ token }}">
+                        
+                        <button class="btn btn-primary">Reset password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

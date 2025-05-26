@@ -1,4 +1,4 @@
-{# templates/admin/toutes_entreprises/index.html.twig #}
+{# templates/admin/ToutesEntreprises/index.html.twig #}
 {% extends 'admin/base-admin.html.twig' %}
 
 {% block title %}Toutes les entreprises{% endblock %}
@@ -13,6 +13,7 @@
             <th>Email</th>
             <th>Statut</th>
             <th>Date d'inscription</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -29,10 +30,22 @@
                         {% endif %}
                     </td>
                     <td>{{ entreprise.createdAt ? entreprise.createdAt|date('d/m/Y') : '-' }}</td>
+                    <td>
+                        <form action="{{ path('admin_approve_company', {'id': entreprise.id}) }}" method="post" style="display: inline-block; margin-right: 5px;">
+                            <button type="submit" class="btn btn-success btn-sm" {% if entreprise.isApproved %}disabled{% endif %}>
+                                ✓ Approuver
+                            </button>
+                        </form>
+                        <form action="{{ path('admin_reject_company', {'id': entreprise.id}) }}" method="post" style="display: inline-block;">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                × Rejeter
+                            </button>
+                        </form>
+                    </td>
                 </tr>
             {% endfor %}
         {% else %}
-            <tr><td colspan="4" class="text-center">Aucune entreprise trouvée.</td></tr>
+            <tr><td colspan="5" class="text-center">Aucune entreprise trouvée.</td></tr>
         {% endif %}
         </tbody>
     </table>

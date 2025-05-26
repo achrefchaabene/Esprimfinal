@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Research</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Style inspiré du welcome-panel */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .profile-section {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            color: var(--white);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .nav-item i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .badge {
+            background-color: var(--white);
+            color: var(--primary-color);
+            border-radius: 50%;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .welcome-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .welcome-title {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .welcome-subtitle {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background: var(--medium-gray);
+            color: var(--white);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #95a5a6;
+            transform: translateY(-3px);
+        }
+
+        /* Research Cards */
+        .research-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .research-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .research-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .research-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .research-title {
+            font-size: 1.3rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .research-desc {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* Content Section Styles */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .content-section h4 {
+            color: var(--dark);
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .content-section p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .content-section ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-section li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .welcome-card {
+                padding: 1.5rem;
+            }
+            
+            .research-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .research-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar - Style inspiré du welcome-panel -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-file-alt"></i> My CV
+            </a>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="nav-item active">
+                <i class="fas fa-comments"></i> Interviews
+            </a>
+            <a href="{{ path('job_seeker_messages_index') }}" class="nav-item">
+                <i class="fas fa-envelope"></i> Messages
+                {% set unread_count = unread_messages_count() %}
+                {% if unread_count > 0 %}
+                    <span class="badge">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item">
+                <i class="fas fa-briefcase"></i> Job Offers
+            </a>
+            <a href="{{ path('conversation_index') }}" class="nav-item">
+                <i class="fas fa-envelope"></i> Conversations
+            </a>
+            <a href="{{ path('chatbot') }}" class="nav-item">
+                <i class="fas fa-robot"></i> Assistant Tchala
+            </a>
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Company Research</h1>
+            <p class="welcome-subtitle">Learn how to research companies effectively for your interviews</p>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back to Preparation</a>
+        </div>
+        
+        <div class="research-container">
+            <div class="research-card">
+                <div class="research-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3 class="research-title">Company Basics</h3>
+                <p class="research-desc">Learn how to find essential information about a company's history, mission, and values.</p>
+                <a href="#company-basics" class="btn-primary" onclick="showContent('company-basics')">Start Learning</a>
+            </div>
+            
+            <div class="research-card">
+                <div class="research-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="research-title">Financial Analysis</h3>
+                <p class="research-desc">Understand how to research a company's financial health and market position.</p>
+                <a href="#financial-analysis" class="btn-primary" onclick="showContent('financial-analysis')">Start Learning</a>
+            </div>
+            
+            <div class="research-card">
+                <div class="research-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="research-title">Company Culture</h3>
+                <p class="research-desc">Discover techniques to learn about a company's culture and work environment.</p>
+                <a href="#company-culture" class="btn-primary" onclick="showContent('company-culture')">Start Learning</a>
+            </div>
+            
+            <div class="research-card">
+                <div class="research-icon">
+                    <i class="fas fa-newspaper"></i>
+                </div>
+                <h3 class="research-title">Recent News</h3>
+                <p class="research-desc">Learn how to stay updated with the latest news and developments about a company.</p>
+                <a href="#recent-news" class="btn-primary" onclick="showContent('recent-news')">Start Learning</a>
+            </div>
+            
+            <div class="research-card">
+                <div class="research-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3 class="research-title">Networking Insights</h3>
+                <p class="research-desc">Discover how to connect with current or former employees to gain insider knowledge.</p>
+                <a href="#networking-insights" class="btn-primary" onclick="showContent('networking-insights')">Start Learning</a>
+            </div>
+            
+            <div class="research-card">
+                <div class="research-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h3 class="research-title">Questions to Ask</h3>
+                <p class="research-desc">Prepare intelligent questions to ask during your interview based on your research.</p>
+                <a href="#questions-to-ask" class="btn-primary" onclick="showContent('questions-to-ask')">Start Learning</a>
+            </div>
+        </div>
+        
+        <!-- Content sections that will be shown/hidden -->
+        <div id="content-sections" style="display: none; margin-top: 2rem;">
+            <div id="company-basics" class="content-section">
+                <div class="welcome-card">
+                    <h2 class="welcome-title">Company Basics</h2>
+                    <div style="text-align: left;">
+                        <h3>How to Research Company Basics</h3>
+                        <p>Understanding a company's basics is the foundation of effective interview preparation. Here's how to do it:</p>
+                        
+                        <h4>1. Visit the Company Website</h4>
+                        <p>Start with the company's official website. Look for:</p>
+                        <ul>
+                            <li>About Us page - for company history and founding story</li>
+                            <li>Mission and Vision statements - to understand their purpose and goals</li>
+                            <li>Leadership team - to learn about key executives</li>
+                            <li>Products/Services - to understand what they offer</li>
+                        </ul>
+                        
+                        <h4>2. Check Social Media Profiles</h4>
+                        <p>Company social media accounts often reveal their brand voice, culture, and recent initiatives:</p>
+                        <ul>
+                            <li>LinkedIn - for professional updates and company milestones</li>
+                            <li>Twitter - for real-time news and engagement with customers</li>
+                            <li>Instagram/Facebook - for culture and behind-the-scenes glimpses</li>
+                        </ul>
+                        
+                        <h4>3. Use Wikipedia and Company Databases</h4>
+                        <p>For established companies, Wikipedia often has comprehensive information about their history and notable events. Business databases like Crunchbase can provide founding dates, funding rounds, and acquisition history.</p>
+                        
+                        <a href="#" class="btn-secondary" onclick="hideContent()"><i class="fas fa-arrow-left"></i> Back to Research Topics</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="financial-analysis" class="content-section">
+                <div class="welcome-card">
+                    <h2 class="welcome-title">Financial Analysis</h2>
+                    <div style="text-align: left;">
+                        <h3>How to Research Company Finances</h3>
+                        <p>Understanding a company's financial health can give you valuable insights for your interview:</p>
+                        
+                        <h4>1. Public Companies</h4>
+                        <p>For publicly traded companies:</p>
+                        <ul>
+                            <li>Annual Reports (10-K) and Quarterly Reports (10-Q) - available on the company's investor relations page</li>
+                            <li>Earnings calls transcripts - to understand recent performance and future outlook</li>
+                            <li>Financial news sites like Bloomberg, Yahoo Finance, or Google Finance</li>
+                        </ul>
+                        
+                        <h4>2. Private Companies</h4>
+                        <p>For private companies, information may be limited, but you can check:</p>
+                        <ul>
+                            <li>Crunchbase - for funding rounds and investors</li>
+                            <li>News articles about funding or revenue milestones</li>
+                            <li>Industry reports that might mention the company</li>
+                        </ul>
+                        
+                        <h4>3. Key Financial Metrics to Understand</h4>
+                        <p>Familiarize yourself with basic metrics like:</p>
+                        <ul>
+                            <li>Revenue growth - Is the company growing?</li>
+                            <li>Profitability - Is the company making money?</li>
+                            <li>Market share - How does it compare to competitors?</li>
+                        </ul>
+                        
+                        <a href="#" class="btn-secondary" onclick="hideContent()"><i class="fas fa-arrow-left"></i> Back to Research Topics</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="company-culture" class="content-section">
+                <div class="welcome-card">
+                    <h2 class="welcome-title">Company Culture</h2>
+                    <div style="text-align: left;">
+                        <h3>How to Research Company Culture</h3>
+                        <p>Understanding a company's culture helps you determine if you'll be a good fit:</p>
+                        
+                        <h4>1. Review Company Values</h4>
+                        <p>Most companies list their values on their website. Pay attention to:</p>
+                        <ul>
+                            <li>Core values and how they're described</li>
+                            <li>How prominently they feature these values</li>
+                            <li>Examples of how they put values into practice</li>
+                        </ul>
+                        
+                        <h4>2. Check Employee Reviews</h4>
+                        <p>Sites that provide insider perspectives:</p>
+                        <ul>
+                            <li>Glassdoor - for employee reviews and ratings</li>
+                            <li>Indeed - for workplace reviews</li>
+                            <li>LinkedIn - for employee posts about the company</li>
+                        </ul>
+                        
+                        <h4>3. Look for Culture Indicators</h4>
+                        <p>Other places to find culture clues:</p>
+                        <ul>
+                            <li>Company blog posts about internal events</li>
+                            <li>Social media showing office life and team activities</li>
+                            <li>Awards like "Best Places to Work"</li>
+                        </ul>
+                        
+                        <a href="#" class="btn-secondary" onclick="hideContent()"><i class="fas fa-arrow-left"></i> Back to Research Topics</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="recent-news" class="content-section">
+                <div class="welcome-card">
+                    <h2 class="welcome-title">Recent News</h2>
+                    <div style="text-align: left;">
+                        <h3>How to Stay Updated with Company News</h3>
+                        <p>Being aware of recent developments shows your interest and preparation:</p>
+                        
+                        <h4>1. Set Up Google Alerts</h4>
+                        <p>Create alerts for:</p>
+                        <ul>
+                            <li>The company name</li>
+                            <li>Key products or services</li>
+                            <li>Names of top executives</li>
+                        </ul>
+                        
+                        <h4>2. Follow Industry News Sources</h4>
+                        <p>Depending on the industry, check relevant sources:</p>
+                        <ul>
+                            <li>Tech: TechCrunch, The Verge, WIRED</li>
+                            <li>Finance: Bloomberg, Wall Street Journal, Financial Times</li>
+                            <li>Healthcare: STAT News, Modern Healthcare</li>
+                            <li>General business: Forbes, Business Insider, Harvard Business Review</li>
+                        </ul>
+                        
+                        <h4>3. Check Press Releases</h4>
+                        <p>Most companies have a "Press" or "News" section on their website with recent announcements about:</p>
+                        <ul>
+                            <li>New products or services</li>
+                            <li>Partnerships and acquisitions</li>
+                            <li>Leadership changes</li>
+                            <li>Company milestones</li>
+                        </ul>
+                        
+                        <a href="#" class="btn-secondary" onclick="hideContent()"><i class="fas fa-arrow-left"></i> Back to Research Topics</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="networking-insights" class="content-section">
+                <div class="welcome-card">
+                    <h2 class="welcome-title">Networking Insights</h2>
+                    <div style="text-align: left;">
+                        <h3>How to Network for Company Insights</h3>
+                        <p>Connecting with current or former employees can provide invaluable insider information:</p>
+                        
+                        <h4>1. Use LinkedIn Strategically</h4>
+                        <p>LinkedIn is your best resource for professional networking:</p>
+                        <ul>
+                            <li>Search for current and former employees</li>
+                            <li>Look for 2nd-degree connections who might introduce you</li>
+                            <li>Join industry or company-specific groups</li>
+                        </ul>
+                        
+                        <h4>2. Craft Thoughtful Outreach Messages</h4>
+                        <p>When reaching out to connections:</p>
+                        <ul>
+                            <li>Be specific about why you're contacting them</li>
+                            <li>Mention shared connections or interests</li>
+                            <li>Ask for a brief conversation, not a job</li>
+                            <li>Prepare specific questions about the company culture and work environment</li>
+                        </ul>
+                        
+                        <h4>3. Attend Industry Events</h4>
+                        <p>Look for opportunities to meet employees in person:</p>
+                        <ul>
+                            <li>Industry conferences and meetups</li>
+                            <li>Company-sponsored events</li>
+                            <li>Alumni networking events</li>
+                        </ul>
+                        
+                        <a href="#" class="btn-secondary" onclick="hideContent()"><i class="fas fa-arrow-left"></i> Back to Research Topics</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="questions-to-ask" class="content-section">
+                <div class="welcome-card">
+                    <h2 class="welcome-title">Questions to Ask</h2>
+                    <div style="text-align: left;">
+                        <h3>Preparing Intelligent Questions Based on Research</h3>
+                        <p>Asking thoughtful questions demonstrates your interest and preparation:</p>
+                        
+                        <h4>1. Company Strategy Questions</h4>
+                        <ul>
+                            <li>"I read about your recent expansion into [market]. How does this align with the company's long-term vision?"</li>
+                            <li>"Your CEO mentioned [specific initiative] in the last earnings call. How is this affecting your team's priorities?"</li>
+                            <li>"I noticed your company values emphasize [value]. Can you share how this manifests in day-to-day operations?"</li>
+                        </ul>
+                        
+                        <h4>2. Role-Specific Questions</h4>
+                        <ul>
+                            <li>"How does this role contribute to the company's mission of [mission statement]?"</li>
+                            <li>"I saw that your team recently launched [product/feature]. What was your team's role in that process?"</li>
+                            <li>"How might the recent announcement about [news item] affect the priorities for this position?"</li>
+                        </ul>
+                        
+                        <h4>3. Culture and Growth Questions</h4>
+                        <ul>
+                            <li>"I read that [company] was recognized for [award/achievement]. What aspects of the company culture contributed to this success?"</li>
+                            <li>"How has the company's approach to [relevant topic] evolved since you joined?"</li>
+                            <li>"What learning and development opportunities are available for someone in this role?"</li>
+                        </ul>
+                        
+                        <a href="#" class="btn-secondary" onclick="hideContent()"><i class="fas fa-arrow-left"></i> Back to Research Topics</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des éléments au chargement et au scroll
+        const animateElements = function() {
+            const elements = document.querySelectorAll(
+                '.research-card'
+            );
+            
+            elements.forEach((element, index) => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if(elementPosition < screenPosition) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+
+        // Initial state for animation
+        const animatedItems = document.querySelectorAll(
+            '.research-card'
+        );
+        
+        animatedItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'all 0.5s ease';
+        });
+
+        // Délai pour l'animation séquentielle
+        animatedItems.forEach((item, index) => {
+            item.style.transitionDelay = `${index * 0.1}s`;
+        });
+
+        // Trigger animations
+        window.addEventListener('load', animateElements);
+        window.addEventListener('scroll', animateElements);
+        
+        // Function to show content sections
+        window.showContent = function(sectionId) {
+            // Hide all content sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show the content container
+            document.getElementById('content-sections').style.display = 'block';
+            
+            // Show the selected section
+            document.getElementById(sectionId).style.display = 'block';
+            
+            // Scroll to the content
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        };
+        
+        // Function to hide content sections
+        window.hideContent = function() {
+            document.getElementById('content-sections').style.display = 'none';
+            
+            // Scroll back to the research cards
+            document.querySelector('.research-container').scrollIntoView({
+                behavior: 'smooth'
+            });
+        };
+    });
+</script>
+</body>
+</html>
+
+

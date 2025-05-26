@@ -1,0 +1,70 @@
+{% extends 'admin/base-admin.html.twig' %}
+
+{% block title %}Créer un administrateur{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h1 class="h3 mb-0">Créer un nouvel administrateur</h1>
+        </div>
+        <div class="card-body">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            
+            {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.username) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.email) }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.plainPassword.first) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.plainPassword.second) }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.prenom) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_row(form.nomComplet) }}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form_row(form.photo) }}
+                </div>
+                
+                <div class="mb-3 form-check">
+                    {{ form_widget(form.termsAccepted) }}
+                    {{ form_label(form.termsAccepted) }}
+                    {{ form_errors(form.termsAccepted) }}
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{{ path('admin_dashboard') }}" class="btn btn-secondary me-md-2">Annuler</a>
+                    <button type="submit" class="btn btn-primary">Créer l'administrateur</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

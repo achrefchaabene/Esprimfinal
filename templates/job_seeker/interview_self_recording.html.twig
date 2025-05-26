@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self Recording Session | Interview Preparation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #ba181b;
+            --accent-color: #e5383b;
+            --light-color: #f5f3f4;
+            --white: #ffffff;
+            --dark: #161a1d;
+            --medium-gray: #b1a7a6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            z-index: 1;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .profile-section {
+            position: relative;
+            text-align: center;
+            margin-bottom: 2rem;
+            z-index: 1;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-email {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-item i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        /* Recording specific styles */
+        .recording-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .video-container {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        #videoPreview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .welcome-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .welcome-subtitle {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary {
+            background: var(--light-color);
+            color: var(--dark);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-record {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-record.recording {
+            background: #dc3545;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile-section">
+            {% if app.user.profileImage %}
+                <img src="{{ asset(app.user.profileImage) }}?v={{ random() }}" alt="Profile" class="profile-img">
+            {% else %}
+                <img src="{{ asset('img/fxchat.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <h3 class="profile-name">{{ app.user.username }}</h3>
+            <p class="profile-email">{{ app.user.email }}</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="{{ path('job_seeker_home') }}" class="nav-item {% if app.request.get('_route') == 'job_seeker_home' %}active{% endif %}">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ path('job_seeker_profile_index') }}" class="nav-item {% if app.request.get('_route') == 'job_seeker_profile_index' %}active{% endif %}">
+                <i class="fas fa-user"></i> Mon Profil
+            </a>
+            <a href="{{ path('job_seeker_profile_edit') }}" class="nav-item {% if app.request.get('_route') == 'job_seeker_profile_edit' %}active{% endif %}">
+                <i class="fas fa-user-edit"></i> Modifier Profil
+            </a>
+            <a href="{{ path('job_seeker_jobs_index') }}" class="nav-item {% if app.request.get('_route') starts with 'job_seeker_jobs' %}active{% endif %}">
+                <i class="fas fa-briefcase"></i> Offres d'emploi
+            </a>
+            <a href="{{ path('job_seeker_applications_index') }}" class="nav-item {% if app.request.get('_route') starts with 'job_seeker_applications' %}active{% endif %}">
+                <i class="fas fa-file-alt"></i> Mes Candidatures
+            </a>
+            <a href="{{ path('job_seeker_interviews_index') }}" class="nav-item {% if app.request.get('_route') starts with 'job_seeker_interviews' %}active{% endif %}">
+                <i class="fas fa-comments"></i> Préparation Entretiens
+            </a>
+            <a href="{{ path('conversation_index') }}" class="nav-item {% if app.request.get('_route') starts with 'conversation' %}active{% endif %}">
+                <i class="fas fa-envelope"></i> Messagerie
+            </a>
+            <a href="{{ path('app_logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Self Recording Session</h1>
+            <p class="welcome-subtitle">Record yourself answering interview questions at your own pace</p>
+            <a href="{{ path('job_seeker_interviews_mock_interview') }}" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back to Mock Interviews</a>
+        </div>
+        
+        <div class="recording-container">
+            <h2>Practice Question</h2>
+            <div class="question-card">
+                <p id="currentQuestion">Tell me about yourself and your experience.</p>
+                <button id="nextQuestion" class="btn-secondary">Next Question <i class="fas fa-arrow-right"></i></button>
+            </div>
+            
+            <div class="video-container">
+                <video id="videoPreview" autoplay muted></video>
+            </div>
+            
+            <div class="controls">
+                <div class="timer" id="timer">00:00</div>
+                <button id="recordButton" class="btn-record">
+                    <i class="fas fa-video"></i> Start Recording
+                </button>
+                <button id="finishButton" class="btn-primary" style="display: none;">
+                    <i class="fas fa-check"></i> Finish Session
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animation des éléments au chargement et au scroll
+        const animateElements = function() {
+            const elements = document.querySelectorAll(
+                '.welcome-card, .recording-container, .question-card, .controls'
+            );
+            
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, 100); // Force immediate animation
+            });
+        };
+
+        // Call animation immediately
+        animateElements();
+        
+        // Sample questions
+        const questions = [
+            "Tell me about yourself and your experience.",
+            "What are your greatest strengths?",
+            "What do you consider to be your weaknesses?",
+            "Why are you interested in working for our company?",
+            "Where do you see yourself in 5 years?",
+            "Describe a difficult work situation and how you overcame it.",
+            "Why should we hire you?",
+            "What is your salary expectation?",
+            "Do you have any questions for us?"
+        ];
+        
+        let currentQuestionIndex = 0;
+        let mediaRecorder;
+        let recordedChunks = [];
+        let isRecording = false;
+        let timerInterval;
+        let seconds = 0;
+        let stream;
+        
+        const videoPreview = document.getElementById('videoPreview');
+        const recordButton = document.getElementById('recordButton');
+        const timer = document.getElementById('timer');
+        const nextQuestionBtn = document.getElementById('nextQuestion');
+        const currentQuestionElement = document.getElementById('currentQuestion');
+        const finishButton = document.getElementById('finishButton');
+        
+        // Setup camera
+        async function setupCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                videoPreview.srcObject = stream;
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                alert('Please allow camera and microphone access to continue with the recording session.');
+            }
+        }
+        
+        // Start setup
+        setupCamera();
+        
+        // Record button
+        recordButton.addEventListener('click', function() {
+            if (!isRecording) {
+                // Start recording
+                startRecording();
+            } else {
+                // Stop recording
+                stopRecording();
+            }
+        });
+        
+        // Next question button
+        nextQuestionBtn.addEventListener('click', function() {
+            currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+            currentQuestionElement.textContent = questions[currentQuestionIndex];
+        });
+        
+        // Finish button
+        finishButton.addEventListener('click', function() {
+            if (isRecording) {
+                stopRecording();
+            }
+            alert('Session completed! You can review your recordings.');
+            // Here you would typically redirect to a review page
+        });
+        
+        function startRecording() {
+            if (!stream) {
+                alert('Camera access is required for recording.');
+                return;
+            }
+            
+            mediaRecorder = new MediaRecorder(stream);
+            recordedChunks = [];
+            
+            mediaRecorder.ondataavailable = function(e) {
+                if (e.data.size > 0) {
+                    recordedChunks.push(e.data);
+                }
+            };
+            
+            mediaRecorder.onstop = function() {
+                // Create video blob
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                
+                // Here you could save the recording or provide download
+                console.log('Recording finished, video URL:', url);
+                
+                // Show finish button after first recording
+                finishButton.style.display = 'block';
+            };
+            
+            // Start recording
+            mediaRecorder.start();
+            isRecording = true;
+            
+            // Update UI
+            recordButton.innerHTML = '<i class="fas fa-stop"></i> Stop Recording';
+            recordButton.classList.add('recording');
+            
+            // Start timer
+            seconds = 0;
+            timer.textContent = '00:00';
+            timerInterval = setInterval(() => {
+                seconds++;
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                timer.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+        
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                // Stop recording
+                mediaRecorder.stop();
+                isRecording = false;
+                
+                // Update UI
+                recordButton.innerHTML = '<i class="fas fa-video"></i> Start Recording';
+                recordButton.classList.remove('recording');
+                
+                // Stop timer
+                clearInterval(timerInterval);
+            }
+        }
+    });
+</script>
+</body>
+</html>
+
+
+
+

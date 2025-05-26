@@ -1,117 +1,175 @@
 {# templates/admin/companies.html.twig #}
 
+{# Assurez-vous que cela étend le même template de base que index.html.twig #}
 {% extends 'admin/base-admin.html.twig' %}
 
-{% block title %}Gestion des Entreprises{% endblock %}
+{% block title %}Liste des Entreprises{% endblock %}
+
+{# --- Ajout du bloc stylesheets pour intégrer le CSS --- #}
+{% block stylesheets %}
+    {{ parent() }} {# Gardez ceci si base-admin.html.twig étend un autre template #}
+    <style>
+        /* admin_custom_styles.css intégré avec améliorations */
+
+        /* Variables de couleur inspirées du modèle /register/choice */
+        :root {
+            --admin-primary-red: #B83227; /* Rouge principal (ajustez si nécessaire) */
+            --admin-card-bg: #ffffff;
+            --admin-card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            --admin-card-radius: 15px;
+            --admin-text-dark: #333;
+            --admin-text-light: #fff;
+            --admin-btn-radius: 8px;
+            --admin-approve-green: #28a745; /* Vert standard pour approuver */
+            --admin-reject-red: #dc3545;    /* Rouge standard pour rejeter */
+            --admin-pending-yellow: #ffc107; /* Jaune pour en attente */
+            --admin-content-bg: #faf8f8; /* Fond gris clair pour la zone de contenu */
+        }
+
+        /* Style général pour le contenu admin */
+        .admin-content-area {
+            padding: 2rem;
+            background-color: var(--admin-content-bg); /* Ajout du fond gris clair */
+            min-height: calc(100vh - 56px); /* Ajustez 56px si votre barre de navigation a une hauteur différente */
+        }
+
+        /* Style des conteneurs de tableaux/cartes */
+        .card.shadow.mb-4 {
+            border: none;
+            border-radius: var(--admin-card-radius);
+            box-shadow: var(--admin-card-shadow);
+            background-color: var(--admin-card-bg);
+        }
+
+        .card.shadow.mb-4 .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid #eee;
+            padding: 1rem 1.25rem;
+            border-top-left-radius: var(--admin-card-radius);
+            border-top-right-radius: var(--admin-card-radius);
+        }
+
+        /* Titres des cartes en rouge */
+        .card.shadow.mb-4 .card-header h1,
+        .card.shadow.mb-4 .card-header h6 {
+            color: var(--admin-primary-red);
+            font-weight: bold;
+            margin: 0;
+            font-size: 1.2rem; /* Taille ajustée pour titre principal */
+        }
+
+        /* Style des badges de statut */
+        .badge {
+            border-radius: var(--admin-btn-radius);
+            padding: 0.4em 0.7em;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-success {
+            background-color: var(--admin-approve-green);
+            color: var(--admin-text-light);
+        }
+        .badge-danger {
+            background-color: var(--admin-reject-red);
+            color: var(--admin-text-light);
+        }
+        .badge-warning {
+            background-color: var(--admin-pending-yellow);
+            color: var(--admin-text-dark); /* Texte sombre sur fond jaune pour lisibilité */
+        }
+
+        /* Ajustements pour les messages flash (optionnel) */
+        .alert {
+            border-radius: var(--admin-btn-radius);
+            box-shadow: var(--admin-card-shadow);
+            border: none;
+        }
+
+        /* Optionnel: Style pour le titre principal H1 (si hors carte) */
+        .admin-content-area > h1 {
+            color: var(--admin-text-dark);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Style de base pour la table */
+        .table {
+            margin-bottom: 0; /* Retirer la marge par défaut dans la carte */
+        }
+
+        .table thead th {
+            border-bottom: 2px solid #dee2e6;
+            color: var(--admin-text-dark);
+            font-weight: 600;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(0,0,0,0.03);
+        }
+
+    </style>
+{% endblock %}
+{# --- Fin du bloc stylesheets --- #}
 
 {% block content %}
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h1>Gestion des Entreprises</h1>
-        </div>
-    </div>
+    {# Ajout de la classe .admin-content-area pour le fond et le padding #}
+    <div class="admin-content-area">
 
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Liste des Entreprises</h6>
-            <div class="d-flex">
-                <input type="text" id="searchInput" class="form-control mr-2" placeholder="Rechercher...">
-                <button class="btn btn-primary" id="exportBtn">Exporter</button>
+        {# Affichage des messages flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show mb-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {# Carte contenant le tableau des entreprises #}
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h1 class="m-0">Liste des Entreprises</h1>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Nom de l'entreprise</th>
+                            <th>Email</th>
+                            <th>Industrie</th>
+                            <th>Statut</th>
+                            {# Ajoutez d'autres colonnes si nécessaire #}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {# Boucle sur la variable dynamique 'companies' fournie par le contrôleur #}
+                        {% for company in companies %}
+                            <tr>
+                                <td>{{ company.companyName | default('N/A') }}</td>
+                                <td>{{ company.email }}</td>
+                                <td>{{ company.industry | default('N/A') }}</td>
+                                <td>
+                                    {% if company.isApproved == true %}
+                                        <span class="badge badge-success">Approuvée</span>
+                                    {% elseif company.isApproved == false %}
+                                        <span class="badge badge-danger">Rejetée</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">En attente</span>
+                                    {% endif %}
+                                </td>
+                                {# Affichez d'autres données ici #}
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">Aucune entreprise trouvée.</td> {# Ajustez colspan si vous ajoutez des colonnes #}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="companiesTable">
-                    <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Téléphone</th>
-                        <th>Adresse</th>
-                        <th>Site Web</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for company in companies %}
-                        <tr>
-                            <td>{{ company.companyName ?? company.firstName ~ ' ' ~ company.lastName }}</td>
-                            <td>{{ company.email }}</td>
-                            <td>{{ company.phone ?? '-' }}</td>
-                            <td>{{ company.address ?? '-' }}</td>
-                            <td>
-                                {% if company.website %}
-                                    <a href="http://{{ company.website }}" target="_blank">{{ company.website }}</a>
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if company.isApproved %}
-                                    <span class="badge bg-success">✅ Approuvé</span>
-                                {% else %}
-                                    <span class="badge bg-warning text-dark">⏳ En attente</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="#" class="btn btn-info btn-sm">📝 Détails</a>
-                                {% if not company.isApproved %}
-                                    <a href="{{ path('admin_approve_company', {'id': company.id}) }}" class="btn btn-success btn-sm">
-                                        ✓ Approuver
-                                    </a>
-                                {% endif %}
-                                <a href="{{ path('admin_delete_company', {'id': company.id}) }}" class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?')">
-                                    🗑 Supprimer
-                                </a>
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="7" class="text-center">Aucune entreprise trouvée</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-{% endblock %}
 
-{% block javascripts %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Fonction de recherche
-            const searchInput = document.getElementById('searchInput');
-            const table = document.getElementById('companiesTable');
-            const rows = table.getElementsByTagName('tr');
-
-            searchInput.addEventListener('keyup', function() {
-                const term = searchInput.value.toLowerCase();
-                
-                for (let i = 1; i < rows.length; i++) {
-                    const row = rows[i];
-                    const cells = row.getElementsByTagName('td');
-                    let found = false;
-                    
-                    for (let j = 0; j < cells.length; j++) {
-                        const cellText = cells[j].textContent.toLowerCase();
-                        if (cellText.indexOf(term) > -1) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    
-                    row.style.display = found ? '' : 'none';
-                }
-            });
-            
-            // Fonction d'export (simple exemple)
-            document.getElementById('exportBtn').addEventListener('click', function() {
-                alert('Fonctionnalité d\'export à implémenter');
-                // Ici vous pourriez implémenter l'export en CSV ou Excel
-            });
-        });
-    </script>
+    </div> {# Fin de .admin-content-area #}
 {% endblock %}

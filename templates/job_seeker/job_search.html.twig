@@ -718,10 +718,10 @@
                         <div class="job-card" data-category="{{ publication.category }}">
                             <div class="job-header">
                                 <div class="job-company">
-                                    {% if publication.user.profileImage is defined and publication.user.profileImage %}
-                                        <img src="img/fxchat.png" alt="{{ publication.user.companyName }}" class="company-logo">
+                                    {% if publication.user.profileImage %}
+                                        <img src="{{ asset(publication.user.profileImage) }}" alt="{{ publication.user.companyName }}" class="company-logo">
                                     {% else %}
-                                       <img src="img/fxchat.png" alt="{{ publication.user.companyName }}" class="company-logo">
+                                        <img src="{{ asset('img/fxchat.png') }}" alt="{{ publication.user.companyName }}" class="company-logo">
                                     {% endif %}
                                     <div class="company-info">
                                         <h3>{{ publication.title }}</h3>

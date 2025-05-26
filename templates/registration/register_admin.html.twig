@@ -1,0 +1,604 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription Administrateur{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #B83227;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --light-text: #777;
+            --border-radius: 8px;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--secondary-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+        
+        .fullscreen-register {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .register-panel {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background-color: white;
+        }
+        
+        .register-box {
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+        }
+        
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .register-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .register-subtitle {
+            color: var(--light-text);
+            font-size: 1rem;
+        }
+        
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--light-text);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .btn-register {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .btn-register:hover {
+            background-color: #9c2720;
+        }
+        
+        .login-links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .login-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .login-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .welcome-panel {
+            flex: 1;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .welcome-content {
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .welcome-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .welcome-content p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .welcome-image {
+            max-width: 80%;
+            height: auto;
+        }
+        
+        /* Photo preview */
+        .photo-preview-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        #photoPreview {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            display: none;
+            margin: 0 auto;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 992px) {
+            .fullscreen-register {
+                flex-direction: column;
+            }
+            
+            .welcome-panel {
+                display: none;
+            }
+        }
+        
+        /* Password toggle */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--light-text);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="fullscreen-register">
+    <div class="register-panel">
+        <div class="register-box">
+            <div class="register-header">
+                <h2 class="register-title">Inscription Administrateur</h2>
+                <p class="register-subtitle">Créez votre compte administrateur</p>
+            </div>
+
+            <div class="photo-preview-container">
+                <img id="photoPreview" src="#" alt="Photo preview">
+            </div>
+
+            {{ form_start(registrationForm) }}
+                <div class="form-group">
+                    <i class="fas fa-envelope input-icon"></i>
+                    {{ form_row(registrationForm.email, {
+                        'label': 'Email',
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'admin@example.com'
+                        }
+                    }) }}
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-user input-icon"></i>
+                    {{ form_row(registrationForm.username, {
+                        'label': 'Username',
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Choose a username'
+                        }
+                    }) }}
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    {{ form_label(registrationForm.plainPassword.first, 'Mot de passe') }}
+                    {{ form_widget(registrationForm.plainPassword.first, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Créez un mot de passe'
+                        }
+                    }) }}
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('{{ registrationForm.plainPassword.first.vars.id }}')"></i>
+                    {{ form_errors(registrationForm.plainPassword.first) }}
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    {{ form_label(registrationForm.plainPassword.second, 'Confirmer le mot de passe') }}
+                    {{ form_widget(registrationForm.plainPassword.second, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Confirmez votre mot de passe'
+                        }
+                    }) }}
+                    <i class="fas fa-eye password-toggle" onclick="togglePassword('{{ registrationForm.plainPassword.second.vars.id }}')"></i>
+                    {{ form_errors(registrationForm.plainPassword.second) }}
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-user input-icon"></i>
+                    {{ form_row(registrationForm.prenom, {
+                        'label': 'Prénom',
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Votre prénom'
+                        }
+                    }) }}
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-user input-icon"></i>
+                    {{ form_row(registrationForm.nomComplet, {
+                        'label': 'Nom complet',
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Votre nom complet'
+                        }
+                    }) }}
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-key input-icon"></i>
+                    {{ form_row(registrationForm.adminCode, {
+                        'label': 'Code administrateur',
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Entrez le code administrateur'
+                        }
+                    }) }}
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-image input-icon"></i>
+                    {{ form_row(registrationForm.photo, {
+                        'label': 'Photo de profil',
+                        'attr': {
+                            'class': 'form-control'
+                        }
+                    }) }}
+                </div>
+
+                <div class="terms-checkbox">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">J'accepte les <a href="#" id="termsLink">conditions d'utilisation</a> et la <a href="#" id="privacyLink">politique de confidentialité</a></label>
+                </div>
+
+                <button type="submit" class="btn-register">INSCRIPTION</button>
+            {{ form_end(registrationForm) }}
+            
+            <div class="login-links">
+                <p>Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous ici</a></p>
+                <p>Retour au <a href="{{ path('app_register_choice') }}">choix du type de compte</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="welcome-panel">
+        <div class="welcome-content">
+            <h1>Bienvenue sur Esprit Career</h1>
+            <p>Rejoignez notre plateforme en tant qu'administrateur pour gérer les utilisateurs et les offres d'emploi.</p>
+            <img src="{{ asset('img/admin-illustration.svg') }}" alt="Admin Illustration" class="welcome-image">
+        </div>
+    </div>
+</div>
+
+<!-- Modales pour les conditions d'utilisation et la politique de confidentialité -->
+<div id="termsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Conditions d'utilisation</h2>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <h3>1. Acceptation des conditions</h3>
+            <p>En utilisant cette plateforme, vous acceptez ces conditions d'utilisation.</p>
+            
+            <h3>2. Compte administrateur</h3>
+            <p>En tant qu'administrateur, vous avez accès à des fonctionnalités avancées et des données sensibles. Vous vous engagez à utiliser ces privilèges de manière responsable.</p>
+            
+            <h3>3. Responsabilités</h3>
+            <p>Vous êtes responsable de maintenir la confidentialité de votre compte et de toutes les actions effectuées sous votre identifiant.</p>
+            
+            <h3>4. Utilisation des données</h3>
+            <p>Vous vous engagez à respecter la confidentialité des données des utilisateurs et à ne pas les utiliser à des fins personnelles.</p>
+        </div>
+        <div class="modal-footer">
+            <div class="terms-agreement">
+                <input type="checkbox" id="modalTermsAgree">
+                <label for="modalTermsAgree">J'ai lu et j'accepte les conditions d'utilisation</label>
+            </div>
+            <button id="acceptTerms" class="btn-accept" disabled>Accepter</button>
+        </div>
+    </div>
+</div>
+
+<div id="privacyModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Politique de confidentialité</h2>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <h3>1. Collecte des données</h3>
+            <p>Nous collectons vos informations personnelles pour la gestion de votre compte administrateur.</p>
+            
+            <h3>2. Utilisation des données</h3>
+            <p>Vos données sont utilisées pour l'authentification et la personnalisation de votre expérience.</p>
+            
+            <h3>3. Protection des données</h3>
+            <p>Nous mettons en œuvre des mesures de sécurité pour protéger vos informations personnelles.</p>
+            
+            <h3>4. Vos droits</h3>
+            <p>Vous avez le droit d'accéder, de modifier ou de supprimer vos données personnelles.</p>
+        </div>
+        <div class="modal-footer">
+            <div class="terms-agreement">
+                <input type="checkbox" id="modalPrivacyAgree">
+                <label for="modalPrivacyAgree">J'ai lu et j'accepte la politique de confidentialité</label>
+            </div>
+            <button id="acceptPrivacy" class="btn-accept" disabled>Accepter</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Styles pour les modales */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 0;
+        width: 70%;
+        max-width: 800px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-header {
+        padding: 15px 20px;
+        background-color: var(--primary-color);
+        color: white;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-body {
+        padding: 20px;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    
+    .modal-footer {
+        padding: 15px 20px;
+        border-top: 1px solid #ddd;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .close {
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    
+    .btn-accept {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+    }
+    
+    .btn-accept:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+    
+    .terms-checkbox {
+        margin-bottom: 1.5rem;
+    }
+    
+    .terms-checkbox a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    .terms-checkbox a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    function togglePassword(inputId) {
+        const passwordInput = document.getElementById(inputId);
+        const icon = event.currentTarget;
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+    
+    // Prévisualisation de la photo
+    document.getElementById('{{ registrationForm.photo.vars.id }}').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            const preview = document.getElementById('photoPreview');
+            
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Gestion des modales
+    document.addEventListener('DOMContentLoaded', function() {
+        // Éléments du DOM
+        const termsLink = document.getElementById('termsLink');
+        const privacyLink = document.getElementById('privacyLink');
+        const termsModal = document.getElementById('termsModal');
+        const privacyModal = document.getElementById('privacyModal');
+        const closeBtns = document.querySelectorAll('.close');
+        const acceptTermsBtn = document.getElementById('acceptTerms');
+        const acceptPrivacyBtn = document.getElementById('acceptPrivacy');
+        const modalTermsAgree = document.getElementById('modalTermsAgree');
+        const modalPrivacyAgree = document.getElementById('modalPrivacyAgree');
+        const termsCheckbox = document.getElementById('terms');
+        const registerBtn = document.querySelector('.btn-register');
+        
+        // Ouvrir la modale Terms of Service
+        termsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            termsModal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Empêcher le défilement de la page
+        });
+        
+        // Ouvrir la modale Privacy Policy
+        privacyLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            privacyModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Fermer les modales
+        closeBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                termsModal.style.display = 'none';
+                privacyModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+        });
+        
+        // Fermer les modales en cliquant en dehors
+        window.addEventListener('click', function(e) {
+            if (e.target === termsModal) {
+                termsModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            if (e.target === privacyModal) {
+                privacyModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Activer/désactiver le bouton d'acceptation des termes
+        modalTermsAgree.addEventListener('change', function() {
+            acceptTermsBtn.disabled = !this.checked;
+        });
+        
+        // Activer/désactiver le bouton d'acceptation de la politique de confidentialité
+        modalPrivacyAgree.addEventListener('change', function() {
+            acceptPrivacyBtn.disabled = !this.checked;
+        });
+        
+        // Accepter les termes et fermer la modale
+        acceptTermsBtn.addEventListener('click', function() {
+            termsModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            termsCheckbox.checked = true;
+            validateForm();
+        });
+        
+        // Accepter la politique de confidentialité et fermer la modale
+        acceptPrivacyBtn.addEventListener('click', function() {
+            privacyModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            termsCheckbox.checked = true;
+            validateForm();
+        });
+        
+        // Activer/désactiver le bouton d'inscription
+        termsCheckbox.addEventListener('change', validateForm);
+        
+        function validateForm() {
+            registerBtn.disabled = !termsCheckbox.checked;
+        }
+        
+        // Initialiser l'état du bouton
+        validateForm();
+    });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

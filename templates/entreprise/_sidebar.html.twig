@@ -1,12 +1,12 @@
 <div class="sidebar">
     <div class="profile-section">
-        {% if user.profileImage %}
-            <img src="{{ asset(user.profileImage) }}" alt="Logo de l'entreprise" class="profile-img" />
+        {% if app.user.profileImage %}
+            <img src="{{ asset(app.user.profileImage) }}" alt="Logo de l'entreprise" class="profile-img" />
         {% else %}
             <img src="{{ asset('img/fxchat.png') }}" alt="Logo par défaut" class="profile-img" />
         {% endif %}
-        <h3 class="profile-name">{{ user.username }}</h3>
-        <p class="profile-email">{{ user.email }}</p>
+        <h3 class="profile-name">{{ app.user.username }}</h3>
+        <p class="profile-email">{{ app.user.email }}</p>
     </div>
     
     <div class="nav-menu">
@@ -14,7 +14,7 @@
             <i class="fas fa-home"></i> Dashboard
         </a>
         <a href="{{ path('entreprise_edit_profile') }}" class="nav-item {% if app.request.get('_route') == 'entreprise_edit_profile' %}active{% endif %}">
-            <i class="fas fa-user-edit"></i> Profil
+            <i class="fas fa-user-edit"></i> Edit Profile
         </a>
         <a href="{{ path('entreprise_publication_index') }}" class="nav-item {% if app.request.get('_route') starts with 'entreprise_publication' %}active{% endif %}">
             <i class="fas fa-briefcase"></i> Publications
@@ -25,7 +25,7 @@
         <a href="#" class="nav-item">
             <i class="fas fa-comments"></i> Entretiens
         </a>
-        <a href="{{ path('entreprise_statistics_index') }}" class="nav-item {% if app.request.get('_route') starts with 'entreprise_statistics' %}active{% endif %}">
+        <a href="#" class="nav-item">
             <i class="fas fa-chart-line"></i> Statistiques
         </a>
         <a href="{{ path('app_logout') }}" class="nav-item">

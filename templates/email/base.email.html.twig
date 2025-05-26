@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Email{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #6c757d;
+            background-color: #f8f9fa;
+            border-radius: 0 0 5px 5px;
+        }
+        a {
+            color: #d62828;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #d62828;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .btn:hover {
+            background-color: #ba181b;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{% block header %}Job Seeker Platform{% endblock %}</h1>
+    </div>
+    
+    <div class="content">
+        {% block body %}{% endblock %}
+    </div>
+    
+    <div class="footer">
+        <p>© {{ "now"|date("Y") }} Job Seeker Platform. All rights reserved.</p>
+        <p>This email was sent to you because you have an account on our platform.</p>
+    </div>
+</body>
+</html>
