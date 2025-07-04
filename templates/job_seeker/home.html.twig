@@ -452,8 +452,23 @@
     <div class="main-content">
         <div class="welcome-card">
             <h1 class="welcome-title">Welcome back, {{ app.user.username }}!</h1>
-            <p class="welcome-subtitle">Here's what's happening with your job search today</p>
-            <a href="{{ path('job_seeker_profile_index') }}" class="btn-primary">Complete Your Profile</a>
+            {% if stats.jobs_applied > 0 %}
+                <p class="welcome-subtitle">You've applied to {{ stats.jobs_applied }} job{{ stats.jobs_applied > 1 ? 's' : '' }}! 
+                {% if stats.interviews > 0 %}
+                    You have {{ stats.interviews }} upcoming interview{{ stats.interviews > 1 ? 's' : '' }}.
+                {% else %}
+                    Keep applying and prepare for interviews.
+                {% endif %}
+                </p>
+            {% else %}
+                <p class="welcome-subtitle">Ready to start your job search journey? Begin by completing your profile and exploring available opportunities.</p>
+            {% endif %}
+            
+            {% if app.user.firstName is empty or app.user.lastName is empty or app.user.title is empty %}
+                <a href="{{ path('job_seeker_profile_index') }}" class="btn-primary">Complete Your Profile</a>
+            {% else %}
+                <a href="{{ path('job_seeker_jobs_index') }}" class="btn-primary">Find New Jobs</a>
+            {% endif %}
         </div>
         
         <h2 class="section-title"><i class="fas fa-chart-line"></i> Your Stats</h2>
@@ -463,7 +478,7 @@
                     <i class="fas fa-briefcase"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>12</h3>
+                    <h3>{{ stats.jobs_applied }}</h3>
                     <p>Jobs Applied</p>
                 </div>
             </div>
@@ -473,7 +488,7 @@
                     <i class="fas fa-comments"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>3</h3>
+                    <h3>{{ stats.interviews }}</h3>
                     <p>Upcoming Interviews</p>
                 </div>
             </div>
@@ -483,7 +498,7 @@
                     <i class="fas fa-envelope"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>5</h3>
+                    <h3>{{ stats.messages }}</h3>
                     <p>New Messages</p>
                 </div>
             </div>
@@ -493,7 +508,7 @@
                     <i class="fas fa-heart"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>8</h3>
+                    <h3>{{ stats.saved_jobs }}</h3>
                     <p>Saved Jobs</p>
                 </div>
             </div>
@@ -501,22 +516,22 @@
         
         <h2 class="section-title"><i class="fas fa-bolt"></i> Quick Actions</h2>
         <div class="quick-actions">
-            <a href="" class="action-btn">
+            <a href="{{ path('job_seeker_cv_builder') }}" class="action-btn">
                 <i class="fas fa-file-alt"></i>
                 <span>Create New CV</span>
             </a>
             
-            <a href="" class="action-btn">
+            <a href="{{ path('job_seeker_jobs_index') }}" class="action-btn">
                 <i class="fas fa-search"></i>
                 <span>Search Jobs</span>
             </a>
             
-            <a href="" class="action-btn">
+            <a href="{{ path('job_seeker_interviews_index') }}" class="action-btn">
                 <i class="fas fa-comments"></i>
                 <span>Prepare Interview</span>
             </a>
             
-            <a href="" class="action-btn">
+            <a href="{{ path('job_seeker_skills_assessment') }}" class="action-btn">
                 <i class="fas fa-chart-line"></i>
                 <span>Improve Skills</span>
             </a>
@@ -524,35 +539,29 @@
         
         <h2 class="section-title"><i class="fas fa-clock"></i> Recent Activities</h2>
         <div class="recent-activities">
-            <div class="activity-item">
-                <div class="activity-icon">
-                    <i class="fas fa-briefcase"></i>
+            {% if recent_activities is empty %}
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">No recent activities</div>
+                        <div class="activity-date">Start applying for jobs to see your activity here</div>
+                    </div>
                 </div>
-                <div class="activity-content">
-                    <div class="activity-title">Applied for Senior Developer at TechCorp</div>
-                    <div class="activity-date">2 hours ago</div>
-                </div>
-            </div>
-            
-            <div class="activity-item">
-                <div class="activity-icon">
-                    <i class="fas fa-comments"></i>
-                </div>
-                <div class="activity-content">
-                    <div class="activity-title">Interview scheduled with HR Manager</div>
-                    <div class="activity-date">Yesterday, 3:45 PM</div>
-                </div>
-            </div>
-            
-            <div class="activity-item">
-                <div class="activity-icon">
-                    <i class="fas fa-envelope"></i>
-                </div>
-                <div class="activity-content">
-                    <div class="activity-title">Received message from Recruiter</div>
-                    <div class="activity-date">Yesterday, 10:30 AM</div>
-                </div>
-            </div>
+            {% else %}
+                {% for activity in recent_activities %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="{{ activity.icon|default('fas fa-info-circle') }}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">{{ activity.title }}</div>
+                            <div class="activity-date">{{ activity.time }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
 </div>
