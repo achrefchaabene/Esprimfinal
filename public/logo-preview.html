@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMSETCAREER - Aperçu du Logo</title>
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1f2937;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #2563eb, #059669);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+        }
+        
+        .logo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .logo-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .logo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .logo-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+        
+        .logo-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: #f9fafb;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            min-height: 120px;
+        }
+        
+        .logo-display.dark {
+            background: #1f2937;
+        }
+        
+        .logo-info {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+        
+        .usage-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        
+        .usage-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+        
+        .usage-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .usage-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+        }
+        
+        .usage-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .usage-list li::before {
+            content: "✓";
+            color: #059669;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .color-palette {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .color-swatch {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .color-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .color-code {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IMSETCAREER</h1>
+        <p class="subtitle">Plateforme de Recrutement Digital - Tunisie</p>
+        
+        <div class="logo-grid">
+            <div class="logo-card">
+                <h3>Logo Principal</h3>
+                <div class="logo-display">
+                    <img src="img/imsetcareer-logo.svg" alt="IMSETCAREER Logo" style="max-height: 80px;">
+                </div>
+                <div class="logo-info">
+                    <strong>Usage :</strong> En-têtes de site web, documents officiels, cartes de visite, signatures email.<br>
+                    <strong>Fichier :</strong> imsetcareer-logo.svg<br>
+                    <strong>Dimensions :</strong> 240×80px (scalable)
+                </div>
+            </div>
+            
+            <div class="logo-card">
+                <h3>Logo Principal (Fond Sombre)</h3>
+                <div class="logo-display dark">
+                    <img src="img/imsetcareer-logo.svg" alt="IMSETCAREER Logo" style="max-height: 80px;">
+                </div>
+                <div class="logo-info">
+                    <strong>Usage :</strong> Fonds sombres, présentations, réseaux sociaux en mode sombre.<br>
+                    <strong>Fichier :</strong> imsetcareer-logo.svg<br>
+                    <strong>Note :</strong> Le logo est conçu pour bien s'afficher sur tous les fonds
+                </div>
+            </div>
+            
+            <div class="logo-card">
+                <h3>Logo Mark (Symbole seul)</h3>
+                <div class="logo-display">
+                    <img src="img/imsetcareer-logo-mark.svg" alt="IMSETCAREER Logo Mark" style="max-height: 60px;">
+                </div>
+                <div class="logo-info">
+                    <strong>Usage :</strong> Espaces restreints, applications mobiles, avatars de profil.<br>
+                    <strong>Fichier :</strong> imsetcareer-logo-mark.svg<br>
+                    <strong>Dimensions :</strong> 60×60px (scalable)
+                </div>
+            </div>
+            
+            <div class="logo-card">
+                <h3>Favicon</h3>
+                <div class="logo-display">
+                    <img src="img/favicon.svg" alt="IMSETCAREER Favicon" style="max-height: 32px;">
+                </div>
+                <div class="logo-info">
+                    <strong>Usage :</strong> Onglets de navigateur, favoris, raccourcis d'applications.<br>
+                    <strong>Fichier :</strong> favicon.svg<br>
+                    <strong>Dimensions :</strong> 32×32px
+                </div>
+            </div>
+        </div>
+        
+        <div class="usage-section">
+            <h2>Guide d'Utilisation</h2>
+            <ul class="usage-list">
+                <li>Utilisez toujours les fichiers SVG pour une qualité optimale sur tous les écrans</li>
+                <li>Respectez l'espace minimum autour du logo (équivalent à la hauteur du logo)</li>
+                <li>Ne modifiez pas les couleurs ou proportions du logo</li>
+                <li>Pour les très petites tailles (moins de 40px), utilisez le logo mark</li>
+                <li>Le logo fonctionne bien sur les fonds clairs et sombres</li>
+                <li>Pour les impressions, convertissez en haute résolution (300 DPI)</li>
+            </ul>
+            
+            <h2 style="margin-top: 2rem;">Palette de Couleurs</h2>
+            <div class="color-palette">
+                <div class="color-swatch">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);"></div>
+                    <span class="color-code">Bleu Principal #2563eb</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #059669, #047857);"></div>
+                    <span class="color-code">Vert Accent #059669</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-circle" style="background: #1f2937;"></div>
+                    <span class="color-code">Gris Sombre #1f2937</span>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-circle" style="background: #6b7280;"></div>
+                    <span class="color-code">Gris Moyen #6b7280</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
